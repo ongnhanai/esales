@@ -1203,7 +1203,7 @@
                         price: 1000000,
                         qty: 1,
                         unit: "Lần",
-                        vatPct: 10
+                        vatPct: 8
                     },
                     {
                         category: 1,
@@ -1213,7 +1213,7 @@
                         price: 1100000,
                         qty: 20,
                         unit: "Bộ",
-                        vatPct: 10
+                        vatPct: 8
                     },
                     {
                         category: 2,
@@ -1223,7 +1223,7 @@
                         price: 529000,
                         qty: 12,
                         unit: "Tháng",
-                        vatPct: 10
+                        vatPct: 8
                     }
                 ]
             }
@@ -1729,7 +1729,7 @@
                         price: 1000000,
                         qty: 1,
                         unit: "Lần",
-                        vatPct: 10
+                        vatPct: 8
                     }
                 ]
             };
@@ -1883,7 +1883,7 @@
                         </div>
                         <div>
                             <label class="block text-[10px] font-semibold text-slate-500">VAT (%)</label>
-                            <input type="number" value="${item.vatPct || 10}" oninput="updateLineItemVal(${idx}, 'vatPct', Number(this.value))" class="w-full px-2 py-1 border rounded text-xs outline-none font-mono">
+                            <input type="number" value="${item.vatPct !== undefined ? item.vatPct : 8}" oninput="updateLineItemVal(${idx}, 'vatPct', Number(this.value))" class="w-full px-2 py-1 border rounded text-xs outline-none font-mono">
                         </div>
                     </div>
                 </div>
@@ -1900,7 +1900,7 @@
                 price: 500000,
                 qty: 1,
                 unit: "Lần",
-                vatPct: 10
+                vatPct: 8
             });
             isDocDirty = true;
             renderLineItemInputs();
