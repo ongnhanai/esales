@@ -1200,6 +1200,7 @@
                         catTitle: "1. Phí khởi tạo dịch vụ",
                         code: "AD0001",
                         desc: "Phí khởi tạo dịch vụ CloudPBX (Hướng dẫn cài đặt, xây dựng kịch bản, đào tạo, vận hành)",
+                        subtitle: "Tặng gói hỗ trợ kỹ thuật Onsite trong tháng đầu tiên",
                         price: 1000000,
                         qty: 1,
                         unit: "Lần",
@@ -1210,6 +1211,7 @@
                         catTitle: "2. Danh mục thiết bị",
                         code: "SIP-T30",
                         desc: "Điện thoại IP Yealink SIP-T30\nĐiện thoại có dây dành cho nhân viên (Bảo hành 12 tháng)",
+                        subtitle: "Bảo hành 1 đổi 1 trong vòng 12 tháng",
                         price: 1100000,
                         qty: 20,
                         unit: "Bộ",
@@ -1220,6 +1222,7 @@
                         catTitle: "1. Dịch vụ Tổng đài CloudPBX",
                         code: "CPBX-STD-YR",
                         desc: "CloudPBX Standard (20 máy nhánh)\nPhí dịch vụ CloudPBX Standard / 1 tháng (Gói thanh toán 12 tháng)",
+                        subtitle: "Cam kết Uptime 99.9% theo tiêu chuẩn SLA",
                         price: 529000,
                         qty: 12,
                         unit: "Tháng",
@@ -1726,6 +1729,7 @@
                         catTitle: "1. Phí khởi tạo dịch vụ",
                         code: "AD0001",
                         desc: "Phí khởi tạo dịch vụ CloudPBX",
+                        subtitle: "Khuyến mãi miễn phí khởi tạo",
                         price: 1000000,
                         qty: 1,
                         unit: "Lần",
@@ -1863,9 +1867,13 @@
                             <label class="block text-[10px] font-semibold text-slate-500">Mã SP/DV</label>
                             <input type="text" value="${item.code || ''}" oninput="updateLineItemVal(${idx}, 'code', this.value)" class="w-full px-2 py-1 border rounded text-xs outline-none focus:border-brand-orange">
                         </div>
-                        <div class="sm:col-span-2">
+                        <div>
                             <label class="block text-[10px] font-semibold text-slate-500">Mô tả sản phẩm / dịch vụ</label>
                             <input type="text" value="${item.desc || ''}" oninput="updateLineItemVal(${idx}, 'desc', this.value)" class="w-full px-2 py-1 border rounded text-xs outline-none focus:border-brand-orange">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500">Ghi chú phụ / Subtitle (màu đỏ, italic)</label>
+                            <input type="text" value="${item.subtitle || ''}" placeholder="VD: Khuyến mãi..." oninput="updateLineItemVal(${idx}, 'subtitle', this.value)" class="w-full px-2 py-1 border rounded text-xs outline-none focus:border-brand-orange text-rose-600 italic">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1897,6 +1905,7 @@
                 catTitle: categoryType === 1 ? "Hàng hóa / Dịch vụ 1 lần" : "Dịch vụ Duy trì",
                 code: "NEW01",
                 desc: "Mô tả dịch vụ bổ sung",
+                subtitle: "",
                 price: 500000,
                 qty: 1,
                 unit: "Lần",
@@ -2069,6 +2078,14 @@
                             descHtml = `<div class="font-bold text-slate-900">${item.desc || ''}</div>`;
                         }
 
+                        if (item.subtitle && item.subtitle.trim()) {
+                            let subText = item.subtitle.trim();
+                            if (!subText.startsWith('(') || !subText.endsWith(')')) {
+                                subText = `(${subText})`;
+                            }
+                            descHtml += `<div class="text-[9px] text-rose-600 italic font-medium mt-0.5">${subText}</div>`;
+                        }
+
                         html += `
                             <tr class="border-b border-slate-200">
                                 <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.code || ''}</td>
@@ -2119,6 +2136,14 @@
                             descHtml = `<div class="font-bold text-slate-900">${parts[0]}</div><div class="text-[9px] text-slate-500 leading-tight">${parts.slice(1).join('<br>')}</div>`;
                         } else {
                             descHtml = `<div class="font-bold text-slate-900">${item.desc || ''}</div>`;
+                        }
+
+                        if (item.subtitle && item.subtitle.trim()) {
+                            let subText = item.subtitle.trim();
+                            if (!subText.startsWith('(') || !subText.endsWith(')')) {
+                                subText = `(${subText})`;
+                            }
+                            descHtml += `<div class="text-[9px] text-rose-600 italic font-medium mt-0.5">${subText}</div>`;
                         }
 
                         html += `
