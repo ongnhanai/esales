@@ -44,7 +44,7 @@
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0mm;
+                margin: 8mm 8mm 8mm 8mm;
             }
 
             html, body {
@@ -53,50 +53,72 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 width: 100% !important;
-                height: 100% !important;
+                height: auto !important;
+                min-height: auto !important;
                 overflow: visible !important;
             }
 
-            /* Hide everything outside printable area */
-            body * {
-                visibility: hidden !important;
+            /* Hide all non-printable UI elements completely */
+            .no-print,
+            #toast-container,
+            #login-view,
+            #app-dashboard,
+            header,
+            footer,
+            aside,
+            #profile-modal,
+            #user-admin-modal,
+            #unsaved-close-modal,
+            #delete-confirm-modal {
+                display: none !important;
             }
 
-            /* Reset modal containers so layout flow starts at (0,0) without offset */
-            #quote-modal, #print-preview-modal, #app-dashboard, main, div {
+            /* Reset modal containers so layout flow starts at top of Page 1 */
+            #quote-modal, 
+            #print-preview-modal {
                 position: static !important;
                 display: block !important;
                 background: transparent !important;
-                overflow: visible !important;
-                max-height: none !important;
-                height: auto !important;
-                width: 100% !important;
-                margin: 0 !important;
                 padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
                 box-shadow: none !important;
                 border: none !important;
             }
 
-            /* Display ONLY printable quotation document */
-            #printable-quotation-area, 
-            #printable-quotation-area * {
-                visibility: visible !important;
+            /* Reset wrapper containers to full page width for printing */
+            #quote-modal > div,
+            #print-preview-modal > div,
+            #preview-modal-paper-container {
+                display: block !important;
+                position: static !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                background: transparent !important;
+                overflow: visible !important;
+                border: none !important;
             }
 
+            /* Printable Document Area */
             #printable-quotation-area {
                 display: block !important;
-                position: absolute !important;
+                visibility: visible !important;
+                position: relative !important;
                 left: 0 !important;
                 top: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
-                margin: 0 !important;
-                padding: 4mm !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
                 background: white !important;
                 box-shadow: none !important;
                 border: none !important;
-                transform: scale(0.95) !important;
-                transform-origin: top left !important;
+                transform: none !important;
                 page-break-before: avoid !important;
                 page-break-after: avoid !important;
                 page-break-inside: avoid !important;
@@ -517,7 +539,7 @@
     <div id="quote-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex flex-col no-print overflow-hidden">
         
         <!-- Modal Top Action Bar -->
-        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0 flex-wrap gap-2">
+        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0 flex-wrap gap-2 no-print">
             <div class="flex items-center gap-3">
                 <span class="text-xl">📄</span>
                 <div>
@@ -564,7 +586,7 @@
         <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-100">
             
             <!-- LEFT PANEL: Form Controls -->
-            <div class="w-full md:w-1/2 p-6 overflow-y-auto border-r border-slate-300 space-y-6">
+            <div class="w-full md:w-1/2 p-6 overflow-y-auto border-r border-slate-300 space-y-6 no-print">
                 
                 <!-- Quote Configuration Toggles Bar (Brand, Currency, Language) -->
                 <div class="bg-slate-200/70 text-slate-800 p-4 rounded-xl shadow-sm border border-slate-300 space-y-3">
@@ -1084,7 +1106,7 @@
 
     <!-- PRINT PREVIEW MODAL -->
     <div id="print-preview-modal" class="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md hidden flex flex-col no-print overflow-hidden">
-        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0">
+        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0 no-print">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-eye text-indigo-400 text-lg"></i>
                 <h3 class="font-bold text-base">Xem Trước Báo Giá Trước Khi In (Print Preview)</h3>
@@ -2239,12 +2261,25 @@
 
         // Comprehensive Print Handler
         function triggerPrintPDF() {
-            // Un-hide printable area before firing window.print
+            const previewModal = document.getElementById('print-preview-modal');
+            const quoteModal = document.getElementById('quote-modal');
+            const isPreviewOpen = previewModal && !previewModal.classList.contains('hidden');
+
+            // Prevent duplicate print rendering if both modals are present in the DOM
+            if (isPreviewOpen && quoteModal) {
+                quoteModal.classList.add('no-print');
+            }
+
             const paper = document.getElementById('printable-quotation-area');
             if (paper) {
                 paper.style.display = 'block';
             }
+
             window.print();
+
+            if (isPreviewOpen && quoteModal) {
+                quoteModal.classList.remove('no-print');
+            }
         }
 
         function triggerScreenCapture() {
