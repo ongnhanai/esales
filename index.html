@@ -42,11 +42,19 @@
 
         /* Comprehensive Print Media Styling for Native Browser Printing */
         @media print {
-            body {
+            @page {
+                size: A4 portrait;
+                margin: 0mm;
+            }
+
+            html, body {
                 background: white !important;
                 color: black !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                overflow: visible !important;
             }
 
             /* Hide everything outside printable area */
@@ -54,8 +62,8 @@
                 visibility: hidden !important;
             }
 
-            /* Ensure modal containers do not clip or overlay print output */
-            #quote-modal, #print-preview-modal, #app-dashboard, main {
+            /* Reset modal containers so layout flow starts at (0,0) without offset */
+            #quote-modal, #print-preview-modal, #app-dashboard, main, div {
                 position: static !important;
                 display: block !important;
                 background: transparent !important;
@@ -63,6 +71,10 @@
                 max-height: none !important;
                 height: auto !important;
                 width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
             }
 
             /* Display ONLY printable quotation document */
@@ -79,16 +91,15 @@
                 width: 100% !important;
                 max-width: 100% !important;
                 margin: 0 !important;
-                padding: 5mm !important;
+                padding: 4mm !important;
                 background: white !important;
                 box-shadow: none !important;
                 border: none !important;
-                transform: none !important;
-            }
-
-            @page {
-                size: A4 portrait;
-                margin: 5mm;
+                transform: scale(0.95) !important;
+                transform-origin: top left !important;
+                page-break-before: avoid !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
             }
         }
 
