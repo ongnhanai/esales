@@ -42,86 +42,53 @@
 
         /* Comprehensive Print Media Styling for Native Browser Printing */
         @media print {
-            @page {
-                size: A4 portrait;
-                margin: 8mm 8mm 8mm 8mm;
-            }
-
-            html, body {
+            body {
                 background: white !important;
                 color: black !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                min-height: auto !important;
-                overflow: visible !important;
             }
 
-            /* Hide all non-printable UI elements completely */
-            .no-print,
-            #toast-container,
-            #login-view,
-            #app-dashboard,
-            header,
-            footer,
-            aside,
-            #profile-modal,
-            #user-admin-modal,
-            #unsaved-close-modal,
-            #delete-confirm-modal {
-                display: none !important;
+            /* Hide everything outside printable area */
+            body * {
+                visibility: hidden !important;
             }
 
-            /* Reset modal containers so layout flow starts at top of Page 1 */
-            #quote-modal, 
-            #print-preview-modal {
+            /* Ensure modal containers do not clip or overlay print output */
+            #quote-modal, #print-preview-modal, #app-dashboard, main {
                 position: static !important;
                 display: block !important;
                 background: transparent !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                width: 100% !important;
-                height: auto !important;
                 overflow: visible !important;
-                box-shadow: none !important;
-                border: none !important;
+                max-height: none !important;
+                height: auto !important;
+                width: 100% !important;
             }
 
-            /* Reset wrapper containers to full page width for printing */
-            #quote-modal > div,
-            #print-preview-modal > div,
-            #preview-modal-paper-container {
-                display: block !important;
-                position: static !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                width: 100% !important;
-                max-width: 100% !important;
-                height: auto !important;
-                background: transparent !important;
-                overflow: visible !important;
-                border: none !important;
+            /* Display ONLY printable quotation document */
+            #printable-quotation-area, 
+            #printable-quotation-area * {
+                visibility: visible !important;
             }
 
-            /* Printable Document Area */
             #printable-quotation-area {
                 display: block !important;
-                visibility: visible !important;
-                position: relative !important;
+                position: absolute !important;
                 left: 0 !important;
                 top: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
-                margin: 0 auto !important;
-                padding: 0 !important;
+                margin: 0 !important;
+                padding: 5mm !important;
                 background: white !important;
                 box-shadow: none !important;
                 border: none !important;
                 transform: none !important;
-                page-break-before: avoid !important;
-                page-break-after: avoid !important;
-                page-break-inside: avoid !important;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 5mm;
             }
         }
 
@@ -539,7 +506,7 @@
     <div id="quote-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex flex-col no-print overflow-hidden">
         
         <!-- Modal Top Action Bar -->
-        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0 flex-wrap gap-2 no-print">
+        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0 flex-wrap gap-2">
             <div class="flex items-center gap-3">
                 <span class="text-xl">📄</span>
                 <div>
@@ -586,7 +553,7 @@
         <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-100">
             
             <!-- LEFT PANEL: Form Controls -->
-            <div class="w-full md:w-1/2 p-6 overflow-y-auto border-r border-slate-300 space-y-6 no-print">
+            <div class="w-full md:w-1/2 p-6 overflow-y-auto border-r border-slate-300 space-y-6">
                 
                 <!-- Quote Configuration Toggles Bar (Brand, Currency, Language) -->
                 <div class="bg-slate-200/70 text-slate-800 p-4 rounded-xl shadow-sm border border-slate-300 space-y-3">
@@ -1106,7 +1073,7 @@
 
     <!-- PRINT PREVIEW MODAL -->
     <div id="print-preview-modal" class="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md hidden flex flex-col no-print overflow-hidden">
-        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0 no-print">
+        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-eye text-indigo-400 text-lg"></i>
                 <h3 class="font-bold text-base">Xem Trước Báo Giá Trước Khi In (Print Preview)</h3>
@@ -1238,7 +1205,7 @@
                         category: 1,
                         catTitle: "2. Danh mục thiết bị",
                         code: "SIP-T30",
-                        desc: "Điện thoại IP Yealink SIP-T30 (Điện thoại có dây dành cho nhân viên)",
+                        desc: "Điện thoại IP Yealink SIP-T30\nĐiện thoại có dây dành cho nhân viên (Bảo hành 12 tháng)",
                         price: 1100000,
                         qty: 20,
                         unit: "Bộ",
@@ -1248,10 +1215,10 @@
                         category: 2,
                         catTitle: "1. Dịch vụ Tổng đài CloudPBX",
                         code: "CPBX-STD-YR",
-                        desc: "CloudPBX Standard (20 máy nhánh) - Phí dịch vụ / 1 năm",
-                        price: 6348000,
-                        qty: 1,
-                        unit: "Gói",
+                        desc: "CloudPBX Standard (20 máy nhánh)\nPhí dịch vụ CloudPBX Standard / 1 tháng (Gói thanh toán 12 tháng)",
+                        price: 529000,
+                        qty: 12,
+                        unit: "Tháng",
                         vatPct: 10
                     }
                 ]
@@ -1550,6 +1517,8 @@
                 return;
             }
 
+            const isAdmin = currentUser && currentUser.type === 'Admin';
+
             const views = ['quotes', 'drafts', 'trash', 'reports', 'admin-users'];
             views.forEach(v => {
                 const el = document.getElementById(`view-${v}`);
@@ -1557,7 +1526,8 @@
 
                 const btn = document.getElementById(`nav-btn-${v}`);
                 if (btn) {
-                    btn.className = "nav-item w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left";
+                    const hideClass = (v === 'admin-users' && !isAdmin) ? ' hidden' : '';
+                    btn.className = `nav-item${hideClass} w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left`;
                 }
             });
 
@@ -1567,7 +1537,8 @@
 
             const activeBtn = document.getElementById(`nav-btn-${viewName}`);
             if (activeBtn) {
-                activeBtn.className = "nav-item w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-white bg-brand-orange/90 shadow text-left";
+                const hideClass = (viewName === 'admin-users' && !isAdmin) ? ' hidden' : '';
+                activeBtn.className = `nav-item${hideClass} w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-white bg-brand-orange/90 shadow text-left`;
             }
 
             if (viewName === 'quotes') {
@@ -2059,34 +2030,132 @@
             document.getElementById('pv-colh-vat').innerText = t.vatCol;
             document.getElementById('pv-colh-total').innerText = `${t.totalCol} (${activeQuote.currency})`;
 
-            // Table Items
+            // Table Items Split into Section I (Phí 1 lần) and Section II (Phí duy trì)
             const tbody = document.getElementById('pv-table-body');
             if (tbody) {
                 let html = '';
-                let stt = 1;
-                activeQuote.lineItems.forEach(item => {
-                    const lineTot = calculateLineItemTotal(item);
-                    html += `
-                        <tr class="border-b border-slate-200">
-                            <td class="p-1 border-r border-slate-300 text-center font-mono">${item.code || ''}</td>
-                            <td class="p-1 border-r border-slate-300 text-center font-bold">${stt++}</td>
-                            <td class="p-1 border-r border-slate-300 text-left font-medium">${item.desc || ''}</td>
-                            <td class="p-1 border-r border-slate-300 text-right font-mono">${formatMoney(item.price, activeQuote.currency)}</td>
-                            <td class="p-1 border-r border-slate-300 text-center font-mono">${item.qty}</td>
-                            <td class="p-1 border-r border-slate-300 text-center">${item.unit}</td>
-                            <td class="p-1 border-r border-slate-300 text-center font-mono">${item.vatPct}%</td>
-                            <td class="p-1 text-right font-bold font-mono">${formatMoney(lineTot, activeQuote.currency)}</td>
-                        </tr>
-                    `;
-                });
+                const cat1Items = activeQuote.lineItems.filter(item => Number(item.category) !== 2);
+                const cat2Items = activeQuote.lineItems.filter(item => Number(item.category) === 2);
 
-                const grandTotal = calculateQuoteGrandTotal(activeQuote);
+                const sec1Title = isEng ? "I. ONE-TIME PAYMENT FEES" : "I. PHÍ THANH TOÁN MỘT LẦN";
+                const sec1SubtotalLbl = isEng ? "SUBTOTAL (Part I - Incl. VAT):" : "CỘNG (Mục I - Đã gồm VAT):";
+                const sec2Title = isEng ? "II. RECURRING SERVICE FEES (MONTHLY / QUARTERLY / YEARLY)" : "II. PHÍ DUY TRÌ DỊCH VỤ THEO THÁNG / QUÝ / NĂM";
+                const sec2SubtotalLbl = isEng ? "SUBTOTAL (Part II - Incl. VAT):" : "CỘNG (Mục II - Đã gồm VAT):";
+
+                // Section I Rendering
                 html += `
-                    <tr class="bg-slate-200 text-slate-900 font-bold border-t-2 border-slate-400">
-                        <td colspan="7" class="p-2 text-right uppercase">${isEng ? 'TOTAL AMOUNT:' : 'TỔNG CỘNG HÓA ĐƠN:'}</td>
-                        <td class="p-2 text-right font-mono text-sm">${formatMoney(grandTotal, activeQuote.currency)}</td>
+                    <tr class="bg-slate-100/90 text-slate-800 font-bold border-b border-slate-300">
+                        <td colspan="8" class="p-1.5 px-2 text-left uppercase text-[10.5px] tracking-wide bg-slate-100">${sec1Title}</td>
                     </tr>
                 `;
+
+                let stt1 = 1;
+                let subtotal1 = 0;
+
+                if (cat1Items.length === 0) {
+                    html += `
+                        <tr class="border-b border-slate-200 text-slate-400 italic">
+                            <td colspan="8" class="p-2 text-center text-[9.5px]">-- ${isEng ? 'No items' : 'Không có sản phẩm'} --</td>
+                        </tr>
+                    `;
+                } else {
+                    cat1Items.forEach(item => {
+                        const lineTot = calculateLineItemTotal(item);
+                        subtotal1 += lineTot;
+
+                        let descHtml = '';
+                        if (item.desc && item.desc.includes('\n')) {
+                            const parts = item.desc.split('\n');
+                            descHtml = `<div class="font-bold text-slate-900">${parts[0]}</div><div class="text-[9px] text-slate-500 leading-tight">${parts.slice(1).join('<br>')}</div>`;
+                        } else {
+                            descHtml = `<div class="font-bold text-slate-900">${item.desc || ''}</div>`;
+                        }
+
+                        html += `
+                            <tr class="border-b border-slate-200">
+                                <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.code || ''}</td>
+                                <td class="p-1 border-r border-slate-300 text-center font-bold text-[9.5px]">${stt1++}</td>
+                                <td class="p-1 border-r border-slate-300 text-left text-[9.5px]">${descHtml}</td>
+                                <td class="p-1 border-r border-slate-300 text-right font-mono text-[9.5px]">${formatMoney(item.price, activeQuote.currency)}</td>
+                                <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.qty}</td>
+                                <td class="p-1 border-r border-slate-300 text-center text-[9.5px]">${item.unit}</td>
+                                <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.vatPct}%</td>
+                                <td class="p-1 text-right font-bold font-mono text-[9.5px]">${formatMoney(lineTot, activeQuote.currency)}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                // Section I Subtotal Row
+                html += `
+                    <tr class="bg-slate-50 font-bold border-b-2 border-slate-300">
+                        <td colspan="7" class="p-1.5 text-right uppercase text-[10px] text-slate-700">${sec1SubtotalLbl}</td>
+                        <td class="p-1.5 text-right font-mono text-xs font-bold text-brand-orange">${formatMoney(subtotal1, activeQuote.currency)}</td>
+                    </tr>
+                `;
+
+                // Section II Rendering
+                html += `
+                    <tr class="bg-slate-100/90 text-slate-800 font-bold border-b border-slate-300">
+                        <td colspan="8" class="p-1.5 px-2 text-left uppercase text-[10.5px] tracking-wide bg-slate-100">${sec2Title}</td>
+                    </tr>
+                `;
+
+                let stt2 = 1;
+                let subtotal2 = 0;
+
+                if (cat2Items.length === 0) {
+                    html += `
+                        <tr class="border-b border-slate-200 text-slate-400 italic">
+                            <td colspan="8" class="p-2 text-center text-[9.5px]">-- ${isEng ? 'No items' : 'Không có dịch vụ'} --</td>
+                        </tr>
+                    `;
+                } else {
+                    cat2Items.forEach(item => {
+                        const lineTot = calculateLineItemTotal(item);
+                        subtotal2 += lineTot;
+
+                        let descHtml = '';
+                        if (item.desc && item.desc.includes('\n')) {
+                            const parts = item.desc.split('\n');
+                            descHtml = `<div class="font-bold text-slate-900">${parts[0]}</div><div class="text-[9px] text-slate-500 leading-tight">${parts.slice(1).join('<br>')}</div>`;
+                        } else {
+                            descHtml = `<div class="font-bold text-slate-900">${item.desc || ''}</div>`;
+                        }
+
+                        html += `
+                            <tr class="border-b border-slate-200">
+                                <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.code || ''}</td>
+                                <td class="p-1 border-r border-slate-300 text-center font-bold text-[9.5px]">${stt2++}</td>
+                                <td class="p-1 border-r border-slate-300 text-left text-[9.5px]">${descHtml}</td>
+                                <td class="p-1 border-r border-slate-300 text-right font-mono text-[9.5px]">${formatMoney(item.price, activeQuote.currency)}</td>
+                                <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.qty}</td>
+                                <td class="p-1 border-r border-slate-300 text-center text-[9.5px]">${item.unit}</td>
+                                <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.vatPct}%</td>
+                                <td class="p-1 text-right font-bold font-mono text-[9.5px]">${formatMoney(lineTot, activeQuote.currency)}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                // Section II Subtotal Row
+                html += `
+                    <tr class="bg-slate-50 font-bold border-b-2 border-slate-300">
+                        <td colspan="7" class="p-1.5 text-right uppercase text-[10px] text-slate-700">${sec2SubtotalLbl}</td>
+                        <td class="p-1.5 text-right font-mono text-xs font-bold text-brand-orange">${formatMoney(subtotal2, activeQuote.currency)}</td>
+                    </tr>
+                `;
+
+                // Grand Total Row
+                const grandTotal = subtotal1 + subtotal2;
+                const grandTotalLbl = isEng ? "GRAND TOTAL (Incl. VAT):" : "TỔNG CỘNG HÓA ĐƠN (Đã gồm VAT):";
+                html += `
+                    <tr class="bg-slate-200 text-slate-900 font-bold border-t-2 border-slate-400">
+                        <td colspan="7" class="p-2 text-right uppercase text-[10.5px]">${grandTotalLbl}</td>
+                        <td class="p-2 text-right font-mono text-sm text-slate-900 font-extrabold">${formatMoney(grandTotal, activeQuote.currency)}</td>
+                    </tr>
+                `;
+
                 tbody.innerHTML = html;
             }
 
@@ -2261,25 +2330,12 @@
 
         // Comprehensive Print Handler
         function triggerPrintPDF() {
-            const previewModal = document.getElementById('print-preview-modal');
-            const quoteModal = document.getElementById('quote-modal');
-            const isPreviewOpen = previewModal && !previewModal.classList.contains('hidden');
-
-            // Prevent duplicate print rendering if both modals are present in the DOM
-            if (isPreviewOpen && quoteModal) {
-                quoteModal.classList.add('no-print');
-            }
-
+            // Un-hide printable area before firing window.print
             const paper = document.getElementById('printable-quotation-area');
             if (paper) {
                 paper.style.display = 'block';
             }
-
             window.print();
-
-            if (isPreviewOpen && quoteModal) {
-                quoteModal.classList.remove('no-print');
-            }
         }
 
         function triggerScreenCapture() {
