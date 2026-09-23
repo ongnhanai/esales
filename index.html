@@ -73,18 +73,18 @@
 
             #printable-quotation-area {
                 display: block !important;
-                position: absolute !important;
-                left: 0 !important;
+                position: fixed !important;
+                left: 50% !important;
                 top: 0 !important;
-                width: 100% !important;
+                transform: translateX(-50%) scale(0.92) !important;
+                transform-origin: top center !important;
+                width: 210mm !important;
                 max-width: 100% !important;
-                margin: 0 !important;
-                padding: 4mm 6mm !important;
+                margin: 0 auto !important;
+                padding: 4mm 8mm !important;
                 background: white !important;
                 box-shadow: none !important;
                 border: none !important;
-                transform: scale(0.92) !important;
-                transform-origin: top left !important;
                 page-break-before: avoid !important;
                 page-break-after: avoid !important;
                 page-break-inside: avoid !important;
@@ -1575,13 +1575,13 @@
             if (draftBadge) draftBadge.innerText = totalDrafts;
             if (trashBadge) trashBadge.innerText = totalTrash;
         }
-
-        function formatMoney(amount, currency = 'VND') {
+        function formatMoney(amount, currency = 'VND', includeSuffix = true) {
             const num = Number(amount) || 0;
             if (currency === 'USD') {
                 return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             }
-            return num.toLocaleString('vi-VN') + ' VNĐ';
+            const formattedNum = num.toLocaleString('vi-VN');
+            return includeSuffix ? `${formattedNum} VNĐ` : formattedNum;
         }
 
         function renderQuotesTable() {
@@ -1627,22 +1627,16 @@
                     ? `<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-200"><i class="fa-solid fa-pen-to-square mr-1"></i>Lưu Nháp</span>`
                     : `<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"><i class="fa-solid fa-circle-check mr-1"></i>Chính thức</span>`;
 
-                const isAdmin = currentUser && currentUser.type === 'Admin';
-
-                const actionButtons = isAdmin ? `
-                    <button onclick="editQuote('${q.id}', true)" title="Xem chi tiết" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
-                        <i class="fa-solid fa-eye text-base"></i>
-                    </button>
-                ` : `
-                    <div class="flex items-center justify-center gap-1">
-                        <button onclick="editQuote('${q.id}')" title="Sửa báo giá" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
-                            <i class="fa-solid fa-pen-to-square text-base"></i>
+                const actionButtons = `
+                    <div class="flex items-center justify-center gap-1.5">
+                        <button onclick="editQuote('${q.id}')" title="Chỉnh sửa" class="p-1.5 text-slate-600 hover:text-brand-orange hover:bg-slate-100 rounded-lg transition-all">
+                            <i class="fa-solid fa-pen-to-square"></i>
                         </button>
-                        <button onclick="duplicateQuote('${q.id}')" title="Nhân bản (Duplicate)" class="p-1.5 text-purple-600 hover:bg-purple-50 rounded-lg transition-all">
-                            <i class="fa-solid fa-copy text-base"></i>
+                        <button onclick="duplicateQuote('${q.id}')" title="Nhân bản" class="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-all">
+                            <i class="fa-solid fa-copy"></i>
                         </button>
-                        <button onclick="confirmDeleteQuote('${q.id}')" title="Chuyển vào Trash" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-all">
-                            <i class="fa-solid fa-trash-can text-base"></i>
+                        <button onclick="confirmDeleteQuote('${q.id}')" title="Xóa" class="p-1.5 text-slate-600 hover:text-rose-600 hover:bg-slate-100 rounded-lg transition-all">
+                            <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
                 `;
@@ -2080,11 +2074,11 @@
                                 <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.code || ''}</td>
                                 <td class="p-1 border-r border-slate-300 text-center font-bold text-[9.5px]">${stt1++}</td>
                                 <td class="p-1 border-r border-slate-300 text-left text-[9.5px]">${descHtml}</td>
-                                <td class="p-1 border-r border-slate-300 text-right font-mono text-[9.5px]">${formatMoney(item.price, activeQuote.currency)}</td>
+                                <td class="p-1 border-r border-slate-300 text-right font-mono text-[9.5px] whitespace-nowrap">${formatMoney(item.price, activeQuote.currency, false)}</td>
                                 <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.qty}</td>
                                 <td class="p-1 border-r border-slate-300 text-center text-[9.5px]">${item.unit}</td>
                                 <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.vatPct}%</td>
-                                <td class="p-1 text-right font-bold font-mono text-[9.5px]">${formatMoney(lineTot, activeQuote.currency)}</td>
+                                <td class="p-1 text-right font-bold font-mono text-[9.5px] whitespace-nowrap">${formatMoney(lineTot, activeQuote.currency, false)}</td>
                             </tr>
                         `;
                     });
@@ -2094,7 +2088,7 @@
                 html += `
                     <tr class="bg-slate-50 font-bold border-b-2 border-slate-300">
                         <td colspan="7" class="p-1.5 text-right uppercase text-[10px] text-slate-700">${sec1SubtotalLbl}</td>
-                        <td class="p-1.5 text-right font-mono text-xs font-bold text-brand-orange">${formatMoney(subtotal1, activeQuote.currency)}</td>
+                        <td class="p-1.5 text-right font-mono text-xs font-bold text-brand-orange whitespace-nowrap">${formatMoney(subtotal1, activeQuote.currency, true)}</td>
                     </tr>
                 `;
 
@@ -2132,11 +2126,11 @@
                                 <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.code || ''}</td>
                                 <td class="p-1 border-r border-slate-300 text-center font-bold text-[9.5px]">${stt2++}</td>
                                 <td class="p-1 border-r border-slate-300 text-left text-[9.5px]">${descHtml}</td>
-                                <td class="p-1 border-r border-slate-300 text-right font-mono text-[9.5px]">${formatMoney(item.price, activeQuote.currency)}</td>
+                                <td class="p-1 border-r border-slate-300 text-right font-mono text-[9.5px] whitespace-nowrap">${formatMoney(item.price, activeQuote.currency, false)}</td>
                                 <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.qty}</td>
                                 <td class="p-1 border-r border-slate-300 text-center text-[9.5px]">${item.unit}</td>
                                 <td class="p-1 border-r border-slate-300 text-center font-mono text-[9.5px]">${item.vatPct}%</td>
-                                <td class="p-1 text-right font-bold font-mono text-[9.5px]">${formatMoney(lineTot, activeQuote.currency)}</td>
+                                <td class="p-1 text-right font-bold font-mono text-[9.5px] whitespace-nowrap">${formatMoney(lineTot, activeQuote.currency, false)}</td>
                             </tr>
                         `;
                     });
@@ -2146,7 +2140,7 @@
                 html += `
                     <tr class="bg-slate-50 font-bold border-b-2 border-slate-300">
                         <td colspan="7" class="p-1.5 text-right uppercase text-[10px] text-slate-700">${sec2SubtotalLbl}</td>
-                        <td class="p-1.5 text-right font-mono text-xs font-bold text-brand-orange">${formatMoney(subtotal2, activeQuote.currency)}</td>
+                        <td class="p-1.5 text-right font-mono text-xs font-bold text-brand-orange whitespace-nowrap">${formatMoney(subtotal2, activeQuote.currency, true)}</td>
                     </tr>
                 `;
 
@@ -2156,7 +2150,7 @@
                 html += `
                     <tr class="bg-slate-200 text-slate-900 font-bold border-t-2 border-slate-400">
                         <td colspan="7" class="p-2 text-right uppercase text-[10.5px]">${grandTotalLbl}</td>
-                        <td class="p-2 text-right font-mono text-sm text-slate-900 font-extrabold">${formatMoney(grandTotal, activeQuote.currency)}</td>
+                        <td class="p-2 text-right font-mono text-sm text-slate-900 font-extrabold whitespace-nowrap">${formatMoney(grandTotal, activeQuote.currency, true)}</td>
                     </tr>
                 `;
 
