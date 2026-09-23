@@ -1,0 +1,2501 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLOUDPBX eSales System - Công cụ quản lý và tạo báo giá</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas for Screen Capture -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Google Fonts Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#F15A24',
+                            dntg: '#003566',
+                            dark: '#2D3748',
+                            light: '#FFF8F5',
+                            hover: '#D94918'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F3F4F6;
+        }
+
+        /* Comprehensive Print Media Styling for Native Browser Printing */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            /* Hide everything outside printable area */
+            body * {
+                visibility: hidden !important;
+            }
+
+            /* Ensure modal containers do not clip or overlay print output */
+            #quote-modal, #print-preview-modal, #app-dashboard, main {
+                position: static !important;
+                display: block !important;
+                background: transparent !important;
+                overflow: visible !important;
+                max-height: none !important;
+                height: auto !important;
+                width: 100% !important;
+            }
+
+            /* Display ONLY printable quotation document */
+            #printable-quotation-area, 
+            #printable-quotation-area * {
+                visibility: visible !important;
+            }
+
+            #printable-quotation-area {
+                display: block !important;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 5mm !important;
+                background: white !important;
+                box-shadow: none !important;
+                border: none !important;
+                transform: none !important;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 5mm;
+            }
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Toast Notification Container (Positioned Bottom-Right) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 no-print"></div>
+
+    <!-- LOGIN VIEW -->
+    <div id="login-view" class="fixed inset-0 z-40 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+            <div class="bg-slate-900 p-6 text-center text-white relative">
+                <div class="flex justify-center mb-3">
+                    <div class="bg-white p-2.5 rounded-xl shadow-sm flex items-center justify-center">
+                        <img src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" 
+                             alt="CloudPBX Logo" 
+                             class="h-10 w-auto object-contain"
+                             onerror="this.onerror=null; this.outerHTML='<span class=\'text-2xl font-black text-brand-orange tracking-wider\'>CLOUDPBX</span>';">
+                    </div>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight">CLOUDPBX eSales System</h1>
+                <p class="text-xs text-slate-400 mt-1">Công cụ quản lý và tạo báo giá</p>
+            </div>
+            
+            <form id="login-form" onsubmit="handleLogin(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Email đăng nhập</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-envelope absolute left-3 top-3 text-slate-400"></i>
+                        <input type="email" id="login-username" name="username" autocomplete="username" required class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-orange focus:border-brand-orange outline-none" placeholder="demo@cloudpbx.vn hoặc admin@cloudpbx.vn">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Mật khẩu</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-3 top-3 text-slate-400"></i>
+                        <input type="password" id="login-password" name="password" autocomplete="current-password" required class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-orange focus:border-brand-orange outline-none" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <!-- Remember Me Checkbox -->
+                <div class="flex items-center justify-between text-xs text-slate-600">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input type="checkbox" id="login-remember-me" class="rounded border-slate-300 text-brand-orange focus:ring-brand-orange">
+                        <span>Ghi nhớ đăng nhập (Cookie)</span>
+                    </label>
+                </div>
+                
+                <div class="p-3 bg-slate-50 rounded-lg text-xs text-slate-600 space-y-1 border border-slate-200">
+                    <p class="font-semibold text-slate-700">Tài khoản thử nghiệm:</p>
+                    <p>• <strong>Kinh doanh (User):</strong> demo@cloudpbx.vn / 123456</p>
+                    <p>• <strong>Quản trị (Admin):</strong> admin@cloudpbx.vn / 123456</p>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 px-4 bg-brand-orange hover:bg-brand-hover text-white font-semibold rounded-lg shadow-md transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Đăng nhập</span>
+                </button>
+            </form>
+            <div class="px-6 pb-4 text-center border-t border-slate-100 pt-3">
+                <p class="text-[11px] text-slate-400 font-medium">© 2026 CLOUDPBX eSales System. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="app-dashboard" class="flex-1 flex flex-col md:flex-row min-h-screen hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col no-print shrink-0 border-r border-slate-800">
+            <!-- Sidebar Header -->
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white p-2 rounded-lg shadow-sm flex items-center justify-center">
+                        <img src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" 
+                             alt="CloudPBX Logo" 
+                             class="h-7 w-auto object-contain"
+                             onerror="this.onerror=null; this.outerHTML='<span class=\'font-black text-brand-orange text-sm\'>CLOUDPBX</span>';">
+                    </div>
+                    <div>
+                        <div class="font-bold text-white text-sm tracking-wide">CLOUDPBX</div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-wider">eSales System</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Info Badge & Profile Button -->
+            <div class="p-3.5 mx-3 my-3 bg-slate-800/70 rounded-xl border border-slate-700/50 flex items-center justify-between">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <div id="user-avatar" class="w-9 h-9 rounded-full bg-brand-orange text-white flex items-center justify-center font-bold text-sm shadow shrink-0 overflow-hidden bg-cover bg-center">
+                        U
+                    </div>
+                    <div class="overflow-hidden">
+                        <div id="user-display-name" class="font-medium text-white text-xs truncate">User Name</div>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span id="user-role-badge" class="px-2 py-0.5 text-[9px] font-semibold uppercase rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">User</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Profile Settings Icon Button -->
+                <button onclick="openProfileModal()" title="Quản lý hồ sơ cá nhân" class="p-2 text-slate-400 hover:text-white hover:bg-slate-700/60 rounded-lg transition-all shrink-0">
+                    <i class="fa-solid fa-user-gear text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="flex-1 px-3 space-y-1 py-2 overflow-y-auto">
+                <button onclick="switchView('quotes')" id="nav-btn-quotes" class="nav-item w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-white bg-brand-orange/90 shadow text-left">
+                    <i class="fa-solid fa-file-invoice w-5 text-left shrink-0"></i>
+                    <span id="txt-nav-quotes" class="flex-1 text-left">Báo giá</span>
+                    <span id="quote-count-badge" class="text-xs bg-black/20 text-white px-2 py-0.5 rounded-full font-mono shrink-0">0</span>
+                </button>
+
+                <button onclick="switchView('drafts')" id="nav-btn-drafts" class="nav-item w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                    <i class="fa-solid fa-file-pen w-5 text-left text-amber-400 shrink-0"></i>
+                    <span id="txt-nav-drafts" class="flex-1 text-left">Báo giá (Nháp)</span>
+                    <span id="draft-count-badge" class="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-mono shrink-0">0</span>
+                </button>
+
+                <button onclick="switchView('trash')" id="nav-btn-trash" class="nav-item w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                    <i class="fa-solid fa-trash-can w-5 text-left text-rose-400 shrink-0"></i>
+                    <span id="txt-nav-trash" class="flex-1 text-left">Trash</span>
+                    <span id="trash-badge-count" class="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded-full font-mono shrink-0">0</span>
+                </button>
+
+                <button onclick="switchView('reports')" id="nav-btn-reports" class="nav-item w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                    <i class="fa-solid fa-chart-column w-5 text-left text-indigo-400 shrink-0"></i>
+                    <span id="txt-nav-reports" class="flex-1 text-left">Báo cáo chi tiết</span>
+                </button>
+
+                <!-- Quản lý nhân viên (Strictly Hidden for regular User accounts) -->
+                <button onclick="switchView('admin-users')" id="nav-btn-admin-users" class="nav-item hidden w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                    <i class="fa-solid fa-users-gear w-5 text-left text-purple-400 shrink-0"></i>
+                    <span id="txt-nav-users" class="flex-1 text-left">Quản lý nhân viên</span>
+                </button>
+            </nav>
+
+            <!-- Logout Button -->
+            <div class="p-4 border-t border-slate-800">
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-semibold transition-all border border-rose-500/20">
+                    <i class="fa-solid fa-power-off"></i>
+                    <span id="txt-logout">Đăng xuất</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+            
+            <!-- Top App Header -->
+            <header class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 no-print shadow-sm">
+                <div>
+                    <h2 id="page-title" class="text-xl font-bold text-slate-800">CLOUDPBX eSales System</h2>
+                    <p id="page-subtitle" class="text-xs text-slate-500 mt-0.5">Công cụ quản lý và tạo báo giá trực tuyến</p>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <!-- Global Language Switcher Button -->
+                    <button type="button" onclick="toggleLanguage()" class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-semibold transition-all border border-slate-300 shadow-sm">
+                        <i class="fa-solid fa-globe text-brand-orange"></i>
+                        <span id="lang-flag-emoji">🇻🇳</span>
+                        <span id="lang-text">Tiếng Việt</span>
+                    </button>
+
+                    <button id="btn-top-create-quote" onclick="openNewQuoteModal()" class="px-4 py-2 bg-brand-orange hover:bg-brand-hover text-white font-medium rounded-lg shadow-sm text-sm flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-plus"></i>
+                        <span id="txt-btn-create-quote">Tạo báo giá</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="p-6 flex-1 space-y-6">
+
+                <!-- Quotes Management View -->
+                <section id="view-quotes" class="space-y-4">
+                    <!-- Filters & Search Bar -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3 md:space-y-0 md:flex md:items-center md:justify-between gap-4">
+                        <div class="flex-1 min-w-[200px] relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400"></i>
+                            <input type="text" id="filter-search" oninput="filterQuotesList()" placeholder="Tìm theo Mã báo giá, Khách hàng..." class="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-orange focus:border-brand-orange outline-none">
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div class="flex items-center gap-2 text-xs text-slate-600">
+                                <span id="lbl-filter-status">Trạng thái:</span>
+                                <select id="filter-status" onchange="filterQuotesList()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs outline-none focus:border-brand-orange bg-white font-medium">
+                                    <option value="ALL">-- Tất cả trạng thái --</option>
+                                    <option value="OFFICIAL">Chính thức</option>
+                                    <option value="DRAFT">Lưu nháp</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-slate-600">
+                                <span id="lbl-filter-from">Từ:</span>
+                                <input type="date" id="filter-date-from" onchange="filterQuotesList()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs outline-none focus:border-brand-orange">
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-slate-600">
+                                <span id="lbl-filter-to">Đến:</span>
+                                <input type="date" id="filter-date-to" onchange="filterQuotesList()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs outline-none focus:border-brand-orange">
+                            </div>
+                            <div id="admin-staff-filter-wrapper" class="hidden">
+                                <select id="filter-staff" onchange="filterQuotesList()" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs outline-none focus:border-brand-orange bg-white">
+                                    <option value="ALL">-- Tất cả nhân viên --</option>
+                                </select>
+                            </div>
+                            <button onclick="resetFilters()" class="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-900 border border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 transition-all">
+                                <i class="fa-solid fa-rotate-left mr-1"></i> <span id="txt-btn-reset">Đặt lại</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quotes Table -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-600 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+                                        <th id="th-quote-ref" class="py-3.5 px-4">Số báo giá</th>
+                                        <th id="th-customer" class="py-3.5 px-4">Khách hàng</th>
+                                        <th id="th-date" class="py-3.5 px-4">Ngày tạo</th>
+                                        <th id="th-sales" class="py-3.5 px-4">Nhân viên</th>
+                                        <th id="th-total" class="py-3.5 px-4 text-right">Tổng tiền</th>
+                                        <th id="th-status" class="py-3.5 px-4 text-center">Trạng thái</th>
+                                        <th id="th-actions" class="py-3.5 px-4 text-center">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="quotes-table-body" class="divide-y divide-slate-100 text-sm">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="quotes-empty-state" class="hidden p-8 text-center text-slate-500">
+                            <i class="fa-regular fa-folder-open text-4xl mb-2 text-slate-300"></i>
+                            <p id="txt-empty-quotes">Không tìm thấy báo giá nào phù hợp.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Trash Bin View -->
+                <section id="view-trash" class="hidden space-y-4">
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-amber-800 text-sm flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg"></i>
+                            <span>Các báo giá đã bị xóa sẽ được lưu trữ tại đây. Bạn có thể khôi phục bất cứ lúc nào.</span>
+                        </div>
+                        <button onclick="emptyTrashBin()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-medium transition-all shadow-sm">
+                            <i class="fa-solid fa-dumpster mr-1"></i> <span>Xóa rỗng Trash</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-600 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+                                        <th class="py-3.5 px-4">Số báo giá</th>
+                                        <th class="py-3.5 px-4">Khách hàng</th>
+                                        <th class="py-3.5 px-4">Ngày xóa</th>
+                                        <th class="py-3.5 px-4">Nhân viên tạo</th>
+                                        <th class="py-3.5 px-4 text-right">Giá trị</th>
+                                        <th class="py-3.5 px-4 text-center">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trash-table-body" class="divide-y divide-slate-100 text-sm">
+                                    <!-- Dynamic Trash Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics Reports View -->
+                <section id="view-reports" class="hidden space-y-6 text-left">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-3 flex-wrap text-left">
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-indigo-600"></i> Thống kê báo cáo
+                            </h3>
+                            <div id="rpt-staff-filter-wrapper" class="hidden">
+                                <select id="rpt-filter-staff" onchange="renderReports()" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold outline-none focus:border-brand-orange bg-white">
+                                    <option value="ALL">-- Tất cả nhân viên --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-left">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold shrink-0">
+                                <i class="fa-solid fa-file-invoice"></i>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-500 font-medium uppercase text-left">Tổng báo giá</div>
+                                <div id="rpt-total-count" class="text-xl font-bold text-slate-800 text-left">0</div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg font-bold shrink-0">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-500 font-medium uppercase text-left">Chính thức</div>
+                                <div id="rpt-official-count" class="text-xl font-bold text-emerald-600 text-left">0</div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-lg font-bold shrink-0">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-500 font-medium uppercase text-left">Bản nháp</div>
+                                <div id="rpt-draft-count" class="text-xl font-bold text-amber-600 text-left">0</div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg font-bold shrink-0">
+                                <i class="fa-solid fa-vault"></i>
+                            </div>
+                            <div>
+                                <div class="text-[11px] text-slate-500 font-medium uppercase text-left">Tổng giá trị</div>
+                                <div id="rpt-total-value" class="text-lg font-bold text-slate-800 text-left">0 VNĐ</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Breakdown Table -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4 text-left">
+                        <h4 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2 text-left">
+                            <i class="fa-solid fa-list-ol text-brand-orange"></i> Thống kê chi tiết theo trạng thái
+                        </h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 text-slate-600 text-xs font-semibold uppercase border-b text-left">
+                                        <th class="py-3 px-4 text-left">Trạng thái báo giá</th>
+                                        <th class="py-3 px-4 text-center">Số lượng</th>
+                                        <th class="py-3 px-4 text-center">Tỷ lệ</th>
+                                        <th class="py-3 px-4 text-right">Tổng giá trị (VNĐ)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y text-sm text-left">
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="py-3 px-4 font-semibold text-emerald-700 flex items-center gap-2 text-left">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Báo giá Chính thức (Official)
+                                        </td>
+                                        <td id="rpt-row-off-count" class="py-3 px-4 text-center font-bold">0</td>
+                                        <td id="rpt-row-off-pct" class="py-3 px-4 text-center font-mono">0%</td>
+                                        <td id="rpt-row-off-val" class="py-3 px-4 text-right font-bold text-emerald-600 font-mono">0 VNĐ</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="py-3 px-4 font-semibold text-amber-700 flex items-center gap-2 text-left">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Báo giá Lưu nháp (Draft)
+                                        </td>
+                                        <td id="rpt-row-draft-count" class="py-3 px-4 text-center font-bold">0</td>
+                                        <td id="rpt-row-draft-pct" class="py-3 px-4 text-center font-mono">0%</td>
+                                        <td id="rpt-row-draft-val" class="py-3 px-4 text-right font-bold text-amber-600 font-mono">0 VNĐ</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Admin Staff Management View -->
+                <section id="view-admin-users" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-slate-800">Danh sách tài khoản nhân viên</h3>
+                        <button onclick="openAddUserModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold transition-all">
+                            <i class="fa-solid fa-user-plus mr-1"></i> <span>Thêm nhân viên</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-600 text-xs font-semibold uppercase border-b">
+                                    <th class="py-3.5 px-4">Tên tài khoản / Email</th>
+                                    <th class="py-3.5 px-4">Họ và tên</th>
+                                    <th class="py-3.5 px-4">Vai trò</th>
+                                    <th class="py-3.5 px-4 text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-table-body" class="divide-y divide-slate-100 text-sm">
+                                <!-- Dynamic Users -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="bg-white border-t border-slate-200 py-3 px-6 text-center text-xs text-slate-500 mt-auto no-print">
+                © 2026 CLOUDPBX eSales System. All rights reserved.
+            </footer>
+        </main>
+    </div>
+
+    <!-- QUOTATION EDITOR MODAL -->
+    <div id="quote-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex flex-col no-print overflow-hidden">
+        
+        <!-- Modal Top Action Bar -->
+        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0 flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+                <span class="text-xl">📄</span>
+                <div>
+                    <h3 id="modal-title" class="font-bold text-base">Soạn thảo Báo Giá</h3>
+                    <p class="text-xs text-slate-400" id="modal-ref-indicator">Chế độ tạo mới</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 flex-wrap">
+                <button id="modal-btn-draft" onclick="saveCurrentQuote('DRAFT')" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-bookmark"></i>
+                    <span>Lưu Nháp</span>
+                </button>
+
+                <button id="modal-btn-official" onclick="saveCurrentQuote('OFFICIAL')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-check"></i>
+                    <span>Lưu Báo Giá</span>
+                </button>
+
+                <!-- Print Preview Button -->
+                <button onclick="openPrintPreviewModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-eye"></i>
+                    <span>Xem trước khi in</span>
+                </button>
+
+                <!-- Direct Print Button -->
+                <button onclick="triggerPrintPDF()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Print</span>
+                </button>
+
+                <button onclick="triggerScreenCapture()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-camera"></i>
+                    <span>Chụp Ảnh</span>
+                </button>
+
+                <button onclick="confirmCloseModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition-all ml-1">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Content: Split Input Controls & Live Paper Preview -->
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-100">
+            
+            <!-- LEFT PANEL: Form Controls -->
+            <div class="w-full md:w-1/2 p-6 overflow-y-auto border-r border-slate-300 space-y-6">
+                
+                <!-- Quote Configuration Toggles Bar (Brand, Currency, Language) -->
+                <div class="bg-slate-200/70 text-slate-800 p-4 rounded-xl shadow-sm border border-slate-300 space-y-3">
+                    <div class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-brand-orange"></i> Tùy chỉnh Báo Giá (Quote Settings)
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                        <!-- 1. Brand Toggle (CLOUDPBX / DNTG) -->
+                        <div class="bg-white p-2.5 rounded-lg border border-slate-300 shadow-sm">
+                            <label class="block text-[10px] font-semibold text-slate-500 uppercase mb-1.5">Thương hiệu (Brand)</label>
+                            <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs font-semibold">
+                                <button type="button" onclick="setQuoteBrand('CLOUDPBX')" id="btn-brand-cloudpbx" class="flex-1 py-1 px-2 rounded-md transition-all text-center">
+                                    CLOUDPBX
+                                </button>
+                                <button type="button" onclick="setQuoteBrand('DNTG')" id="btn-brand-dntg" class="flex-1 py-1 px-2 rounded-md transition-all text-center">
+                                    DNTG
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 2. Currency Toggle (VNĐ / USD) -->
+                        <div class="bg-white p-2.5 rounded-lg border border-slate-300 shadow-sm">
+                            <label class="block text-[10px] font-semibold text-slate-500 uppercase mb-1.5">Tiền tệ (Currency)</label>
+                            <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs font-semibold">
+                                <button type="button" onclick="setQuoteCurrency('VND')" id="btn-curr-vnd" class="flex-1 py-1 px-2 rounded-md transition-all text-center">
+                                    VNĐ
+                                </button>
+                                <button type="button" onclick="setQuoteCurrency('USD')" id="btn-curr-usd" class="flex-1 py-1 px-2 rounded-md transition-all text-center">
+                                    USD ($)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 3. Quote Language Toggle (VN / EN) -->
+                        <div class="bg-white p-2.5 rounded-lg border border-slate-300 shadow-sm">
+                            <label class="block text-[10px] font-semibold text-slate-500 uppercase mb-1.5">Ngôn ngữ Báo Giá</label>
+                            <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs font-semibold">
+                                <button type="button" onclick="setQuoteDocLang('VI')" id="btn-doclang-vi" class="flex-1 py-1 px-2 rounded-md transition-all text-center">
+                                    🇻🇳 VN
+                                </button>
+                                <button type="button" onclick="setQuoteDocLang('EN')" id="btn-doclang-en" class="flex-1 py-1 px-2 rounded-md transition-all text-center">
+                                    🇬🇧 EN
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected Brand Company Details Banner -->
+                    <div class="bg-white p-2.5 rounded-lg border border-slate-300 text-[11px] text-slate-700 space-y-0.5 shadow-sm">
+                        <div id="brand-banner-title" class="font-bold text-slate-900 uppercase text-[11.5px]">CÔNG TY TNHH CNTT ĐỒNG NHẤT</div>
+                        <div id="brand-banner-subtitle" class="text-slate-500 font-medium">VIETNAM CLOUDCOMMUNICATION SERVICE CENTER</div>
+                        <div class="text-slate-600">22 Đường số 5, P. Tân Hưng, TP.HCM</div>
+                        <div class="flex flex-wrap gap-x-4 text-slate-700 pt-0.5">
+                            <span><strong>Hotline:</strong> 1900 6020</span>
+                            <span><strong>Email:</strong> <span id="brand-email-indicator" class="text-brand-orange font-semibold">hello@cloudpbx.vn</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-building text-brand-orange"></i>
+                        <span>Thông Tin Khách Hàng & Báo Giá</span>
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tên Khách Hàng (Tên ngắn) *</label>
+                            <input type="text" id="form-customer-name" oninput="handleCustomerNameChange()" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-brand-orange outline-none" placeholder="VD: Mama Box">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Mã Số Báo Giá (Ref) - Tự Động</label>
+                            <input type="text" id="form-quote-ref" readonly class="w-full px-3 py-2 border bg-slate-100 rounded-lg text-sm font-mono text-slate-700 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Ngày Báo Giá *</label>
+                            <input type="date" id="form-quote-date" onchange="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-brand-orange outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Người Nhận (Ms/Mr)</label>
+                            <input type="text" id="form-recipient-person" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange" placeholder="Ms Thủy">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tên Công Ty Khách Hàng</label>
+                            <input type="text" id="form-customer-company" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange" placeholder="MAMA BOX CORP">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Chức Danh</label>
+                            <input type="text" id="form-recipient-title" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Địa Chỉ Khách Hàng</label>
+                        <input type="text" id="form-customer-address" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+                            <input type="email" id="form-customer-email" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Điện thoại DĐ</label>
+                            <input type="text" id="form-customer-mobile" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Line Items -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-brand-orange"></i>
+                            <span>Danh Mục Sản Phẩm / Dịch Vụ</span>
+                        </h4>
+                        <div class="flex gap-2">
+                            <button onclick="addNewLineItem(1)" class="px-2.5 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded text-xs font-medium transition-all">
+                                + <span>Phí 1 Lần</span>
+                            </button>
+                            <button onclick="addNewLineItem(2)" class="px-2.5 py-1 bg-purple-50 text-purple-600 hover:bg-purple-100 border border-purple-200 rounded text-xs font-medium transition-all">
+                                + <span>Phí Duy Trì</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="form-line-items-container" class="space-y-4">
+                        <!-- Dynamic Line Item Inputs -->
+                    </div>
+                </div>
+
+                <!-- Payment Terms with Advance Option -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-credit-card text-brand-orange"></i>
+                        <span>Điều Kiện Thanh Toán</span>
+                    </h4>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Thiết bị / Phí khởi tạo / Triển khai:</label>
+                            <div class="flex flex-wrap gap-4">
+                                <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                    <input type="radio" name="term_setup" value="PREPAID" checked onchange="toggleAdvanceInputs(); updateQuotationPreview();">
+                                    <span>Trả trước (100%)</span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                    <input type="radio" name="term_setup" value="POSTPAID" onchange="toggleAdvanceInputs(); updateQuotationPreview();">
+                                    <span>Trả sau khi nghiệm thu</span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                    <input type="radio" name="term_setup" value="ADVANCE" onchange="toggleAdvanceInputs(); updateQuotationPreview();">
+                                    <span>Tạm ứng</span>
+                                </label>
+                            </div>
+
+                            <!-- Advance Payment Inputs -->
+                            <div id="advance-inputs-wrapper" class="hidden mt-3 p-3 bg-amber-50/70 border border-amber-200 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">% Tạm ứng</label>
+                                    <input type="number" id="form-advance-pct" value="30" oninput="calculateAdvanceRemaining(); updateQuotationPreview();" class="w-full px-2.5 py-1.5 border rounded-lg text-xs font-mono outline-none focus:ring-1 focus:ring-brand-orange">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">% Còn lại</label>
+                                    <input type="number" id="form-advance-rem" value="70" readonly class="w-full px-2.5 py-1.5 border bg-slate-100 rounded-lg text-xs font-mono outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Thời hạn còn lại (ngày)</label>
+                                    <input type="number" id="form-advance-days" value="7" oninput="updateQuotationPreview();" class="w-full px-2.5 py-1.5 border rounded-lg text-xs font-mono outline-none focus:ring-1 focus:ring-brand-orange" placeholder="VD: 7">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Phí dịch vụ CloudPBX:</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                    <input type="radio" name="term_cloud" value="MONTHLY" onchange="updateQuotationPreview()">
+                                    <span>Mỗi tháng</span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                    <input type="radio" name="term_cloud" value="QUARTERLY" onchange="updateQuotationPreview()">
+                                    <span>Mỗi Quý</span>
+                                </label>
+                                <label class="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                                    <input type="radio" name="term_cloud" value="YEARLY" checked onchange="updateQuotationPreview()">
+                                    <span>Mỗi năm</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales Info -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 space-y-4">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-signature text-brand-orange"></i>
+                        <span>Thông Tin Nhân Viên Kinh Doanh</span>
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Họ và tên *</label>
+                            <input type="text" id="form-sales-name" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Chức vụ</label>
+                            <input type="text" id="form-sales-title" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none" placeholder="Account Manager">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+                            <input type="email" id="form-sales-email" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Số điện thoại</label>
+                            <input type="text" id="form-sales-phone" oninput="updateQuotationPreview()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL: Live Paper Preview Document -->
+            <div class="w-full md:w-1/2 p-6 overflow-y-auto bg-slate-200/80 flex justify-center">
+                
+                <div id="printable-quotation-area" class="bg-white text-slate-900 shadow-xl rounded p-8 w-full max-w-[800px] text-[11px] leading-tight space-y-4 border border-slate-200 self-start">
+                    
+                    <!-- Paper Header -->
+                    <div class="flex justify-between items-start border-b border-slate-300 pb-3">
+                        <div class="space-y-1">
+                            <div id="pv-brand-logo-container">
+                                <img id="pv-brand-logo-img" src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" 
+                                     alt="Brand Logo" 
+                                     class="h-10 w-auto mb-1 object-contain"
+                                     crossOrigin="anonymous"
+                                     onerror="this.onerror=null; this.outerHTML='<div class=\'font-black text-brand-orange text-lg tracking-wider mb-1\'>CLOUDPBX</div>';">
+                            </div>
+                            <div id="pv-brand-header-title" class="font-bold uppercase text-slate-800 text-xs">CÔNG TY TNHH CNTT ĐỒNG NHẤT</div>
+                            <div id="pv-brand-subtitle" class="text-[9px] text-slate-500 uppercase tracking-wide">VIETNAM CLOUDCOMMUNICATION SERVICE CENTER</div>
+                        </div>
+                        <div class="text-right space-y-1">
+                            <h2 id="pv-doc-title" class="text-base font-bold text-slate-800 uppercase">BÁO GIÁ DỊCH VỤ</h2>
+                            <div class="font-bold text-brand-orange text-xs">
+                                <span id="pv-lbl-ref">Số (Ref):</span> <span id="pv-quote-ref">QUO2609001-ABC</span>
+                            </div>
+                            <div class="text-slate-600 text-[10px]">
+                                <span id="pv-lbl-date">Ngày:</span> <span id="pv-quote-date">23/09/2026</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Company Address & Contact Details -->
+                    <div class="text-[9.5px] text-slate-600 flex justify-between border-b border-slate-200 pb-2 flex-wrap gap-1">
+                        <span>22 Đường số 5, Phường Tân Hưng, TP. HCM</span>
+                        <span>Hotline: 1900 6020 - Email: <span id="pv-brand-email" class="font-semibold text-slate-800">hello@cloudpbx.vn</span></span>
+                    </div>
+
+                    <!-- Recipient Info Table -->
+                    <div>
+                        <div id="pv-lbl-to" class="font-bold uppercase text-[10px] text-slate-700 mb-1">KÍNH GỬI / TO:</div>
+                        <table class="w-full border-collapse border border-slate-300 text-[10.5px]">
+                            <tbody>
+                                <tr class="border-b border-slate-300">
+                                    <td id="pv-lbl-recipient" class="bg-slate-50 font-semibold p-1.5 w-24 border-r border-slate-300">Người nhận</td>
+                                    <td id="pv-recipient-person" class="p-1.5 border-r border-slate-300 font-medium">Ms Thủy</td>
+                                    <td id="pv-lbl-title" class="bg-slate-50 font-semibold p-1.5 w-24 border-r border-slate-300">Chức danh</td>
+                                    <td id="pv-recipient-title" class="p-1.5"></td>
+                                </tr>
+                                <tr class="border-b border-slate-300">
+                                    <td id="pv-lbl-company" class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300">Công ty</td>
+                                    <td id="pv-recipient-company" class="p-1.5 border-r border-slate-300 font-bold">MAMA BOX CORP</td>
+                                    <td class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300">Email</td>
+                                    <td id="pv-recipient-email" class="p-1.5"></td>
+                                </tr>
+                                <tr>
+                                    <td id="pv-lbl-address" class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300">Địa chỉ</td>
+                                    <td id="pv-recipient-address" class="p-1.5 border-r border-slate-300"></td>
+                                    <td id="pv-lbl-phone" class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300">Điện thoại</td>
+                                    <td id="pv-recipient-phone" class="p-1.5 font-mono">0332877968</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Products Table -->
+                    <div class="space-y-2">
+                        <table class="w-full border-collapse border border-slate-300 text-[10px]">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-800 border-b border-slate-300 font-bold uppercase">
+                                    <th id="pv-colh-code" class="p-1 border-r border-slate-300 text-center w-8">Mã</th>
+                                    <th id="pv-colh-stt" class="p-1 border-r border-slate-300 text-center w-7">STT</th>
+                                    <th id="pv-colh-desc" class="p-1 border-r border-slate-300 text-left">Mô tả Sản phẩm / Dịch vụ</th>
+                                    <th id="pv-colh-price" class="p-1 border-r border-slate-300 text-right w-20">Đơn giá (VNĐ)</th>
+                                    <th id="pv-colh-qty" class="p-1 border-r border-slate-300 text-center w-8">SL</th>
+                                    <th id="pv-colh-unit" class="p-1 border-r border-slate-300 text-center w-10">Đơn vị</th>
+                                    <th id="pv-colh-vat" class="p-1 border-r border-slate-300 text-center w-10">VAT</th>
+                                    <th id="pv-colh-total" class="p-1 text-right w-24">Tổng (VNĐ)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pv-table-body">
+                                <!-- Dynamic Rendered Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Notes & Terms Section -->
+                    <div class="text-[9.5px] text-slate-600 bg-slate-50/80 p-2.5 rounded border border-slate-200 space-y-1">
+                        <div id="pv-notes-title" class="font-bold text-slate-800 uppercase">Ghi chú & Điều khoản dịch vụ:</div>
+                        <p id="pv-note-1" class="leading-relaxed">• Đơn giá đã bao gồm thuế GTGT (VAT) theo từng mục tương ứng.</p>
+                        <p id="pv-note-2" class="leading-relaxed">• Giá dịch vụ chưa bao gồm phí chọn số đẹp, cước phát sinh thực tế khi sử dụng, phí thuê bao đầu số.</p>
+                        <p id="pv-note-3" class="leading-relaxed">• Hàng hóa (nếu có) được bảo hành theo tiêu chuẩn nhà sản xuất.</p>
+                    </div>
+
+                    <!-- Payment Conditions and Bank Details -->
+                    <div class="grid grid-cols-2 gap-3 text-[9.5px]">
+                        <div class="border border-slate-300 p-2 rounded">
+                            <div id="pv-payterms-title" class="font-bold uppercase text-slate-800 mb-1">ĐIỀU KIỆN THANH TOÁN</div>
+                            <div class="space-y-1 text-slate-700">
+                                <div>- <span id="pv-lbl-setup">Thiết bị / Khởi tạo:</span> <span id="pv-term-setup" class="font-semibold text-slate-900">Trả trước 100%</span></div>
+                                <div>- <span id="pv-lbl-cloudfee">Phí dịch vụ Cloud:</span> <span id="pv-term-cloud" class="font-semibold text-slate-900">Mỗi năm</span></div>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-300 p-2 rounded">
+                            <div id="pv-banktitle" class="font-bold uppercase text-slate-800 mb-1">TÀI KHOẢN NGÂN HÀNG</div>
+                            <div class="text-[8.5px] text-slate-700 space-y-0.5" id="pv-bank-accounts">
+                                <div id="pv-bank-owner" class="font-semibold text-slate-900">CÔNG TY TNHH CNTT ĐỒNG NHẤT</div>
+                                <div id="pv-bank-name">Ngân hàng Quốc tế (VIB) - Chi nhánh HCM</div>
+                                <div id="pv-bank-addr" class="text-[8px] text-slate-500">Số 54-56 Nam Kỳ Khởi Nghĩa, P. Nguyễn Thái Bình, Q.1, TP.HCM</div>
+                                <div>VIB (VND): <span class="font-mono font-bold">601704060180338</span></div>
+                                <div>VIB (USD): <span class="font-mono font-bold">608840060000710</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Signatures Area with Approved Badge -->
+                    <div class="pt-4 grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div id="pv-custrep-title" class="font-bold text-slate-800 uppercase">ĐẠI DIỆN KHÁCH HÀNG</div>
+                            <div id="pv-custsign-guide" class="text-[9px] text-slate-400 italic">(Ký, đóng dấu và ghi rõ họ tên)</div>
+                            <div class="h-16"></div>
+                            <div id="pv-customer-sign-name" class="font-bold text-slate-800"></div>
+                        </div>
+                        <div>
+                            <div id="pv-supprep-title" class="font-bold text-slate-800 uppercase">ĐẠI DIỆN NHÀ CUNG CẤP</div>
+                            <div id="pv-suppsign-guide" class="text-[9px] text-slate-400 italic">(Ký, đóng dấu và ghi rõ họ tên)</div>
+                            <div class="h-16 flex items-center justify-center">
+                                <span id="pv-status-stamp" class="text-xs font-bold border-2 border-emerald-600 text-emerald-700 bg-emerald-50/50 px-3 py-1 rounded-md tracking-wider uppercase rotate-[-3deg] shadow-sm">ISSUED Sep 23, 2026</span>
+                            </div>
+                            <div id="pv-sales-sign-name" class="font-bold text-slate-900">LÊ NGUYỄN NGỌC NGÂN</div>
+                            <div id="pv-sales-sign-title" class="text-[9.5px] text-slate-600">Account Manager</div>
+                            <div id="pv-sales-sign-contact" class="text-[9px] text-slate-500 font-mono">Phone: 0902 328 534 | Email: ngan.lnn@cloudpbx.vn</div>
+                        </div>
+                    </div>
+
+                    <div class="text-[8px] text-slate-400 text-center border-t border-slate-200 pt-1">
+                        CLOUDPBX eSales System • Confidential Quotation Document
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PROFILE MANAGEMENT MODAL -->
+    <div id="profile-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all">
+            <div class="bg-slate-900 text-white p-5 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-brand-orange text-white flex items-center justify-center font-bold text-sm shadow">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base">Quản lý hồ sơ cá nhân (Profile)</h3>
+                        <p class="text-xs text-slate-400">Cập nhật thông tin cá nhân & đổi mật khẩu</p>
+                    </div>
+                </div>
+                <button onclick="closeProfileModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSaveProfile(event)" class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Email / Tên đăng nhập</label>
+                        <input type="text" id="prof-username" readonly class="w-full px-3 py-2 border bg-slate-100 rounded-lg text-sm font-mono text-slate-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Vai trò</label>
+                        <input type="text" id="prof-role" readonly class="w-full px-3 py-2 border bg-slate-100 rounded-lg text-sm font-medium text-slate-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Họ và tên *</label>
+                    <input type="text" id="prof-fullname" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Chức danh / Chức vụ</label>
+                        <input type="text" id="prof-title" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Số điện thoại</label>
+                        <input type="text" id="prof-phone" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email liên hệ</label>
+                    <input type="email" id="prof-email" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Đổi mật khẩu mới (Để trống nếu không đổi)</label>
+                    <input type="password" id="prof-new-pass" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange" placeholder="••••••••">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">URL Ảnh đại diện (Avatar Image URL)</label>
+                    <input type="text" id="prof-avatar-url" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange" placeholder="https://example.com/avatar.jpg">
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t">
+                    <button type="button" onclick="closeProfileModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-lg transition-all">
+                        Hủy
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-brand-orange hover:bg-brand-hover text-white text-xs font-bold rounded-lg shadow transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Cập nhật Hồ Sơ</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT USER MODAL (ADMIN) -->
+    <div id="user-admin-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+            <div class="bg-slate-900 text-white p-5 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-sm shadow">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <h3 id="user-admin-modal-title" class="font-bold text-base">Thêm tài khoản nhân viên</h3>
+                        <p class="text-xs text-slate-400">Quản lý tài khoản truy cập hệ thống</p>
+                    </div>
+                </div>
+                <button onclick="closeUserAdminModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSaveUserAdmin(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Họ và tên *</label>
+                    <input type="text" id="admin-user-fullname" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange" placeholder="Nguyễn Văn A">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email / Tên đăng nhập *</label>
+                    <input type="email" id="admin-user-email" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange" placeholder="nv-a@cloudpbx.vn">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Mật khẩu *</label>
+                    <input type="password" id="admin-user-password" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange" placeholder="••••••••">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Vai trò</label>
+                        <select id="admin-user-type" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange bg-white font-medium">
+                            <option value="User">Kinh doanh (User)</option>
+                            <option value="Admin">Quản trị (Admin)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Số điện thoại</label>
+                        <input type="text" id="admin-user-phone" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange" placeholder="0901234567">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Chức danh / Chức vụ</label>
+                    <input type="text" id="admin-user-title" class="w-full px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-orange" placeholder="Account Manager">
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t">
+                    <button type="button" onclick="closeUserAdminModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-lg transition-all">
+                        Hủy
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span id="user-admin-btn-text">Lưu tài khoản</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PRINT PREVIEW MODAL -->
+    <div id="print-preview-modal" class="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md hidden flex flex-col no-print overflow-hidden">
+        <div class="bg-slate-900 text-white px-6 py-3 flex items-center justify-between border-b border-slate-800 shrink-0">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-eye text-indigo-400 text-lg"></i>
+                <h3 class="font-bold text-base">Xem Trước Báo Giá Trước Khi In (Print Preview)</h3>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Direct Print Button -->
+                <button onclick="triggerPrintPDF()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Print</span>
+                </button>
+                <button onclick="closePrintPreviewModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto p-8 flex justify-center bg-slate-800/50">
+            <div id="preview-modal-paper-container" class="transform scale-100 origin-top">
+                <!-- Cloned paper preview will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Unsaved Changes Confirmation Modal -->
+    <div id="unsaved-close-modal" class="fixed inset-0 z-[60] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all">
+            <div class="bg-amber-500 p-4 text-white text-center">
+                <i class="fa-solid fa-triangle-exclamation text-3xl mb-1"></i>
+                <h3 class="font-bold text-base">Cảnh báo chưa lưu</h3>
+            </div>
+            <div class="p-5 text-center space-y-3">
+                <p class="text-sm text-slate-700 font-medium">Báo giá chưa được lưu! Bạn có chắc chắn muốn đóng và bỏ qua thay đổi không?</p>
+                <div class="flex items-center justify-center gap-3 pt-2">
+                    <button onclick="cancelCloseModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-lg transition-all">
+                        <span>Tiếp tục soạn</span>
+                    </button>
+                    <button onclick="forceCloseQuoteModal()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow transition-all">
+                        <span>Đóng không lưu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Delete Confirmation Modal -->
+    <div id="delete-confirm-modal" class="fixed inset-0 z-[60] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all">
+            <div class="bg-rose-600 p-4 text-white text-center">
+                <i class="fa-solid fa-trash-can text-3xl mb-1"></i>
+                <h3 class="font-bold text-base">Xác nhận chuyển vào Trash</h3>
+            </div>
+            <div class="p-5 text-center space-y-3">
+                <p class="text-sm text-slate-700 font-medium">Bạn có chắc chắn muốn chuyển báo giá <strong id="delete-target-ref" class="text-rose-600">---</strong> vào Trash không?</p>
+                <div class="flex items-center justify-center gap-3 pt-2">
+                    <button onclick="cancelDeleteModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold rounded-lg transition-all">
+                        Hủy
+                    </button>
+                    <button onclick="executeDeleteQuote()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow transition-all">
+                        Xác nhận xóa
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Application State Variables
+        let usersData = [
+            {
+                id: "usr_1",
+                name: "Lê Nguyễn Ngọc Ngân",
+                email: "demo@cloudpbx.vn",
+                username: "demo@cloudpbx.vn",
+                password: "123456",
+                type: "User",
+                title: "Account Manager",
+                phone: "0902 328 534",
+                avatarUrl: ""
+            },
+            {
+                id: "usr_2",
+                name: "Quản trị viên",
+                email: "admin@cloudpbx.vn",
+                username: "admin@cloudpbx.vn",
+                password: "123456",
+                type: "Admin",
+                title: "System Administrator",
+                phone: "1900 6020",
+                avatarUrl: ""
+            }
+        ];
+
+        let quotesData = [
+            {
+                id: "q_1",
+                refNo: "QUO2609001-MAMA BOX",
+                customerName: "Mama Box",
+                companyName: "MAMA BOX CORP",
+                date: "2026-09-23",
+                recipientPerson: "Ms Thủy",
+                recipientTitle: "Trưởng phòng Mua hàng",
+                address: "728-730 Võ Văn Kiệt, P.1, Q.5, TP.HCM",
+                email: "thuy.mama@gmail.com",
+                mobile: "0332877968",
+                salesName: "Lê Nguyễn Ngọc Ngân",
+                salesTitle: "Account Manager",
+                salesEmail: "ngan.lnn@cloudpbx.vn",
+                salesPhone: "0902 328 534",
+                status: "OFFICIAL", // 'OFFICIAL' or 'DRAFT'
+                brand: "CLOUDPBX", // 'CLOUDPBX' or 'DNTG'
+                currency: "VND", // 'VND' or 'USD'
+                docLang: "VI", // 'VI' or 'EN'
+                termSetup: "PREPAID", // 'PREPAID', 'POSTPAID', 'ADVANCE'
+                advancePct: 30,
+                advanceRem: 70,
+                advanceDays: 7,
+                termCloud: "YEARLY", // 'MONTHLY', 'QUARTERLY', 'YEARLY'
+                lineItems: [
+                    {
+                        category: 1, // 1: Phí 1 Lần, 2: Phí Duy Trì
+                        catTitle: "1. Phí khởi tạo dịch vụ",
+                        code: "AD0001",
+                        desc: "Phí khởi tạo dịch vụ CloudPBX (Hướng dẫn cài đặt, xây dựng kịch bản, đào tạo, vận hành)",
+                        price: 1000000,
+                        qty: 1,
+                        unit: "Lần",
+                        vatPct: 10
+                    },
+                    {
+                        category: 1,
+                        catTitle: "2. Danh mục thiết bị",
+                        code: "SIP-T30",
+                        desc: "Điện thoại IP Yealink SIP-T30 (Điện thoại có dây dành cho nhân viên)",
+                        price: 1100000,
+                        qty: 20,
+                        unit: "Bộ",
+                        vatPct: 10
+                    },
+                    {
+                        category: 2,
+                        catTitle: "1. Dịch vụ Tổng đài CloudPBX",
+                        code: "CPBX-STD-YR",
+                        desc: "CloudPBX Standard (20 máy nhánh) - Phí dịch vụ / 1 năm",
+                        price: 6348000,
+                        qty: 1,
+                        unit: "Gói",
+                        vatPct: 10
+                    }
+                ]
+            }
+        ];
+
+        let trashData = [];
+        let currentUser = null;
+        let currentLanguage = 'VI';
+        let activeQuote = null;
+        let quoteToDeleteId = null;
+        let isDocDirty = false;
+        let editingUserId = null;
+
+        // Translation Dictionaries
+        const i18nData = {
+            VI: {
+                navQuotes: "Báo giá",
+                navDrafts: "Báo giá (Nháp)",
+                navTrash: "Trash",
+                navReports: "Báo cáo chi tiết",
+                navUsers: "Quản lý nhân viên",
+                logout: "Đăng xuất",
+                createQuote: "Tạo báo giá",
+                searchPlaceholder: "Tìm theo Mã báo giá, Khách hàng...",
+                docTitle: "BÁO GIÁ DỊCH VỤ",
+                refLbl: "Số (Ref):",
+                dateLbl: "Ngày:",
+                toLbl: "KÍNH GỬI / TO:",
+                recipient: "Người nhận",
+                title: "Chức danh",
+                company: "Công ty",
+                address: "Địa chỉ",
+                phone: "Điện thoại",
+                codeCol: "Mã",
+                sttCol: "STT",
+                descCol: "Mô tả Sản phẩm / Dịch vụ",
+                priceCol: "Đơn giá",
+                qtyCol: "SL",
+                unitCol: "Đơn vị",
+                vatCol: "VAT",
+                totalCol: "Tổng",
+                notesTitle: "Ghi chú & Điều khoản dịch vụ:",
+                note1: "• Đơn giá đã bao gồm thuế GTGT (VAT) theo từng mục tương ứng.",
+                note2: "• Giá dịch vụ chưa bao gồm phí chọn số đẹp, cước phát sinh thực tế khi sử dụng, phí thuê bao đầu số.",
+                note3: "• Hàng hóa (nếu có) được bảo hành theo tiêu chuẩn nhà sản xuất.",
+                paytermsTitle: "ĐIỀU KIỆN THANH TOÁN",
+                setupTerm: "Thiết bị / Khởi tạo:",
+                cloudTerm: "Phí dịch vụ Cloud:",
+                bankTitle: "TÀI KHOẢN NGÂN HÀNG",
+                bankOwner: "CÔNG TY TNHH CNTT ĐỒNG NHẤT",
+                bankName: "Ngân hàng Quốc tế (VIB) - Chi nhánh HCM",
+                bankAddr: "Số 54-56 Nam Kỳ Khởi Nghĩa, P. Nguyễn Thái Bình, Q.1, TP.HCM",
+                custRep: "ĐẠI DIỆN KHÁCH HÀNG",
+                suppRep: "ĐẠI DIỆN NHÀ CUNG CẤP",
+                signGuide: "(Ký, đóng dấu và ghi rõ họ tên)"
+            },
+            EN: {
+                navQuotes: "Quotations",
+                navDrafts: "Drafts",
+                navTrash: "Trash",
+                navReports: "Detailed Reports",
+                navUsers: "Staff Management",
+                logout: "Logout",
+                createQuote: "Create Quote",
+                searchPlaceholder: "Search by Ref No, Customer Name...",
+                docTitle: "SERVICE QUOTATION",
+                refLbl: "Ref No:",
+                dateLbl: "Date:",
+                toLbl: "ATTENTION / TO:",
+                recipient: "Recipient",
+                title: "Title",
+                company: "Company",
+                address: "Address",
+                phone: "Phone",
+                codeCol: "Code",
+                sttCol: "No.",
+                descCol: "Product / Service Description",
+                priceCol: "Unit Price",
+                qtyCol: "Qty",
+                unitCol: "Unit",
+                vatCol: "VAT",
+                totalCol: "Total",
+                notesTitle: "Notes & Terms of Service:",
+                note1: "• Unit prices include Value Added Tax (VAT) as specified per line item.",
+                note2: "• Service prices exclude nice number selection fees, actual usage call charges, or DID subscription fees.",
+                note3: "• Equipment (if any) is covered under standard manufacturer warranty.",
+                paytermsTitle: "PAYMENT TERMS",
+                setupTerm: "Equipment / Setup:",
+                cloudTerm: "Cloud Service Fee:",
+                bankTitle: "BANK ACCOUNT DETAILS",
+                bankOwner: "DONG NHAT INFORMATION TECHOLOGY CO.,LTD",
+                bankName: "International Commercial Bank (VIB) - HCMC Branch",
+                bankAddr: "No. 54-56 Nam Ky Khoi Nghia St, Nguyen Thai Binh Ward, Dist 1, HCMC",
+                custRep: "CUSTOMER REPRESENTATIVE",
+                suppRep: "SUPPLIER REPRESENTATIVE",
+                signGuide: "(Sign, Stamp & Full Name)"
+            }
+        };
+
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            const bgColors = {
+                success: 'bg-emerald-600 text-white',
+                error: 'bg-rose-600 text-white',
+                warning: 'bg-amber-500 text-white',
+                info: 'bg-slate-800 text-white'
+            };
+            const icons = {
+                success: 'fa-circle-check',
+                error: 'fa-circle-xmark',
+                warning: 'fa-triangle-exclamation',
+                info: 'fa-circle-info'
+            };
+
+            toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-xl text-xs font-semibold ${bgColors[type] || bgColors.info} transform transition-all duration-300 translate-y-2 opacity-0 z-[9999]`;
+            toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-sm"></i> <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // Cookie Helpers
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (encodeURIComponent(value) || "") + expires + "; path=/; SameSite=Lax";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+            }
+            return null;
+        }
+
+        function eraseCookie(name) {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+
+        function populateStaffFilterDropdown() {
+            const filterStaff = document.getElementById('filter-staff');
+            const rptFilterStaff = document.getElementById('rpt-filter-staff');
+
+            const staffList = (typeof usersData !== 'undefined' && Array.isArray(usersData)) 
+                ? usersData.filter(u => u.type === 'User') 
+                : [];
+                
+            const staffOptions = staffList
+                .map(u => `<option value="${u.name || u.email}">${u.name || u.email}</option>`)
+                .join('');
+
+            const defaultOpt = '<option value="ALL">-- Tất cả nhân viên --</option>';
+
+            if (filterStaff) filterStaff.innerHTML = defaultOpt + staffOptions;
+            if (rptFilterStaff) rptFilterStaff.innerHTML = defaultOpt + staffOptions;
+        }
+
+        // Login Handler
+        function handleLogin(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('login-username').value.trim().toLowerCase();
+            const passVal = document.getElementById('login-password').value.trim();
+            const rememberMe = document.getElementById('login-remember-me').checked;
+
+            const user = usersData.find(u => (u.email.toLowerCase() === emailInput || u.username.toLowerCase() === emailInput) && u.password === passVal);
+            if (!user) {
+                showToast("Email đăng nhập hoặc mật khẩu không chính xác!", "error");
+                return;
+            }
+
+            if (rememberMe) {
+                setCookie('cloudpbx_remember_user', user.email, 30);
+            } else {
+                eraseCookie('cloudpbx_remember_user');
+            }
+
+            currentUser = { ...user };
+            
+            // Update User Profile Badge
+            const displayNameEl = document.getElementById('user-display-name');
+            if (displayNameEl) displayNameEl.innerText = currentUser.name || currentUser.email;
+
+            const roleBadge = document.getElementById('user-role-badge');
+            if (roleBadge) {
+                roleBadge.innerText = currentUser.type;
+                roleBadge.className = currentUser.type === 'Admin' 
+                    ? 'px-2 py-0.5 text-[9px] font-semibold uppercase rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                    : 'px-2 py-0.5 text-[9px] font-semibold uppercase rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30';
+            }
+
+            const avatarEl = document.getElementById('user-avatar');
+            if (avatarEl) {
+                if (currentUser.avatarUrl) {
+                    avatarEl.style.backgroundImage = `url('${currentUser.avatarUrl}')`;
+                    avatarEl.innerText = '';
+                } else {
+                    avatarEl.style.backgroundImage = 'none';
+                    avatarEl.innerText = (currentUser.name || currentUser.email).charAt(0).toUpperCase();
+                }
+            }
+
+            // Role-based visibility safeguards (User vs Admin)
+            const isAdmin = currentUser.type === 'Admin';
+            const createBtnTop = document.getElementById('btn-top-create-quote');
+            const adminUsersNav = document.getElementById('nav-btn-admin-users');
+            const adminStaffFilter = document.getElementById('admin-staff-filter-wrapper');
+            const rptStaffFilter = document.getElementById('rpt-staff-filter-wrapper');
+
+            // Regular Users do NOT have Staff Management access
+            if (createBtnTop) createBtnTop.classList.toggle('hidden', isAdmin);
+            if (adminUsersNav) adminUsersNav.classList.toggle('hidden', !isAdmin);
+            if (adminStaffFilter) adminStaffFilter.classList.toggle('hidden', !isAdmin);
+            if (rptStaffFilter) rptStaffFilter.classList.toggle('hidden', !isAdmin);
+
+            populateStaffFilterDropdown();
+
+            // Toggle screens
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('app-dashboard').classList.remove('hidden');
+
+            switchView('quotes');
+            showToast(`Xin chào, ${currentUser.name || currentUser.email}!`, "success");
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('app-dashboard').classList.add('hidden');
+            document.getElementById('login-view').classList.remove('hidden');
+            document.getElementById('login-password').value = '';
+            showToast("Đã đăng xuất thành công", "info");
+        }
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'VI' ? 'EN' : 'VI';
+            const flagEl = document.getElementById('lang-flag-emoji');
+            const textEl = document.getElementById('lang-text');
+            if (flagEl) flagEl.innerText = currentLanguage === 'VI' ? '🇻🇳' : '🇬🇧';
+            if (textEl) textEl.innerText = currentLanguage === 'VI' ? 'Tiếng Việt' : 'English';
+
+            updateAppLanguageUI();
+
+            if (activeQuote) {
+                activeQuote.docLang = currentLanguage;
+                updateQuoteConfigTogglesUI();
+                updateQuotationPreview();
+            }
+
+            showToast(currentLanguage === 'VI' ? "Đã chuyển sang Tiếng Việt" : "Switched to English", "info");
+        }
+
+        function updateAppLanguageUI() {
+            const t = i18nData[currentLanguage] || i18nData.VI;
+            
+            const setTxt = (id, text) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = text;
+            };
+
+            setTxt('txt-nav-quotes', t.navQuotes);
+            setTxt('txt-nav-drafts', t.navDrafts);
+            setTxt('txt-nav-trash', t.navTrash);
+            setTxt('txt-nav-reports', t.navReports);
+            setTxt('txt-nav-users', t.navUsers);
+            setTxt('txt-logout', t.logout);
+            setTxt('txt-btn-create-quote', t.createQuote);
+
+            const searchInput = document.getElementById('filter-search');
+            if (searchInput) searchInput.placeholder = t.searchPlaceholder;
+        }
+
+        function switchView(viewName) {
+            // Guard: non-admin users cannot access staff management view
+            if (viewName === 'admin-users' && currentUser && currentUser.type !== 'Admin') {
+                showToast("Bạn không có quyền truy cập chức năng này!", "error");
+                return;
+            }
+
+            const views = ['quotes', 'drafts', 'trash', 'reports', 'admin-users'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+
+                const btn = document.getElementById(`nav-btn-${v}`);
+                if (btn) {
+                    btn.className = "nav-item w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left";
+                }
+            });
+
+            const targetView = (viewName === 'drafts') ? 'quotes' : viewName;
+            const activeEl = document.getElementById(`view-${targetView}`);
+            if (activeEl) activeEl.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`nav-btn-${viewName}`);
+            if (activeBtn) {
+                activeBtn.className = "nav-item w-full flex items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-white bg-brand-orange/90 shadow text-left";
+            }
+
+            if (viewName === 'quotes') {
+                document.getElementById('filter-status').value = 'ALL';
+                renderQuotesTable();
+            } else if (viewName === 'drafts') {
+                document.getElementById('filter-status').value = 'DRAFT';
+                renderQuotesTable();
+            } else if (viewName === 'trash') {
+                renderTrashTable();
+            } else if (viewName === 'reports') {
+                renderReports();
+            } else if (viewName === 'admin-users') {
+                renderAdminUsersTable();
+            }
+
+            updateBadges();
+        }
+
+        function updateBadges() {
+            const totalQuotes = quotesData.filter(q => q.status === 'OFFICIAL').length;
+            const totalDrafts = quotesData.filter(q => q.status === 'DRAFT').length;
+            const totalTrash = trashData.length;
+
+            const quoteBadge = document.getElementById('quote-count-badge');
+            const draftBadge = document.getElementById('draft-count-badge');
+            const trashBadge = document.getElementById('trash-badge-count');
+
+            if (quoteBadge) quoteBadge.innerText = totalQuotes;
+            if (draftBadge) draftBadge.innerText = totalDrafts;
+            if (trashBadge) trashBadge.innerText = totalTrash;
+        }
+
+        function formatMoney(amount, currency = 'VND') {
+            const num = Number(amount) || 0;
+            if (currency === 'USD') {
+                return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            return num.toLocaleString('vi-VN') + ' VNĐ';
+        }
+
+        function renderQuotesTable() {
+            const tbody = document.getElementById('quotes-table-body');
+            const emptyState = document.getElementById('quotes-empty-state');
+            if (!tbody) return;
+
+            const searchVal = (document.getElementById('filter-search')?.value || '').toLowerCase().trim();
+            const statusVal = document.getElementById('filter-status')?.value || 'ALL';
+            const staffVal = document.getElementById('filter-staff')?.value || 'ALL';
+            const dateFrom = document.getElementById('filter-date-from')?.value;
+            const dateTo = document.getElementById('filter-date-to')?.value;
+
+            let filtered = quotesData.filter(q => {
+                if (statusVal !== 'ALL' && q.status !== statusVal) return false;
+                if (staffVal !== 'ALL' && q.salesName !== staffVal) return false;
+                
+                if (searchVal) {
+                    const matchRef = (q.refNo || '').toLowerCase().includes(searchVal);
+                    const matchCust = (q.customerName || '').toLowerCase().includes(searchVal);
+                    const matchComp = (q.companyName || '').toLowerCase().includes(searchVal);
+                    if (!matchRef && !matchCust && !matchComp) return false;
+                }
+
+                if (dateFrom && q.date < dateFrom) return false;
+                if (dateTo && q.date > dateTo) return false;
+
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                if (emptyState) emptyState.classList.remove('hidden');
+                return;
+            }
+
+            if (emptyState) emptyState.classList.add('hidden');
+
+            tbody.innerHTML = filtered.map(q => {
+                const totalVal = calculateQuoteGrandTotal(q);
+                const isDraft = q.status === 'DRAFT';
+                const statusBadge = isDraft 
+                    ? `<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-200"><i class="fa-solid fa-pen-to-square mr-1"></i>Lưu Nháp</span>`
+                    : `<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200"><i class="fa-solid fa-circle-check mr-1"></i>Chính thức</span>`;
+
+                const isAdmin = currentUser && currentUser.type === 'Admin';
+
+                const actionButtons = isAdmin ? `
+                    <button onclick="editQuote('${q.id}', true)" title="Xem chi tiết" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                        <i class="fa-solid fa-eye text-base"></i>
+                    </button>
+                ` : `
+                    <div class="flex items-center justify-center gap-1">
+                        <button onclick="editQuote('${q.id}')" title="Sửa báo giá" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                            <i class="fa-solid fa-pen-to-square text-base"></i>
+                        </button>
+                        <button onclick="duplicateQuote('${q.id}')" title="Nhân bản (Duplicate)" class="p-1.5 text-purple-600 hover:bg-purple-50 rounded-lg transition-all">
+                            <i class="fa-solid fa-copy text-base"></i>
+                        </button>
+                        <button onclick="confirmDeleteQuote('${q.id}')" title="Chuyển vào Trash" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-all">
+                            <i class="fa-solid fa-trash-can text-base"></i>
+                        </button>
+                    </div>
+                `;
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-all border-b border-slate-100">
+                        <td class="py-3 px-4 font-mono font-bold text-brand-orange">${q.refNo}</td>
+                        <td class="py-3 px-4 font-medium text-slate-800">
+                            <div>${q.customerName}</div>
+                            <div class="text-xs text-slate-400">${q.companyName || ''}</div>
+                        </td>
+                        <td class="py-3 px-4 text-slate-600 text-xs">${q.date}</td>
+                        <td class="py-3 px-4 text-slate-700 font-medium text-xs">${q.salesName}</td>
+                        <td class="py-3 px-4 text-right font-bold text-slate-900 font-mono">${formatMoney(totalVal, q.currency)}</td>
+                        <td class="py-3 px-4 text-center">${statusBadge}</td>
+                        <td class="py-3 px-4 text-center">${actionButtons}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            updateBadges();
+        }
+
+        function filterQuotesList() {
+            renderQuotesTable();
+        }
+
+        function resetFilters() {
+            const search = document.getElementById('filter-search');
+            const status = document.getElementById('filter-status');
+            const staff = document.getElementById('filter-staff');
+            const dFrom = document.getElementById('filter-date-from');
+            const dTo = document.getElementById('filter-date-to');
+
+            if (search) search.value = '';
+            if (status) status.value = 'ALL';
+            if (staff) staff.value = 'ALL';
+            if (dFrom) dFrom.value = '';
+            if (dTo) dTo.value = '';
+
+            renderQuotesTable();
+        }
+
+        function calculateLineItemTotal(item) {
+            const price = Number(item.price) || 0;
+            const qty = Number(item.qty) || 0;
+            const vatPct = Number(item.vatPct) || 0;
+            const subtotal = price * qty;
+            const vatVal = subtotal * (vatPct / 100);
+            return subtotal + vatVal;
+        }
+
+        function calculateQuoteGrandTotal(quote) {
+            if (!quote || !Array.isArray(quote.lineItems)) return 0;
+            return quote.lineItems.reduce((acc, item) => acc + calculateLineItemTotal(item), 0);
+        }
+
+        function openNewQuoteModal() {
+            const dateStr = new Date().toISOString().split('T')[0];
+            activeQuote = {
+                id: 'q_' + Date.now(),
+                refNo: generateNextQuoteRef("KHACHHANG"),
+                customerName: "",
+                companyName: "",
+                date: dateStr,
+                recipientPerson: "",
+                recipientTitle: "",
+                address: "",
+                email: "",
+                mobile: "",
+                salesName: currentUser ? (currentUser.name || currentUser.email) : "Lê Nguyễn Ngọc Ngân",
+                salesTitle: currentUser ? (currentUser.title || "Account Manager") : "Account Manager",
+                salesEmail: currentUser ? (currentUser.email || "ngan.lnn@cloudpbx.vn") : "ngan.lnn@cloudpbx.vn",
+                salesPhone: currentUser ? (currentUser.phone || "0902 328 534") : "0902 328 534",
+                status: "DRAFT",
+                brand: "CLOUDPBX",
+                currency: "VND",
+                docLang: "VI",
+                termSetup: "PREPAID",
+                advancePct: 30,
+                advanceRem: 70,
+                advanceDays: 7,
+                termCloud: "YEARLY",
+                lineItems: [
+                    {
+                        category: 1,
+                        catTitle: "1. Phí khởi tạo dịch vụ",
+                        code: "AD0001",
+                        desc: "Phí khởi tạo dịch vụ CloudPBX",
+                        price: 1000000,
+                        qty: 1,
+                        unit: "Lần",
+                        vatPct: 10
+                    }
+                ]
+            };
+
+            isDocDirty = false;
+            populateModalFormFields();
+            updateQuoteConfigTogglesUI();
+            renderLineItemInputs();
+            updateQuotationPreview();
+
+            document.getElementById('quote-modal').classList.remove('hidden');
+        }
+
+        function generateNextQuoteRef(custName) {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const seq = String(quotesData.length + trashData.length + 1).padStart(3, '0');
+            const cleanCust = (custName || 'ABC').toUpperCase().replace(/[^A-Z0-9]/g, '');
+            return `QUO${yy}${mm}${seq}-${cleanCust || 'ABC'}`;
+        }
+
+        function handleCustomerNameChange() {
+            const nameInput = document.getElementById('form-customer-name').value;
+            if (activeQuote) {
+                activeQuote.customerName = nameInput;
+                activeQuote.refNo = generateNextQuoteRef(nameInput);
+                document.getElementById('form-quote-ref').value = activeQuote.refNo;
+            }
+            isDocDirty = true;
+            updateQuotationPreview();
+        }
+
+        function populateModalFormFields() {
+            if (!activeQuote) return;
+            document.getElementById('form-customer-name').value = activeQuote.customerName || '';
+            document.getElementById('form-quote-ref').value = activeQuote.refNo || '';
+            document.getElementById('form-quote-date').value = activeQuote.date || '';
+            document.getElementById('form-recipient-person').value = activeQuote.recipientPerson || '';
+            document.getElementById('form-recipient-title').value = activeQuote.recipientTitle || '';
+            document.getElementById('form-customer-company').value = activeQuote.companyName || '';
+            document.getElementById('form-customer-address').value = activeQuote.address || '';
+            document.getElementById('form-customer-email').value = activeQuote.email || '';
+            document.getElementById('form-customer-mobile').value = activeQuote.mobile || '';
+
+            document.getElementById('form-sales-name').value = activeQuote.salesName || '';
+            document.getElementById('form-sales-title').value = activeQuote.salesTitle || '';
+            document.getElementById('form-sales-email').value = activeQuote.salesEmail || '';
+            document.getElementById('form-sales-phone').value = activeQuote.salesPhone || '';
+
+            document.getElementById('form-advance-pct').value = activeQuote.advancePct || 30;
+            document.getElementById('form-advance-rem').value = activeQuote.advanceRem || 70;
+            document.getElementById('form-advance-days').value = activeQuote.advanceDays || 7;
+        }
+
+        function setQuoteBrand(brand) {
+            if (!activeQuote) return;
+            activeQuote.brand = brand;
+            updateQuoteConfigTogglesUI();
+            updateQuotationPreview();
+        }
+
+        function setQuoteCurrency(curr) {
+            if (!activeQuote) return;
+            activeQuote.currency = curr;
+            updateQuoteConfigTogglesUI();
+            updateQuotationPreview();
+        }
+
+        function setQuoteDocLang(lang) {
+            if (!activeQuote) return;
+            activeQuote.docLang = lang;
+            updateQuoteConfigTogglesUI();
+            updateQuotationPreview();
+        }
+
+        function updateQuoteConfigTogglesUI() {
+            if (!activeQuote) return;
+
+            // Brand Toggles
+            const btnCloud = document.getElementById('btn-brand-cloudpbx');
+            const btnDntg = document.getElementById('btn-brand-dntg');
+            if (btnCloud && btnDntg) {
+                if (activeQuote.brand === 'CLOUDPBX') {
+                    btnCloud.className = "flex-1 py-1 px-2 rounded-md transition-all text-center bg-brand-orange text-white shadow";
+                    btnDntg.className = "flex-1 py-1 px-2 rounded-md transition-all text-center text-slate-600 hover:text-slate-900";
+                } else {
+                    btnDntg.className = "flex-1 py-1 px-2 rounded-md transition-all text-center text-white shadow bg-[#003566]";
+                    btnCloud.className = "flex-1 py-1 px-2 rounded-md transition-all text-center text-slate-600 hover:text-slate-900";
+                }
+            }
+
+            // Currency Toggles
+            const btnVnd = document.getElementById('btn-curr-vnd');
+            const btnUsd = document.getElementById('btn-curr-usd');
+            if (btnVnd && btnUsd) {
+                if (activeQuote.currency === 'VND') {
+                    btnVnd.className = "flex-1 py-1 px-2 rounded-md transition-all text-center bg-emerald-600 text-white shadow";
+                    btnUsd.className = "flex-1 py-1 px-2 rounded-md transition-all text-center text-slate-600 hover:text-slate-900";
+                } else {
+                    btnUsd.className = "flex-1 py-1 px-2 rounded-md transition-all text-center bg-indigo-600 text-white shadow";
+                    btnVnd.className = "flex-1 py-1 px-2 rounded-md transition-all text-center text-slate-600 hover:text-slate-900";
+                }
+            }
+
+            // Lang Toggles
+            const btnVi = document.getElementById('btn-doclang-vi');
+            const btnEn = document.getElementById('btn-doclang-en');
+            if (btnVi && btnEn) {
+                if (activeQuote.docLang === 'VI') {
+                    btnVi.className = "flex-1 py-1 px-2 rounded-md transition-all text-center bg-blue-600 text-white shadow";
+                    btnEn.className = "flex-1 py-1 px-2 rounded-md transition-all text-center text-slate-600 hover:text-slate-900";
+                } else {
+                    btnEn.className = "flex-1 py-1 px-2 rounded-md transition-all text-center bg-blue-600 text-white shadow";
+                    btnVi.className = "flex-1 py-1 px-2 rounded-md transition-all text-center text-slate-600 hover:text-slate-900";
+                }
+            }
+        }
+
+        function renderLineItemInputs() {
+            const container = document.getElementById('form-line-items-container');
+            if (!container || !activeQuote) return;
+
+            container.innerHTML = activeQuote.lineItems.map((item, idx) => `
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2 relative">
+                    <button type="button" onclick="removeLineItem(${idx})" class="absolute top-2 right-2 text-rose-500 hover:text-rose-700 p-1">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500">Mã SP/DV</label>
+                            <input type="text" value="${item.code || ''}" oninput="updateLineItemVal(${idx}, 'code', this.value)" class="w-full px-2 py-1 border rounded text-xs outline-none focus:border-brand-orange">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-[10px] font-semibold text-slate-500">Mô tả sản phẩm / dịch vụ</label>
+                            <input type="text" value="${item.desc || ''}" oninput="updateLineItemVal(${idx}, 'desc', this.value)" class="w-full px-2 py-1 border rounded text-xs outline-none focus:border-brand-orange">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500">Đơn giá (${activeQuote.currency})</label>
+                            <input type="number" value="${item.price || 0}" oninput="updateLineItemVal(${idx}, 'price', Number(this.value))" class="w-full px-2 py-1 border rounded text-xs outline-none font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500">Số lượng</label>
+                            <input type="number" value="${item.qty || 1}" oninput="updateLineItemVal(${idx}, 'qty', Number(this.value))" class="w-full px-2 py-1 border rounded text-xs outline-none font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500">Đơn vị</label>
+                            <input type="text" value="${item.unit || 'Lần'}" oninput="updateLineItemVal(${idx}, 'unit', this.value)" class="w-full px-2 py-1 border rounded text-xs outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-slate-500">VAT (%)</label>
+                            <input type="number" value="${item.vatPct || 10}" oninput="updateLineItemVal(${idx}, 'vatPct', Number(this.value))" class="w-full px-2 py-1 border rounded text-xs outline-none font-mono">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addNewLineItem(categoryType) {
+            if (!activeQuote) return;
+            activeQuote.lineItems.push({
+                category: categoryType,
+                catTitle: categoryType === 1 ? "Hàng hóa / Dịch vụ 1 lần" : "Dịch vụ Duy trì",
+                code: "NEW01",
+                desc: "Mô tả dịch vụ bổ sung",
+                price: 500000,
+                qty: 1,
+                unit: "Lần",
+                vatPct: 10
+            });
+            isDocDirty = true;
+            renderLineItemInputs();
+            updateQuotationPreview();
+        }
+
+        function removeLineItem(index) {
+            if (!activeQuote) return;
+            activeQuote.lineItems.splice(index, 1);
+            isDocDirty = true;
+            renderLineItemInputs();
+            updateQuotationPreview();
+        }
+
+        function updateLineItemVal(index, key, val) {
+            if (!activeQuote || !activeQuote.lineItems[index]) return;
+            activeQuote.lineItems[index][key] = val;
+            isDocDirty = true;
+            updateQuotationPreview();
+        }
+
+        function toggleAdvanceInputs() {
+            const isAdvance = document.querySelector('input[name="term_setup"]:checked')?.value === 'ADVANCE';
+            const wrapper = document.getElementById('advance-inputs-wrapper');
+            if (wrapper) wrapper.classList.toggle('hidden', !isAdvance);
+        }
+
+        function calculateAdvanceRemaining() {
+            const pctInput = document.getElementById('form-advance-pct');
+            const remInput = document.getElementById('form-advance-rem');
+            if (pctInput && remInput) {
+                const pct = Math.min(100, Math.max(0, Number(pctInput.value) || 0));
+                remInput.value = 100 - pct;
+            }
+        }
+
+        function updateQuotationPreview() {
+            if (!activeQuote) return;
+
+            // Sync form inputs to activeQuote object
+            activeQuote.customerName = document.getElementById('form-customer-name')?.value || '';
+            activeQuote.date = document.getElementById('form-quote-date')?.value || '';
+            activeQuote.recipientPerson = document.getElementById('form-recipient-person')?.value || '';
+            activeQuote.recipientTitle = document.getElementById('form-recipient-title')?.value || '';
+            activeQuote.companyName = document.getElementById('form-customer-company')?.value || '';
+            activeQuote.address = document.getElementById('form-customer-address')?.value || '';
+            activeQuote.email = document.getElementById('form-customer-email')?.value || '';
+            activeQuote.mobile = document.getElementById('form-customer-mobile')?.value || '';
+
+            activeQuote.salesName = document.getElementById('form-sales-name')?.value || '';
+            activeQuote.salesTitle = document.getElementById('form-sales-title')?.value || '';
+            activeQuote.salesEmail = document.getElementById('form-sales-email')?.value || '';
+            activeQuote.salesPhone = document.getElementById('form-sales-phone')?.value || '';
+
+            activeQuote.advancePct = Number(document.getElementById('form-advance-pct')?.value) || 30;
+            activeQuote.advanceRem = Number(document.getElementById('form-advance-rem')?.value) || 70;
+            activeQuote.advanceDays = Number(document.getElementById('form-advance-days')?.value) || 7;
+
+            const isEng = activeQuote.docLang === 'EN';
+            const t = isEng ? i18nData.EN : i18nData.VI;
+
+            // Branding adjustments
+            const isDntg = activeQuote.brand === 'DNTG';
+            const brandTitleEl = document.getElementById('brand-banner-title');
+            const subtitleEl = document.getElementById('pv-brand-subtitle');
+            const headerTitleEl = document.getElementById('pv-brand-header-title');
+            const emailEl = document.getElementById('pv-brand-email');
+            const brandBannerEmail = document.getElementById('brand-email-indicator');
+            const logoContainer = document.getElementById('pv-brand-logo-container');
+
+            if (isDntg) {
+                if (brandTitleEl) brandTitleEl.innerText = "CÔNG TY TNHH CNTT ĐỒNG NHẤT";
+                if (subtitleEl) subtitleEl.innerText = "DONG NHAT TECHNOLOGY GROUP";
+                if (headerTitleEl) headerTitleEl.innerText = "CÔNG TY TNHH CNTT ĐỒNG NHẤT";
+                if (emailEl) emailEl.innerText = "hello@dntg.com.vn";
+                if (brandBannerEmail) brandBannerEmail.innerText = "hello@dntg.com.vn";
+                if (logoContainer) {
+                    logoContainer.innerHTML = `<div class="font-black text-[#003566] text-xl tracking-wider mb-1">DNTG</div>`;
+                }
+            } else {
+                if (brandTitleEl) brandTitleEl.innerText = "CÔNG TY TNHH CNTT ĐỒNG NHẤT";
+                if (subtitleEl) subtitleEl.innerText = "VIETNAM CLOUDCOMMUNICATION SERVICE CENTER";
+                if (headerTitleEl) headerTitleEl.innerText = "CÔNG TY TNHH CNTT ĐỒNG NHẤT";
+                if (emailEl) emailEl.innerText = "hello@cloudpbx.vn";
+                if (brandBannerEmail) brandBannerEmail.innerText = "hello@cloudpbx.vn";
+                if (logoContainer) {
+                    logoContainer.innerHTML = `
+                        <img id="pv-brand-logo-img" src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" 
+                             alt="Brand Logo" 
+                             class="h-10 w-auto mb-1 object-contain"
+                             crossOrigin="anonymous"
+                             onerror="this.onerror=null; this.outerHTML='<div class=\\'font-black text-brand-orange text-lg tracking-wider mb-1\\'>CLOUDPBX</div>';">
+                    `;
+                }
+            }
+
+            // Document Translations
+            document.getElementById('pv-doc-title').innerText = t.docTitle;
+            document.getElementById('pv-lbl-ref').innerText = t.refLbl;
+            document.getElementById('pv-quote-ref').innerText = activeQuote.refNo;
+            document.getElementById('pv-lbl-date').innerText = t.dateLbl;
+            document.getElementById('pv-quote-date').innerText = activeQuote.date;
+
+            // Recipient Section Translations
+            document.getElementById('pv-lbl-to').innerText = t.toLbl;
+            document.getElementById('pv-lbl-recipient').innerText = t.recipient;
+            document.getElementById('pv-recipient-person').innerText = activeQuote.recipientPerson;
+            document.getElementById('pv-lbl-title').innerText = t.title;
+            document.getElementById('pv-recipient-title').innerText = activeQuote.recipientTitle;
+            document.getElementById('pv-lbl-company').innerText = t.company;
+            document.getElementById('pv-recipient-company').innerText = activeQuote.companyName;
+            document.getElementById('pv-recipient-email').innerText = activeQuote.email;
+            document.getElementById('pv-lbl-address').innerText = t.address;
+            document.getElementById('pv-recipient-address').innerText = activeQuote.address;
+            document.getElementById('pv-lbl-phone').innerText = t.phone;
+            document.getElementById('pv-recipient-phone').innerText = activeQuote.mobile;
+
+            // Table Column Headings Translations
+            document.getElementById('pv-colh-code').innerText = t.codeCol;
+            document.getElementById('pv-colh-stt').innerText = t.sttCol;
+            document.getElementById('pv-colh-desc').innerText = t.descCol;
+            document.getElementById('pv-colh-price').innerText = `${t.priceCol} (${activeQuote.currency})`;
+            document.getElementById('pv-colh-qty').innerText = t.qtyCol;
+            document.getElementById('pv-colh-unit').innerText = t.unitCol;
+            document.getElementById('pv-colh-vat').innerText = t.vatCol;
+            document.getElementById('pv-colh-total').innerText = `${t.totalCol} (${activeQuote.currency})`;
+
+            // Table Items
+            const tbody = document.getElementById('pv-table-body');
+            if (tbody) {
+                let html = '';
+                let stt = 1;
+                activeQuote.lineItems.forEach(item => {
+                    const lineTot = calculateLineItemTotal(item);
+                    html += `
+                        <tr class="border-b border-slate-200">
+                            <td class="p-1 border-r border-slate-300 text-center font-mono">${item.code || ''}</td>
+                            <td class="p-1 border-r border-slate-300 text-center font-bold">${stt++}</td>
+                            <td class="p-1 border-r border-slate-300 text-left font-medium">${item.desc || ''}</td>
+                            <td class="p-1 border-r border-slate-300 text-right font-mono">${formatMoney(item.price, activeQuote.currency)}</td>
+                            <td class="p-1 border-r border-slate-300 text-center font-mono">${item.qty}</td>
+                            <td class="p-1 border-r border-slate-300 text-center">${item.unit}</td>
+                            <td class="p-1 border-r border-slate-300 text-center font-mono">${item.vatPct}%</td>
+                            <td class="p-1 text-right font-bold font-mono">${formatMoney(lineTot, activeQuote.currency)}</td>
+                        </tr>
+                    `;
+                });
+
+                const grandTotal = calculateQuoteGrandTotal(activeQuote);
+                html += `
+                    <tr class="bg-slate-200 text-slate-900 font-bold border-t-2 border-slate-400">
+                        <td colspan="7" class="p-2 text-right uppercase">${isEng ? 'TOTAL AMOUNT:' : 'TỔNG CỘNG HÓA ĐƠN:'}</td>
+                        <td class="p-2 text-right font-mono text-sm">${formatMoney(grandTotal, activeQuote.currency)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML = html;
+            }
+
+            // Notes Section Translations
+            document.getElementById('pv-notes-title').innerText = t.notesTitle;
+            document.getElementById('pv-note-1').innerText = t.note1;
+            document.getElementById('pv-note-2').innerText = t.note2;
+            document.getElementById('pv-note-3').innerText = t.note3;
+
+            // Payment Terms Translations
+            document.getElementById('pv-payterms-title').innerText = t.paytermsTitle;
+            document.getElementById('pv-lbl-setup').innerText = t.setupTerm;
+            document.getElementById('pv-lbl-cloudfee').innerText = t.cloudTerm;
+
+            const setupOption = document.querySelector('input[name="term_setup"]:checked')?.value || 'PREPAID';
+            let setupText = isEng ? "Prepaid (100%)" : "Trả trước (100%)";
+            if (setupOption === 'POSTPAID') {
+                setupText = isEng ? "Postpaid upon acceptance" : "Trả sau khi nghiệm thu";
+            } else if (setupOption === 'ADVANCE') {
+                setupText = isEng 
+                    ? `Advance payment ${activeQuote.advancePct}%, remaining ${activeQuote.advanceRem}% within ${activeQuote.advanceDays} days`
+                    : `Tạm ứng ${activeQuote.advancePct}%, còn lại ${activeQuote.advanceRem}% trong vòng ${activeQuote.advanceDays} ngày`;
+            }
+
+            const cloudOption = document.querySelector('input[name="term_cloud"]:checked')?.value || 'YEARLY';
+            let cloudText = isEng ? "Yearly" : "Mỗi năm";
+            if (cloudOption === 'MONTHLY') cloudText = isEng ? "Monthly" : "Mỗi tháng";
+            if (cloudOption === 'QUARTERLY') cloudText = isEng ? "Quarterly" : "Mỗi Quý";
+
+            document.getElementById('pv-term-setup').innerText = setupText;
+            document.getElementById('pv-term-cloud').innerText = cloudText;
+
+            // Bank Accounts Translations
+            document.getElementById('pv-banktitle').innerText = t.bankTitle;
+            const bankOwnerEl = document.getElementById('pv-bank-owner');
+            if (bankOwnerEl) bankOwnerEl.innerText = t.bankOwner;
+            const bankNameEl = document.getElementById('pv-bank-name');
+            if (bankNameEl) bankNameEl.innerText = t.bankName;
+            const bankAddrEl = document.getElementById('pv-bank-addr');
+            if (bankAddrEl) bankAddrEl.innerText = t.bankAddr;
+
+            // Signature Block Translations
+            document.getElementById('pv-custrep-title').innerText = t.custRep;
+            document.getElementById('pv-custsign-guide').innerText = t.signGuide;
+            document.getElementById('pv-supprep-title').innerText = t.suppRep;
+            document.getElementById('pv-suppsign-guide').innerText = t.signGuide;
+
+            // Sales Sign details
+            document.getElementById('pv-sales-sign-name').innerText = activeQuote.salesName;
+            document.getElementById('pv-sales-sign-title').innerText = activeQuote.salesTitle;
+            document.getElementById('pv-sales-sign-contact').innerText = `Phone: ${activeQuote.salesPhone} | Email: ${activeQuote.salesEmail}`;
+
+            // Update ISSUED badge with creation date
+            const stampEl = document.getElementById('pv-status-stamp');
+            if (stampEl) {
+                let formattedDate = activeQuote.date;
+                if (activeQuote.date && activeQuote.date.includes('-')) {
+                    const parts = activeQuote.date.split('-');
+                    if (parts.length === 3) {
+                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        const mIdx = parseInt(parts[1], 10) - 1;
+                        if (mIdx >= 0 && mIdx < 12) {
+                            formattedDate = `${months[mIdx]} ${parseInt(parts[2], 10)}, ${parts[0]}`;
+                        }
+                    }
+                }
+                stampEl.innerText = `ISSUED ${formattedDate || 'Sep 23, 2026'}`;
+            }
+        }
+
+        function saveCurrentQuote(statusType) {
+            if (!activeQuote) return;
+            activeQuote.status = statusType;
+            
+            const existingIdx = quotesData.findIndex(q => q.id === activeQuote.id);
+            if (existingIdx >= 0) {
+                quotesData[existingIdx] = { ...activeQuote };
+            } else {
+                quotesData.unshift({ ...activeQuote });
+            }
+
+            isDocDirty = false;
+            document.getElementById('quote-modal').classList.add('hidden');
+            renderQuotesTable();
+            showToast(statusType === 'DRAFT' ? "Đã lưu nháp báo giá thành công!" : "Đã lưu báo giá chính thức!", "success");
+        }
+
+        function editQuote(quoteId, readOnly = false) {
+            const found = quotesData.find(q => q.id === quoteId);
+            if (!found) return;
+            activeQuote = JSON.parse(JSON.stringify(found));
+            isDocDirty = false;
+
+            populateModalFormFields();
+            updateQuoteConfigTogglesUI();
+            renderLineItemInputs();
+            updateQuotationPreview();
+
+            document.getElementById('quote-modal').classList.remove('hidden');
+        }
+
+        function duplicateQuote(quoteId) {
+            const found = quotesData.find(q => q.id === quoteId);
+            if (!found) return;
+
+            const dup = JSON.parse(JSON.stringify(found));
+            dup.id = 'q_' + Date.now();
+            dup.refNo = generateNextQuoteRef(dup.customerName);
+            dup.status = 'DRAFT';
+            dup.date = new Date().toISOString().split('T')[0];
+
+            quotesData.unshift(dup);
+            renderQuotesTable();
+            showToast(`Đã nhân bản báo giá mới: ${dup.refNo}`, "success");
+        }
+
+        function confirmDeleteQuote(quoteId) {
+            quoteToDeleteId = quoteId;
+            const quote = quotesData.find(q => q.id === quoteId);
+            const refEl = document.getElementById('delete-target-ref');
+            if (refEl) refEl.innerText = quote ? quote.refNo : 'Báo giá';
+            document.getElementById('delete-confirm-modal').classList.remove('hidden');
+        }
+
+        function cancelDeleteModal() {
+            quoteToDeleteId = null;
+            document.getElementById('delete-confirm-modal').classList.add('hidden');
+        }
+
+        function executeDeleteQuote() {
+            if (!quoteToDeleteId) return;
+            const idx = quotesData.findIndex(q => q.id === quoteToDeleteId);
+            if (idx >= 0) {
+                const deleted = quotesData.splice(idx, 1)[0];
+                trashData.unshift(deleted);
+                renderQuotesTable();
+                showToast(`Đã chuyển báo giá ${deleted.refNo} vào Trash`, "warning");
+            }
+            cancelDeleteModal();
+        }
+
+        function confirmCloseModal() {
+            if (isDocDirty) {
+                document.getElementById('unsaved-close-modal').classList.remove('hidden');
+            } else {
+                forceCloseQuoteModal();
+            }
+        }
+
+        function cancelCloseModal() {
+            document.getElementById('unsaved-close-modal').classList.add('hidden');
+        }
+
+        function forceCloseQuoteModal() {
+            isDocDirty = false;
+            document.getElementById('unsaved-close-modal').classList.add('hidden');
+            document.getElementById('quote-modal').classList.add('hidden');
+        }
+
+        function openPrintPreviewModal() {
+            const container = document.getElementById('preview-modal-paper-container');
+            const paper = document.getElementById('printable-quotation-area');
+            if (container && paper) {
+                container.innerHTML = paper.outerHTML;
+            }
+            document.getElementById('print-preview-modal').classList.remove('hidden');
+        }
+
+        function closePrintPreviewModal() {
+            document.getElementById('print-preview-modal').classList.add('hidden');
+        }
+
+        // Comprehensive Print Handler
+        function triggerPrintPDF() {
+            // Un-hide printable area before firing window.print
+            const paper = document.getElementById('printable-quotation-area');
+            if (paper) {
+                paper.style.display = 'block';
+            }
+            window.print();
+        }
+
+        function triggerScreenCapture() {
+            const target = document.getElementById('printable-quotation-area');
+            if (!target) return;
+            showToast("Đang tạo ảnh chụp báo giá...", "info");
+            html2canvas(target, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${activeQuote ? activeQuote.refNo : 'Quotation'}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast("Đã tải ảnh báo giá về máy!", "success");
+            }).catch(err => {
+                console.error(err);
+                showToast("Lỗi khi chụp ảnh báo giá!", "error");
+            });
+        }
+
+        function renderTrashTable() {
+            const tbody = document.getElementById('trash-table-body');
+            if (!tbody) return;
+
+            if (trashData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">Trash rỗng</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = trashData.map((q, idx) => `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="py-3 px-4 font-mono text-slate-700 font-bold">${q.refNo}</td>
+                    <td class="py-3 px-4">${q.customerName}</td>
+                    <td class="py-3 px-4 text-xs text-slate-500">${q.date}</td>
+                    <td class="py-3 px-4 text-xs">${q.salesName}</td>
+                    <td class="py-3 px-4 text-right font-mono font-bold">${formatMoney(calculateQuoteGrandTotal(q), q.currency)}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="restoreFromTrash(${idx})" title="Khôi phục" class="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg mr-1">
+                            <i class="fa-solid fa-rotate-left"></i>
+                        </button>
+                        <button onclick="purgeFromTrash(${idx})" title="Xóa vĩnh viễn" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function restoreFromTrash(index) {
+            const restored = trashData.splice(index, 1)[0];
+            quotesData.unshift(restored);
+            renderTrashTable();
+            updateBadges();
+            showToast(`Đã khôi phục báo giá ${restored.refNo}`, "success");
+        }
+
+        function purgeFromTrash(index) {
+            trashData.splice(index, 1);
+            renderTrashTable();
+            updateBadges();
+            showToast("Đã xóa vĩnh viễn báo giá", "info");
+        }
+
+        function emptyTrashBin() {
+            trashData = [];
+            renderTrashTable();
+            updateBadges();
+            showToast("Đã xóa rỗng Trash", "info");
+        }
+
+        function renderReports() {
+            const totalCount = quotesData.length;
+            const officialList = quotesData.filter(q => q.status === 'OFFICIAL');
+            const draftList = quotesData.filter(q => q.status === 'DRAFT');
+
+            const totalVal = quotesData.reduce((acc, q) => acc + calculateQuoteGrandTotal(q), 0);
+            const offVal = officialList.reduce((acc, q) => acc + calculateQuoteGrandTotal(q), 0);
+            const draftVal = draftList.reduce((acc, q) => acc + calculateQuoteGrandTotal(q), 0);
+
+            document.getElementById('rpt-total-count').innerText = totalCount;
+            document.getElementById('rpt-official-count').innerText = officialList.length;
+            document.getElementById('rpt-draft-count').innerText = draftList.length;
+            document.getElementById('rpt-total-value').innerText = formatMoney(totalVal);
+
+            document.getElementById('rpt-row-off-count').innerText = officialList.length;
+            document.getElementById('rpt-row-off-pct').innerText = totalCount ? Math.round((officialList.length / totalCount) * 100) + '%' : '0%';
+            document.getElementById('rpt-row-off-val').innerText = formatMoney(offVal);
+
+            document.getElementById('rpt-row-draft-count').innerText = draftList.length;
+            document.getElementById('rpt-row-draft-pct').innerText = totalCount ? Math.round((draftList.length / totalCount) * 100) + '%' : '0%';
+            document.getElementById('rpt-row-draft-val').innerText = formatMoney(draftVal);
+        }
+
+        function renderAdminUsersTable() {
+            const tbody = document.getElementById('admin-users-table-body');
+            if (!tbody) return;
+
+            tbody.innerHTML = usersData.map(u => `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="py-3 px-4 font-medium">${u.email}</td>
+                    <td class="py-3 px-4 font-bold">${u.name}</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">${u.type}</span></td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="editUserAccount('${u.id}')" class="text-slate-600 hover:text-brand-orange text-xs font-semibold mr-2"><i class="fa-solid fa-pen mr-1"></i>Sửa</button>
+                        ${u.type !== 'Admin' ? `<button onclick="deleteUserAccount('${u.id}')" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash mr-1"></i>Xóa</button>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAddUserModal() {
+            editingUserId = null;
+            document.getElementById('user-admin-modal-title').innerText = "Thêm tài khoản nhân viên";
+            document.getElementById('user-admin-btn-text').innerText = "Tạo tài khoản";
+            document.getElementById('admin-user-fullname').value = "";
+            document.getElementById('admin-user-email').value = "";
+            document.getElementById('admin-user-password').value = "123456";
+            document.getElementById('admin-user-type').value = "User";
+            document.getElementById('admin-user-phone').value = "";
+            document.getElementById('admin-user-title').value = "Account Manager";
+
+            document.getElementById('user-admin-modal').classList.remove('hidden');
+        }
+
+        function closeUserAdminModal() {
+            document.getElementById('user-admin-modal').classList.add('hidden');
+        }
+
+        function editUserAccount(userId) {
+            const user = usersData.find(u => u.id === userId);
+            if (!user) return;
+
+            editingUserId = userId;
+            document.getElementById('user-admin-modal-title').innerText = "Chỉnh sửa tài khoản nhân viên";
+            document.getElementById('user-admin-btn-text').innerText = "Cập nhật";
+            document.getElementById('admin-user-fullname').value = user.name || '';
+            document.getElementById('admin-user-email').value = user.email || '';
+            document.getElementById('admin-user-password').value = user.password || '';
+            document.getElementById('admin-user-type').value = user.type || 'User';
+            document.getElementById('admin-user-phone').value = user.phone || '';
+            document.getElementById('admin-user-title').value = user.title || '';
+
+            document.getElementById('user-admin-modal').classList.remove('hidden');
+        }
+
+        function deleteUserAccount(userId) {
+            const user = usersData.find(u => u.id === userId);
+            if (!user) return;
+
+            if (user.type === 'Admin') {
+                showToast("Không thể xóa tài khoản Quản trị viên!", "error");
+                return;
+            }
+
+            const idx = usersData.findIndex(u => u.id === userId);
+            if (idx >= 0) {
+                usersData.splice(idx, 1);
+                renderAdminUsersTable();
+                populateStaffFilterDropdown();
+                showToast(`Đã xóa tài khoản ${user.email}`, "warning");
+            }
+        }
+
+        function handleSaveUserAdmin(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('admin-user-fullname').value.trim();
+            const email = document.getElementById('admin-user-email').value.trim().toLowerCase();
+            const password = document.getElementById('admin-user-password').value.trim();
+            const type = document.getElementById('admin-user-type').value;
+            const phone = document.getElementById('admin-user-phone').value.trim();
+            const title = document.getElementById('admin-user-title').value.trim();
+
+            if (editingUserId) {
+                const user = usersData.find(u => u.id === editingUserId);
+                if (user) {
+                    user.name = name;
+                    user.email = email;
+                    user.username = email;
+                    user.password = password;
+                    user.type = type;
+                    user.phone = phone;
+                    user.title = title;
+                }
+                showToast("Đã cập nhật thông tin tài khoản thành công!", "success");
+            } else {
+                const exists = usersData.some(u => u.email.toLowerCase() === email);
+                if (exists) {
+                    showToast("Email này đã tồn tại trong hệ thống!", "error");
+                    return;
+                }
+
+                const newUser = {
+                    id: 'usr_' + Date.now(),
+                    name: name,
+                    email: email,
+                    username: email,
+                    password: password,
+                    type: type,
+                    title: title || "Account Manager",
+                    phone: phone,
+                    avatarUrl: ""
+                };
+                usersData.push(newUser);
+                showToast(`Đã thêm nhân viên mới: ${name}`, "success");
+            }
+
+            closeUserAdminModal();
+            renderAdminUsersTable();
+            populateStaffFilterDropdown();
+        }
+
+        function openProfileModal() {
+            if (!currentUser) return;
+            document.getElementById('prof-username').value = currentUser.email;
+            document.getElementById('prof-role').value = currentUser.type;
+            document.getElementById('prof-fullname').value = currentUser.name || '';
+            document.getElementById('prof-title').value = currentUser.title || '';
+            document.getElementById('prof-phone').value = currentUser.phone || '';
+            document.getElementById('prof-email').value = currentUser.email || '';
+            document.getElementById('prof-avatar-url').value = currentUser.avatarUrl || '';
+
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        function handleSaveProfile(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            currentUser.name = document.getElementById('prof-fullname').value.trim();
+            currentUser.title = document.getElementById('prof-title').value.trim();
+            currentUser.phone = document.getElementById('prof-phone').value.trim();
+            currentUser.avatarUrl = document.getElementById('prof-avatar-url').value.trim();
+
+            const newPass = document.getElementById('prof-new-pass').value.trim();
+            if (newPass) {
+                currentUser.password = newPass;
+            }
+
+            const displayNameEl = document.getElementById('user-display-name');
+            if (displayNameEl) displayNameEl.innerText = currentUser.name;
+
+            closeProfileModal();
+            showToast("Đã cập nhật hồ sơ cá nhân thành công!", "success");
+        }
+
+        // Initialization Logic
+        window.onload = function() {
+            console.log("CLOUDPBX eSales System initialized successfully.");
+            populateStaffFilterDropdown();
+
+            // Check Cookie for Remembered User
+            const savedEmail = getCookie('cloudpbx_remember_user');
+            if (savedEmail) {
+                const userField = document.getElementById('login-username');
+                const rememberCb = document.getElementById('login-remember-me');
+                if (userField) userField.value = savedEmail;
+                if (rememberCb) rememberCb.checked = true;
+            }
+        };
+    </script>
+</body>
+</html>
