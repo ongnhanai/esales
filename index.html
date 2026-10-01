@@ -119,12 +119,13 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 no-print"></div>
 
     <!-- LOGIN VIEW -->
-    <div id="login-view" class="fixed inset-0 z-40 flex items-center justify-center p-4 relative overflow-hidden transition-all duration-700 bg-gradient-to-br from-sky-100 via-white to-rose-100">
-        <!-- Ambient Brand Glow Effects -->
-        <div id="bg-glow-1" class="absolute -top-32 -left-32 w-96 h-96 bg-rose-200/60 rounded-full blur-3xl pointer-events-none transition-all duration-700"></div>
-        <div id="bg-glow-2" class="absolute -bottom-32 -right-32 w-96 h-96 bg-sky-200/60 rounded-full blur-3xl pointer-events-none transition-all duration-700"></div>
+    <div id="login-view" class="fixed inset-0 w-screen h-screen min-h-screen z-40 flex items-center justify-center p-4 relative overflow-hidden transition-all duration-1000 bg-gradient-to-br from-sky-100 via-slate-50 to-rose-100">
+        <!-- Ambient Full Screen Brand Glow Effects -->
+        <div id="bg-glow-1" class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-rose-200/50 rounded-full blur-3xl pointer-events-none transition-all duration-1000"></div>
+        <div id="bg-glow-2" class="absolute -bottom-40 -right-40 w-[600px] h-[600px] bg-sky-200/50 rounded-full blur-3xl pointer-events-none transition-all duration-1000"></div>
+        <div id="bg-glow-3" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-100/30 rounded-full blur-3xl pointer-events-none transition-all duration-1000"></div>
 
-        <div class="bg-white rounded-2xl shadow-2xl shadow-blue-900/10 w-full max-w-md overflow-hidden transform transition-all relative z-10">
+        <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-slate-900/10 w-full max-w-md overflow-hidden transform transition-all relative z-10 border border-white/60">
             <div class="bg-slate-900 p-6 text-center text-white relative">
                 <div class="flex justify-center mb-3">
                     <div class="bg-white p-2.5 rounded-xl shadow-sm flex items-center justify-center">
@@ -2664,29 +2665,34 @@
         // Initialization Logic
         const softBackgroundThemes = [
             {
-                bg: "bg-gradient-to-br from-sky-100 via-white to-rose-100",
-                glow1: "bg-rose-200/60 -top-32 -left-32",
-                glow2: "bg-sky-200/60 -bottom-32 -right-32"
+                bg: "bg-gradient-to-br from-sky-100 via-slate-50 to-rose-100",
+                glow1: "bg-rose-200/60 -top-40 -left-40 w-[600px] h-[600px]",
+                glow2: "bg-sky-200/60 -bottom-40 -right-40 w-[600px] h-[600px]",
+                glow3: "bg-amber-100/40 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
             },
             {
-                bg: "bg-gradient-to-tr from-amber-50 via-sky-100 to-indigo-50",
-                glow1: "bg-orange-200/50 -top-20 -right-20",
-                glow2: "bg-sky-300/50 -bottom-20 -left-20"
+                bg: "bg-gradient-to-tr from-amber-50 via-sky-100 to-rose-100",
+                glow1: "bg-orange-200/50 -top-32 -right-32 w-[650px] h-[650px]",
+                glow2: "bg-sky-300/50 -bottom-32 -left-32 w-[650px] h-[650px]",
+                glow3: "bg-rose-200/30 top-1/4 left-1/3 w-[700px] h-[700px]"
             },
             {
-                bg: "bg-gradient-to-r from-blue-50 via-slate-50 to-pink-100",
-                glow1: "bg-pink-200/60 -top-32 -left-20",
-                glow2: "bg-cyan-200/50 -bottom-32 -right-20"
+                bg: "bg-gradient-to-r from-sky-100 via-white to-pink-100",
+                glow1: "bg-pink-200/60 -top-40 -left-20 w-[600px] h-[600px]",
+                glow2: "bg-sky-200/60 -bottom-40 -right-20 w-[600px] h-[600px]",
+                glow3: "bg-orange-100/40 bottom-1/3 right-1/4 w-[750px] h-[750px]"
             },
             {
                 bg: "bg-gradient-to-bl from-sky-100 via-rose-50 to-blue-100",
-                glow1: "bg-sky-200/60 -top-20 -left-32",
-                glow2: "bg-amber-200/50 -bottom-32 -right-32"
+                glow1: "bg-sky-300/50 -top-32 -left-40 w-[650px] h-[650px]",
+                glow2: "bg-amber-200/50 -bottom-40 -right-32 w-[650px] h-[650px]",
+                glow3: "bg-rose-200/40 top-1/3 right-1/3 w-[700px] h-[700px]"
             },
             {
-                bg: "bg-gradient-to-b from-slate-100 via-sky-50 to-rose-100",
-                glow1: "bg-rose-300/40 -top-32 -right-20",
-                glow2: "bg-blue-200/60 -bottom-20 -left-32"
+                bg: "bg-gradient-to-b from-slate-50 via-sky-100 to-rose-100",
+                glow1: "bg-rose-300/40 -top-40 -right-20 w-[600px] h-[600px]",
+                glow2: "bg-blue-200/60 -bottom-20 -left-40 w-[600px] h-[600px]",
+                glow3: "bg-amber-100/50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
             }
         ];
 
@@ -2694,6 +2700,7 @@
             const loginView = document.getElementById('login-view');
             const glow1 = document.getElementById('bg-glow-1');
             const glow2 = document.getElementById('bg-glow-2');
+            const glow3 = document.getElementById('bg-glow-3');
             if (!loginView) return;
 
             let lastIdx = sessionStorage.getItem('cloudpbx_last_soft_bg_idx');
@@ -2705,9 +2712,10 @@
             sessionStorage.setItem('cloudpbx_last_soft_bg_idx', newIdx);
             const theme = softBackgroundThemes[newIdx];
 
-            loginView.className = `fixed inset-0 z-40 flex items-center justify-center p-4 relative overflow-hidden transition-all duration-700 ${theme.bg}`;
-            if (glow1) glow1.className = `absolute w-96 h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700 ${theme.glow1}`;
-            if (glow2) glow2.className = `absolute w-96 h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700 ${theme.glow2}`;
+            loginView.className = `fixed inset-0 w-screen h-screen min-h-screen z-40 flex items-center justify-center p-4 relative overflow-hidden transition-all duration-1000 ${theme.bg}`;
+            if (glow1) glow1.className = `absolute rounded-full blur-3xl pointer-events-none transition-all duration-1000 ${theme.glow1}`;
+            if (glow2) glow2.className = `absolute rounded-full blur-3xl pointer-events-none transition-all duration-1000 ${theme.glow2}`;
+            if (glow3) glow3.className = `absolute rounded-full blur-3xl pointer-events-none transition-all duration-1000 ${theme.glow3}`;
         }
 
         window.onload = function() {
