@@ -119,8 +119,12 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 no-print"></div>
 
     <!-- LOGIN VIEW -->
-    <div id="login-view" class="fixed inset-0 z-40 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+    <div id="login-view" class="fixed inset-0 z-40 flex items-center justify-center p-4 relative overflow-hidden transition-all duration-700 bg-gradient-to-br from-sky-100 via-white to-rose-100">
+        <!-- Ambient Brand Glow Effects -->
+        <div id="bg-glow-1" class="absolute -top-32 -left-32 w-96 h-96 bg-rose-200/60 rounded-full blur-3xl pointer-events-none transition-all duration-700"></div>
+        <div id="bg-glow-2" class="absolute -bottom-32 -right-32 w-96 h-96 bg-sky-200/60 rounded-full blur-3xl pointer-events-none transition-all duration-700"></div>
+
+        <div class="bg-white rounded-2xl shadow-2xl shadow-blue-900/10 w-full max-w-md overflow-hidden transform transition-all relative z-10">
             <div class="bg-slate-900 p-6 text-center text-white relative">
                 <div class="flex justify-center mb-3">
                     <div class="bg-white p-2.5 rounded-xl shadow-sm flex items-center justify-center">
@@ -135,6 +139,18 @@
             </div>
             
             <form id="login-form" onsubmit="handleLogin(event)" class="p-6 space-y-4">
+                <!-- Dynamic Greeting & Business Motivation Quote Banner -->
+                <div class="bg-gradient-to-r from-orange-50 to-amber-50 p-3.5 rounded-xl border border-orange-200/80 shadow-sm text-center space-y-2">
+                    <div id="greeting-banner" class="text-sm font-extrabold text-slate-800 flex items-center justify-center gap-1.5 flex-wrap">
+                        <!-- Rendered via JS -->
+                    </div>
+                    <div class="pt-2 border-t border-orange-200/60 flex items-center justify-center">
+                        <p id="motivation-quote" class="text-xs text-slate-600 font-semibold italic leading-snug text-center">
+                            <!-- Rendered via JS -->
+                        </p>
+                    </div>
+                </div>
+
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Email đăng nhập</label>
                     <div class="relative">
@@ -170,7 +186,7 @@
                 </button>
             </form>
             <div class="px-6 pb-4 text-center border-t border-slate-100 pt-3">
-                <p class="text-[11px] text-slate-400 font-medium">© 2026 CLOUDPBX eSales System. All rights reserved.</p>
+                <p class="text-[11px] text-slate-400 font-medium">© 2026 DNTG. All rights reserved.</p>
             </div>
         </div>
     </div>
@@ -501,7 +517,7 @@
 
             <!-- Footer -->
             <footer class="bg-white border-t border-slate-200 py-3 px-6 text-center text-xs text-slate-500 mt-auto no-print">
-                © 2026 CLOUDPBX eSales System. All rights reserved.
+                © 2026 DNTG. All rights reserved.
             </footer>
         </main>
     </div>
@@ -1144,6 +1160,39 @@
 
     <script>
         // Global Application State Variables
+        const motivationQuotes = [
+            "Đừng chờ đợi cơ hội, hãy tự tạo ra nó! 🚀😉✨",
+            "Kỷ luật là cầu nối giữa mục tiêu và thành tựu! 🎯😊💪",
+            "Thái độ tích cực mở đường cho thành công rực rỡ! 🤗🌟🥰",
+            "Người kiên trì luôn là người chạm tới vinh quang! 🏆😉🔥",
+            "Năng lượng tích cực sinh ra ngân lượng dồi dào! 💰😊⚡",
+            "Sự hài lòng của khách hàng là niềm vui lớn nhất! 🥰🤝✨",
+            "Tập trung giải pháp, bứt phá doanh số hôm nay! 💡😉🚀",
+            "Thành công là tổng hợp những nỗ lực nhỏ mỗi ngày! 🤗🌱⭐",
+            "Hành động quyết liệt, bùng nổ doanh thu cực đỉnh! 💪😉🔥",
+            "Giao tiếp chân thành, kết nối mọi niềm tin! 😊🤝💖"
+        ];
+
+        function renderGreetingAndQuote() {
+            const hour = new Date().getHours();
+            let greetingText = "";
+
+            if (hour >= 5 && hour < 12) {
+                greetingText = "Chào buổi sáng tràn đầy năng lượng! ☀️😊🚀";
+            } else if (hour >= 12 && hour < 18) {
+                greetingText = "Chào buổi chiều thật nhiều cơ hội! 🌤️🤗💼";
+            } else {
+                greetingText = "Chào buổi tối chốt deal thành công! 🌙😉🎉";
+            }
+
+            const greetingEl = document.getElementById('greeting-banner');
+            if (greetingEl) greetingEl.innerHTML = `<span>${greetingText}</span>`;
+
+            const randomQuote = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
+            const quoteEl = document.getElementById('motivation-quote');
+            if (quoteEl) quoteEl.innerText = `"${randomQuote}"`;
+        }
+
         let usersData = [
             {
                 id: "usr_1",
@@ -2613,8 +2662,58 @@
         }
 
         // Initialization Logic
+        const softBackgroundThemes = [
+            {
+                bg: "bg-gradient-to-br from-sky-100 via-white to-rose-100",
+                glow1: "bg-rose-200/60 -top-32 -left-32",
+                glow2: "bg-sky-200/60 -bottom-32 -right-32"
+            },
+            {
+                bg: "bg-gradient-to-tr from-amber-50 via-sky-100 to-indigo-50",
+                glow1: "bg-orange-200/50 -top-20 -right-20",
+                glow2: "bg-sky-300/50 -bottom-20 -left-20"
+            },
+            {
+                bg: "bg-gradient-to-r from-blue-50 via-slate-50 to-pink-100",
+                glow1: "bg-pink-200/60 -top-32 -left-20",
+                glow2: "bg-cyan-200/50 -bottom-32 -right-20"
+            },
+            {
+                bg: "bg-gradient-to-bl from-sky-100 via-rose-50 to-blue-100",
+                glow1: "bg-sky-200/60 -top-20 -left-32",
+                glow2: "bg-amber-200/50 -bottom-32 -right-32"
+            },
+            {
+                bg: "bg-gradient-to-b from-slate-100 via-sky-50 to-rose-100",
+                glow1: "bg-rose-300/40 -top-32 -right-20",
+                glow2: "bg-blue-200/60 -bottom-20 -left-32"
+            }
+        ];
+
+        function applyRandomSoftBackground() {
+            const loginView = document.getElementById('login-view');
+            const glow1 = document.getElementById('bg-glow-1');
+            const glow2 = document.getElementById('bg-glow-2');
+            if (!loginView) return;
+
+            let lastIdx = sessionStorage.getItem('cloudpbx_last_soft_bg_idx');
+            let newIdx;
+            do {
+                newIdx = Math.floor(Math.random() * softBackgroundThemes.length);
+            } while (softBackgroundThemes.length > 1 && newIdx == lastIdx);
+
+            sessionStorage.setItem('cloudpbx_last_soft_bg_idx', newIdx);
+            const theme = softBackgroundThemes[newIdx];
+
+            loginView.className = `fixed inset-0 z-40 flex items-center justify-center p-4 relative overflow-hidden transition-all duration-700 ${theme.bg}`;
+            if (glow1) glow1.className = `absolute w-96 h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700 ${theme.glow1}`;
+            if (glow2) glow2.className = `absolute w-96 h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700 ${theme.glow2}`;
+        }
+
         window.onload = function() {
             console.log("CLOUDPBX eSales System initialized successfully.");
+            applyRandomSoftBackground();
+            renderGreetingAndQuote();
             populateStaffFilterDropdown();
 
             // Check Cookie for Remembered User
