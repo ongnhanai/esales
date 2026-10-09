@@ -147,6 +147,15 @@
 
         <div class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl shadow-slate-900/10 w-full max-w-md overflow-hidden relative z-10 border border-white/60">
             <div class="bg-slate-900 p-6 text-center text-white relative">
+                <!-- Language Toggle Button on Login Screen -->
+                <div class="absolute top-3.5 right-3.5 z-20">
+                    <button type="button" onclick="toggleGlobalAppLanguage()" class="px-2.5 py-1 bg-slate-800/90 hover:bg-slate-700 text-slate-200 hover:text-white rounded-lg text-xs font-semibold border border-slate-700 transition-all flex items-center gap-1.5 shadow-sm">
+                        <span id="login-lang-flag">🇻🇳</span>
+                        <span id="login-lang-text">Tiếng Việt</span>
+                        <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                    </button>
+                </div>
+
                 <div class="flex justify-center mb-3">
                     <div class="bg-white px-3 py-2 rounded-xl shadow-sm flex items-center justify-center">
                         <img src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" 
@@ -155,8 +164,8 @@
                              onerror="this.onerror=null; this.src='https://placehold.co/180x45/ffffff/f15a24?text=CLOUDPBX';">
                     </div>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight">CLOUDPBX eSales System (R1)</h1>
-                <p class="text-xs text-slate-400 mt-1">Hệ thống Quản lý Báo giá, Hợp đồng & Khách hàng</p>
+                <h1 id="login-app-title" class="text-xl font-bold tracking-tight">CLOUDPBX eSales System (R1)</h1>
+                <p id="login-app-subtitle" class="text-xs text-slate-400 mt-1">Hệ thống Quản lý Báo giá, Hợp đồng & Khách hàng</p>
             </div>
             
             <form id="login-form" onsubmit="handleLogin(event)" class="p-6 space-y-4 text-left">
@@ -168,14 +177,14 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Email đăng nhập</label>
+                    <label id="lbl-login-email" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Email đăng nhập</label>
                     <div class="relative">
                         <i class="fa-solid fa-envelope absolute left-3 top-3 text-slate-400"></i>
                         <input type="email" id="login-username" name="username" autocomplete="username" required class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-orange focus:border-brand-orange outline-none bg-white" placeholder="Email">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Mật khẩu</label>
+                    <label id="lbl-login-password" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Mật khẩu</label>
                     <div class="relative">
                         <i class="fa-solid fa-lock absolute left-3 top-3 text-slate-400"></i>
                         <input type="password" id="login-password" name="password" autocomplete="current-password" required class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-orange focus:border-brand-orange outline-none bg-white" placeholder="••••••••">
@@ -185,12 +194,12 @@
                 <div class="flex items-center justify-between text-xs text-slate-600">
                     <label class="flex items-center gap-2 cursor-pointer select-none">
                         <input type="checkbox" id="login-remember-me" class="rounded border-slate-300 text-brand-orange focus:ring-brand-orange">
-                        <span>Ghi nhớ đăng nhập (Cookie)</span>
+                        <span id="lbl-login-remember">Ghi nhớ đăng nhập (Cookie)</span>
                     </label>
                 </div>
                 
                 <div class="p-3 bg-slate-50 rounded-lg text-[11px] text-slate-600 space-y-1 border border-slate-200">
-                    <p class="font-bold text-slate-700">Tài khoản thử nghiệm 4 vai trò:</p>
+                    <p id="lbl-login-demo-title" class="font-bold text-slate-700">Tài khoản thử nghiệm 4 vai trò:</p>
                     <p>• <strong>Superadmin:</strong> superadmin@cloudpbx.vn / 123456</p>
                     <p>• <strong>Admin:</strong> admin@cloudpbx.vn / 123456</p>
                     <p>• <strong>Manager (Sales 1):</strong> manager@cloudpbx.vn / 123456</p>
@@ -199,7 +208,7 @@
 
                 <button type="submit" class="w-full py-2.5 px-4 bg-brand-orange hover:bg-brand-hover text-white font-semibold rounded-lg shadow-md transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-right-to-bracket"></i>
-                    <span>Đăng nhập</span>
+                    <span id="btn-login-submit">Đăng nhập</span>
                 </button>
             </form>
             <div class="px-6 pb-4 text-center border-t border-slate-100 pt-3">
@@ -325,13 +334,20 @@
                 </div>
                 
                 <div class="flex items-center gap-3 shrink-0">
+                    <!-- Global Language Switcher -->
+                    <button type="button" onclick="toggleGlobalAppLanguage()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-300 transition-all flex items-center gap-1.5 shadow-sm">
+                        <span id="global-lang-flag">🇻🇳</span>
+                        <span id="global-lang-text">Tiếng Việt</span>
+                        <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                    </button>
+
                     <div id="current-dept-indicator" class="text-xs px-2.5 py-1 bg-slate-100 rounded-lg font-semibold text-slate-600 border border-slate-200">
                         <i class="fa-solid fa-building text-slate-400 mr-1"></i> <span id="dept-name-display">Toàn bộ</span>
                     </div>
 
                     <button id="btn-top-create-quote" onclick="openNewQuoteModal()" class="px-3.5 py-2 bg-brand-orange hover:bg-brand-hover text-white font-semibold rounded-lg shadow-sm text-xs flex items-center gap-1.5 transition-all">
                         <i class="fa-solid fa-plus"></i>
-                        <span>Tạo báo giá</span>
+                        <span id="txt-btn-create-quote">Tạo báo giá</span>
                     </button>
                 </div>
             </header>
@@ -487,62 +503,95 @@
                 <!-- VIEW 5: Reports -->
                 <section id="view-reports" class="hidden space-y-6 text-left">
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
-                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <h3 id="rpt-title-text" class="font-bold text-slate-800 text-sm flex items-center gap-2">
                             <i class="fa-solid fa-chart-pie text-indigo-600"></i> Báo cáo Doanh thu & Hiệu suất kinh doanh
                         </h3>
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs text-slate-500 font-semibold">Thời gian:</span>
-                            <select id="rpt-filter-period" onchange="renderReports()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold outline-none bg-white">
-                                <option value="ALL">Tất cả thời gian</option>
-                                <option value="THIS_MONTH" selected>Tháng này</option>
-                                <option value="THIS_YEAR">Năm nay</option>
-                            </select>
+                        <div class="flex flex-wrap items-center gap-3 text-xs">
+                            <div id="rpt-filter-staff-wrapper" class="hidden flex items-center gap-1.5">
+                                <span id="lbl-rpt-staff" class="text-slate-500 font-semibold">Nhân viên:</span>
+                                <select id="rpt-filter-staff" onchange="renderReports()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold outline-none bg-white">
+                                    <option value="ALL">-- Tất cả nhân viên --</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span id="lbl-rpt-period" class="text-slate-500 font-semibold">Thời gian:</span>
+                                <select id="rpt-filter-period" onchange="handleRptPeriodChange()" class="px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold outline-none bg-white font-medium">
+                                    <option value="ALL">Tất cả</option>
+                                    <option value="THIS_WEEK">Tuần này</option>
+                                    <option value="THIS_MONTH" selected>Tháng này</option>
+                                    <option value="LAST_MONTH">Tháng trước</option>
+                                    <option value="THIS_YEAR">Năm nay</option>
+                                    <option value="CUSTOM">Tuỳ chọn</option>
+                                </select>
+                            </div>
+                            <div id="rpt-custom-date-wrapper" class="hidden flex items-center gap-1.5 bg-slate-50 p-1 rounded-lg border border-slate-200">
+                                <input type="date" id="rpt-custom-from" onchange="renderReports()" class="px-2 py-1 border border-slate-300 rounded text-xs outline-none bg-white">
+                                <span class="text-slate-400">→</span>
+                                <input type="date" id="rpt-custom-to" onchange="renderReports()" class="px-2 py-1 border border-slate-300 rounded text-xs outline-none bg-white">
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 4 Summary KPI Cards with Requested Revenue Formula -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-left">
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                    <!-- 4 Summary KPI Cards with Responsive Auto-Scaling Proportions -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 text-left items-stretch">
+                        <!-- Card 1: Quotes Count (2/12 cols on desktop ~ 16.7%) -->
+                        <div class="sm:col-span-1 lg:col-span-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0">
                                 <i class="fa-solid fa-file-invoice"></i>
                             </div>
-                            <div>
-                                <div class="text-[10px] text-slate-500 uppercase font-semibold">Tổng báo giá</div>
+                            <div class="min-w-0">
+                                <div class="text-[10px] text-slate-500 uppercase font-semibold truncate">Tổng báo giá</div>
                                 <div id="rpt-total-count" class="text-lg font-bold text-slate-800">0</div>
                             </div>
                         </div>
 
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                        <!-- Card 2: Contracts Count (2/12 cols on desktop ~ 16.7%) -->
+                        <div class="sm:col-span-1 lg:col-span-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold shrink-0">
                                 <i class="fa-solid fa-file-contract"></i>
                             </div>
-                            <div>
-                                <div class="text-[10px] text-slate-500 uppercase font-semibold">Hợp đồng đã ký</div>
+                            <div class="min-w-0">
+                                <div class="text-[10px] text-slate-500 uppercase font-semibold truncate">Hợp đồng đã ký</div>
                                 <div id="rpt-contract-count" class="text-lg font-bold text-emerald-600">0</div>
                             </div>
                         </div>
 
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+                        <!-- Card 3: Drafts Count (2/12 cols on desktop ~ 16.7%) -->
+                        <div class="sm:col-span-1 lg:col-span-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold shrink-0">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </div>
-                            <div>
-                                <div class="text-[10px] text-slate-500 uppercase font-semibold">Bản nháp</div>
+                            <div class="min-w-0">
+                                <div class="text-[10px] text-slate-500 uppercase font-semibold truncate">Bản nháp</div>
                                 <div id="rpt-draft-count" class="text-lg font-bold text-amber-600">0</div>
                             </div>
                         </div>
 
-                        <!-- Real Revenue Card with Converted Total and Subtitle Breakdown -->
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start gap-3 md:col-span-1">
-                            <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold shrink-0 mt-0.5">
-                                <i class="fa-solid fa-vault"></i>
+                        <!-- Card 4: Real Revenue (6/12 cols on desktop = 50% width to ensure full visibility without truncation) -->
+                        <div class="sm:col-span-2 lg:col-span-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start gap-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold shrink-0 mt-0.5 shadow-sm border border-indigo-100/60">
+                                <i class="fa-solid fa-vault text-base"></i>
                             </div>
-                            <div class="flex-1 overflow-hidden">
-                                <div class="text-[10.5px] text-slate-500 font-bold uppercase tracking-wider">DOANH THU THỰC TẾ (VNĐ)</div>
-                                <div id="rpt-real-revenue-converted" class="text-base font-black text-slate-900 mt-0.5 truncate">0 VNĐ</div>
-                                <div class="mt-1 pt-1 border-t border-slate-100 text-[10.5px] text-slate-600 space-y-0.5">
-                                    <div class="truncate">• Tổng VNĐ = <strong id="rpt-sub-vnd" class="text-slate-800">0 VNĐ</strong></div>
-                                    <div class="truncate">• Tổng USD = <strong id="rpt-sub-usd" class="text-indigo-600">$0.00 USD</strong> <span class="text-[9px] text-slate-400">(Tỷ giá: 25.450)</span></div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between gap-2 flex-wrap">
+                                    <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">DOANH THU THỰC TẾ (VNĐ)</span>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/70 whitespace-nowrap">
+                                        1 USD = 27.000 VNĐ
+                                    </span>
+                                </div>
+                                <div id="rpt-real-revenue-converted" class="text-lg md:text-xl font-black text-slate-900 mt-0.5 whitespace-nowrap tracking-tight">0 VNĐ</div>
+                                <div class="mt-2 pt-2 border-t border-slate-100 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-600">
+                                    <div class="whitespace-nowrap flex items-center gap-1">
+                                        <span class="text-slate-400">•</span>
+                                        <span>Tổng VNĐ =</span>
+                                        <strong id="rpt-sub-vnd" class="text-slate-800 font-bold">0 VNĐ</strong>
+                                    </div>
+                                    <div class="whitespace-nowrap flex items-center gap-1">
+                                        <span class="text-slate-400">•</span>
+                                        <span>Tổng USD =</span>
+                                        <strong id="rpt-sub-usd" class="text-indigo-600 font-bold">$0.00</strong>
+                                        <span class="text-[10px] text-slate-400 font-medium">(Tỷ giá: 27.000)</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -716,22 +765,25 @@
             
             <div class="flex items-center gap-2 flex-wrap">
                 <button id="modal-btn-draft" onclick="saveCurrentQuote('DRAFT')" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-bookmark"></i> Lưu Nháp
+                    <i class="fa-solid fa-bookmark"></i> <span id="txt-modal-btn-draft">Lưu Nháp</span>
                 </button>
-                <button id="modal-btn-official" onclick="saveCurrentQuote('OFFICIAL')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-check"></i> Lưu Báo Giá
+                <button id="modal-btn-update" onclick="updateExistingQuote()" class="hidden px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i> <span id="txt-modal-btn-update">Cập nhật bản mới</span>
+                </button>
+                <button id="modal-btn-official" onclick="saveAsNewOfficialQuote()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-check"></i> <span id="txt-modal-btn-official">Lưu báo giá mới</span>
                 </button>
                 <button id="modal-btn-to-contract" onclick="createContractFromActiveQuote()" class="px-3 py-1.5 bg-brand-orange hover:bg-brand-hover text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5 hidden">
                     <i class="fa-solid fa-file-contract"></i> + Tạo HĐ
                 </button>
                 <button onclick="openPrintPreviewModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-eye"></i> Xem trước
+                    <i class="fa-solid fa-eye"></i> <span id="txt-modal-btn-preview">Xem trước</span>
                 </button>
-                <button onclick="triggerPrintPDF()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-print"></i> In
+                <button onclick="triggerPrintPDF()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-print"></i> <span id="txt-modal-btn-print">In</span>
                 </button>
                 <button onclick="triggerScreenCapture()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-lg shadow transition-all flex items-center gap-1.5">
-                    <i class="fa-solid fa-camera"></i> Chụp ảnh
+                    <i class="fa-solid fa-camera"></i> <span id="txt-modal-btn-capture">Chụp ảnh</span>
                 </button>
                 <button onclick="confirmCloseModal()" class="w-7 h-7 rounded-full bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition-all ml-1">
                     <i class="fa-solid fa-xmark text-sm"></i>
@@ -1187,9 +1239,15 @@
                         <p id="cv-modal-header-subtitle" class="text-[11px] text-slate-400">Xem thông tin hợp đồng và danh mục sản phẩm dịch vụ liên kết</p>
                     </div>
                 </div>
-                <button onclick="closeContractViewModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition-all">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
+                <div class="flex items-center gap-2.5">
+                    <button type="button" id="cv-header-btn-create-appendix" onclick="handleCreateAppendixFromViewModal()" class="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold shadow transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-circle-plus"></i>
+                        <span>+ Tạo Phụ lục</span>
+                    </button>
+                    <button onclick="closeContractViewModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center transition-all">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Modal Body Scrollable -->
@@ -1282,6 +1340,10 @@
             <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0">
                 <button type="button" onclick="closeContractViewModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-lg text-xs transition-all">
                     Đóng
+                </button>
+                <button type="button" id="cv-btn-create-appendix" onclick="handleCreateAppendixFromViewModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg text-xs shadow transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                    <span id="cv-txt-btn-add-appendix">+ Tạo Phụ lục</span>
                 </button>
             </div>
         </div>
@@ -1540,14 +1602,97 @@
     </div>
 
     <script>
-        const EXCHANGE_RATE_USD_VND = 25450;
+        /* Fixed exchange rate set strictly to 27.000 VNĐ / USD */
+        const EXCHANGE_RATE_USD_VND = 27000;
         let currentUser = null;
         let activeQuote = null;
+        let currentViewingContract = null;
         let expandedHistoryQuoteIds = new Set();
         let expandedContractIds = new Set(['ctr_1']);
         let expandedCustomerIds = new Set(['c_1']);
         let customerDrawerActiveTab = { 'c_1': 'quotes' };
         let pendingSaveStatusType = null;
+        let currentSystemLanguage = 'VI';
+
+        // Full application i18n dictionary for VI and EN
+        const appI18nDictionary = {
+            VI: {
+                appTitle: "CLOUDPBX eSales System (R1)",
+                appSubtitle: "Hệ thống Quản lý Báo giá, Hợp đồng & Khách hàng",
+                emailLabel: "Email đăng nhập",
+                passwordLabel: "Mật khẩu",
+                rememberMe: "Ghi nhớ đăng nhập (Cookie)",
+                demoTitle: "Tài khoản thử nghiệm 4 vai trò:",
+                loginBtn: "Đăng nhập",
+                logoutBtn: "Đăng xuất",
+                createQuote: "Tạo báo giá",
+                navQuotes: "Báo giá",
+                navDrafts: "Báo giá (Nháp)",
+                navContracts: "Hợp đồng & Phụ lục",
+                navCustomers: "Khách hàng",
+                navTrash: "Trash",
+                navReports: "Báo cáo chi tiết",
+                navDepts: "Quản lý Phòng ban",
+                navUsers: "Nhân viên & RBAC",
+                navSyslog: "Nhật ký SysLog",
+                rptTitle: "Báo cáo Doanh thu & Hiệu suất kinh doanh",
+                rptPeriod: "Thời gian:",
+                rptStaff: "Nhân viên:",
+                allStaff: "-- Tất cả nhân viên --",
+                periodAll: "Tất cả",
+                periodThisWeek: "Tuần này",
+                periodThisMonth: "Tháng này",
+                periodLastMonth: "Tháng trước",
+                periodThisYear: "Năm nay",
+                periodCustom: "Tuỳ chọn",
+                btnDraft: "Lưu Nháp",
+                btnUpdate: "Cập nhật bản mới",
+                btnSaveNewOfficial: "Lưu Báo Giá Mới",
+                btnPreview: "Xem trước",
+                btnPrint: "In",
+                btnCapture: "Chụp ảnh",
+                btnAddAppendix: "+ Tạo Phụ lục",
+                searchPlaceholder: "🔍 Tìm kiếm: Mã KH, CID, Tên công ty, SĐT, QUO..., CTR..., AP..."
+            },
+            EN: {
+                appTitle: "CLOUDPBX eSales System (R1)",
+                appSubtitle: "Quotation, Contract & Customer Management System",
+                emailLabel: "Login Email",
+                passwordLabel: "Password",
+                rememberMe: "Remember me (Cookie)",
+                demoTitle: "4 Demo roles accounts:",
+                loginBtn: "Sign In",
+                logoutBtn: "Log out",
+                createQuote: "Create Quote",
+                navQuotes: "Quotations",
+                navDrafts: "Draft Quotes",
+                navContracts: "Contracts & Addendums",
+                navCustomers: "Customers",
+                navTrash: "Trash",
+                navReports: "Detailed Reports",
+                navDepts: "Departments Management",
+                navUsers: "Staff & RBAC",
+                navSyslog: "Audit SysLog",
+                rptTitle: "Revenue & Sales Performance Reports",
+                rptPeriod: "Period:",
+                rptStaff: "Staff:",
+                allStaff: "-- All Staff --",
+                periodAll: "All Time",
+                periodThisWeek: "This Week",
+                periodThisMonth: "This Month",
+                periodLastMonth: "Last Month",
+                periodThisYear: "This Year",
+                periodCustom: "Custom Range",
+                btnDraft: "Save Draft",
+                btnUpdate: "Update Version",
+                btnSaveNewOfficial: "Save As New Quote",
+                btnPreview: "Preview",
+                btnPrint: "Print",
+                btnCapture: "Capture",
+                btnAddAppendix: "+ Create Addendum",
+                searchPlaceholder: "🔍 Search: Customer CID, Company, Phone, QUO..., CTR..., AP..."
+            }
+        };
 
         function getFormattedNow() {
             const now = new Date();
@@ -2158,9 +2303,37 @@
         function formatMoney(amount, currency = 'VND', includeSuffix = true) {
             const num = Number(amount) || 0;
             if (currency === 'USD') {
-                return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + (includeSuffix ? ' USD' : '');
+                return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             }
             return num.toLocaleString('vi-VN') + (includeSuffix ? ' VNĐ' : '');
+        }
+
+        function toggleGlobalAppLanguage() {
+            currentSystemLanguage = currentSystemLanguage === 'VI' ? 'EN' : 'VI';
+            const flagEl = document.getElementById('global-lang-flag');
+            const textEl = document.getElementById('global-lang-text');
+            if (flagEl) flagEl.innerText = currentSystemLanguage === 'VI' ? '🇻🇳' : '🇬🇧';
+            if (textEl) textEl.innerText = currentSystemLanguage === 'VI' ? 'Tiếng Việt' : 'English';
+
+            const isEng = currentSystemLanguage === 'EN';
+            const txtBtnCreate = document.getElementById('txt-btn-create-quote');
+            if (txtBtnCreate) txtBtnCreate.innerText = isEng ? 'Create Quote' : 'Tạo báo giá';
+
+            const txtNavQuotes = document.querySelector('#nav-btn-quotes span.flex-1');
+            if (txtNavQuotes) txtNavQuotes.innerText = isEng ? 'Quotes' : 'Báo giá';
+            const txtNavDrafts = document.querySelector('#nav-btn-drafts span.flex-1');
+            if (txtNavDrafts) txtNavDrafts.innerText = isEng ? 'Draft Quotes' : 'Báo giá (Nháp)';
+            const txtNavContracts = document.querySelector('#nav-btn-contracts span.flex-1');
+            if (txtNavContracts) txtNavContracts.innerText = isEng ? 'Contracts & Addendums' : 'Hợp đồng & Phụ lục';
+            const txtNavCustomers = document.querySelector('#nav-btn-customers span.flex-1');
+            if (txtNavCustomers) txtNavCustomers.innerText = isEng ? 'Customers' : 'Khách hàng';
+            const txtNavReports = document.querySelector('#nav-btn-reports span.flex-1');
+            if (txtNavReports) txtNavReports.innerText = isEng ? 'Reports' : 'Báo cáo chi tiết';
+
+            const rptTitle = document.getElementById('rpt-title-text');
+            if (rptTitle) rptTitle.innerText = isEng ? 'Revenue & Sales Performance Report' : 'Báo cáo Doanh thu & Hiệu suất kinh doanh';
+
+            showToast(isEng ? 'Switched to English interface' : 'Đã chuyển sang giao diện Tiếng Việt', 'info');
         }
 
         function calculateLineItemTotal(item) {
@@ -2263,6 +2436,9 @@
             // 2. Quản lý phòng ban & Nhân viên & RBAC: Chỉ Superadmin & Admin được thấy (User & Manager bị ẨN)
             document.getElementById('nav-btn-departments')?.classList.toggle('hidden', !isSuperOrAdmin);
             document.getElementById('nav-btn-admin-users')?.classList.toggle('hidden', !isSuperOrAdmin);
+
+            // 3. Báo cáo chi tiết: Ẩn đối với tài khoản Admin
+            document.getElementById('nav-btn-reports')?.classList.toggle('hidden', isAdmin);
         }
 
         function handleLogout() {
@@ -2280,6 +2456,10 @@
             }
             if ((viewName === 'admin-users' || viewName === 'departments') && !(currentUser.type === 'Superadmin' || currentUser.type === 'Admin')) {
                 showToast("Bạn không có quyền truy cập mục quản trị!", "error");
+                return;
+            }
+            if (viewName === 'reports' && currentUser.type === 'Admin') {
+                showToast("Tài khoản Quản trị viên (Admin) không có quyền xem Báo cáo chi tiết!", "error");
                 return;
             }
 
@@ -2300,14 +2480,9 @@
                 activeBtn.className = `nav-item w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-white bg-brand-orange shadow text-left`;
             }
 
-            // Bảo toàn và tái áp dụng class ẩn/hiện menu sau khi cập nhật lại kiểu dáng nút
-            updateRoleBasedMenuVisibility();
-
             if (viewName === 'quotes') {
-                document.getElementById('filter-status').value = 'ALL';
                 renderQuotesTable();
             } else if (viewName === 'drafts') {
-                document.getElementById('filter-status').value = 'DRAFT';
                 renderQuotesTable();
             } else if (viewName === 'contracts') {
                 renderContractsTable();
@@ -2325,232 +2500,187 @@
                 renderSysLogTable();
             }
 
+            updateRoleBasedMenuVisibility();
             updateBadges();
         }
 
         function updateBadges() {
-            const quotes = getAccessibleQuotes();
-            const contracts = getAccessibleContracts();
-            document.getElementById('quote-count-badge').innerText = quotes.filter(q => q.status === 'OFFICIAL').length;
-            document.getElementById('draft-count-badge').innerText = quotes.filter(q => q.status === 'DRAFT').length;
-            document.getElementById('contract-count-badge').innerText = contracts.length;
-            document.getElementById('customer-count-badge').innerText = customersData.length;
-            document.getElementById('trash-badge-count').innerText = trashData.length;
-            document.getElementById('syslog-count-badge').innerText = sysLogsData.length;
+            const accessibleQuotes = getAccessibleQuotes();
+            const accessibleContracts = getAccessibleContracts();
+
+            const quoteBadge = document.getElementById('quote-count-badge');
+            const draftBadge = document.getElementById('draft-count-badge');
+            const contractBadge = document.getElementById('contract-count-badge');
+            const customerBadge = document.getElementById('customer-count-badge');
+            const trashBadge = document.getElementById('trash-badge-count');
+            const syslogBadge = document.getElementById('syslog-count-badge');
+
+            if (quoteBadge) quoteBadge.innerText = accessibleQuotes.filter(q => q.status === 'OFFICIAL').length;
+            if (draftBadge) draftBadge.innerText = accessibleQuotes.filter(q => q.status === 'DRAFT').length;
+            if (contractBadge) contractBadge.innerText = accessibleContracts.length;
+            if (customerBadge) customerBadge.innerText = customersData.length;
+            if (trashBadge) trashBadge.innerText = trashData.length;
+            if (syslogBadge) syslogBadge.innerText = sysLogsData.length;
         }
 
         function populateStaffFilterDropdown() {
             const filterStaff = document.getElementById('filter-staff');
             const wrapper = document.getElementById('filter-staff-wrapper');
-            if (!filterStaff) return;
+            const rptFilterStaff = document.getElementById('rpt-filter-staff');
+            const rptWrapper = document.getElementById('rpt-filter-staff-wrapper');
 
+            if (!currentUser) return;
+
+            // Users only see their own performance; Manager, Admin, and Superadmin see staff filter
             if (currentUser.type === 'User') {
                 wrapper?.classList.add('hidden');
+                rptWrapper?.classList.add('hidden');
                 return;
             }
+
             wrapper?.classList.remove('hidden');
+            rptWrapper?.classList.remove('hidden');
 
             let staffList = usersData.filter(u => u.type === 'User' || u.type === 'Manager');
+            // Manager is strictly constrained to staff in their assigned department
             if (currentUser.type === 'Manager') {
                 staffList = staffList.filter(u => u.deptId === currentUser.deptId);
             }
-            filterStaff.innerHTML = '<option value="ALL">-- Tất cả nhân viên --</option>' + staffList.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+
+            const staffOptions = staffList.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+            const defaultOpt = '<option value="ALL">-- Tất cả nhân viên --</option>';
+
+            if (filterStaff) filterStaff.innerHTML = defaultOpt + staffOptions;
+            if (rptFilterStaff) rptFilterStaff.innerHTML = defaultOpt + staffOptions;
         }
 
-        function renderQuotesTable() {
-            const tbody = document.getElementById('quotes-table-body');
-            const empty = document.getElementById('quotes-empty-state');
-            if (!tbody) return;
+        function toggleGlobalAppLanguage() {
+            currentSystemLanguage = currentSystemLanguage === 'VI' ? 'EN' : 'VI';
+            const isEng = currentSystemLanguage === 'EN';
+            const dict = appI18nDictionary[currentSystemLanguage];
 
-            const searchVal = (document.getElementById('filter-search')?.value || '').toLowerCase().trim();
-            const statusVal = document.getElementById('filter-status')?.value || 'ALL';
-            const staffVal = document.getElementById('filter-staff')?.value || 'ALL';
+            // Update Login Screen Language Elements
+            const loginFlag = document.getElementById('login-lang-flag');
+            const loginText = document.getElementById('login-lang-text');
+            if (loginFlag) loginFlag.innerText = isEng ? '🇬🇧' : '🇻🇳';
+            if (loginText) loginText.innerText = isEng ? 'English' : 'Tiếng Việt';
 
-            const quotes = getAccessibleQuotes();
-            const filtered = quotes.filter(q => {
-                if (statusVal !== 'ALL' && q.status !== statusVal) return false;
-                if (staffVal !== 'ALL' && q.salesName !== staffVal) return false;
-                if (searchVal) {
-                    const match = q.refNo.toLowerCase().includes(searchVal) || q.customerName.toLowerCase().includes(searchVal) || (q.companyName || '').toLowerCase().includes(searchVal);
-                    if (!match) return false;
-                }
-                return true;
-            });
+            // Update Dashboard Header Language Elements
+            const globalFlag = document.getElementById('global-lang-flag');
+            const globalText = document.getElementById('global-lang-text');
+            if (globalFlag) globalFlag.innerText = isEng ? '🇬🇧' : '🇻🇳';
+            if (globalText) globalText.innerText = isEng ? 'English' : 'Tiếng Việt';
 
-            if (filtered.length === 0) {
-                tbody.innerHTML = '';
-                empty?.classList.remove('hidden');
-                return;
+            // Login Labels & Buttons
+            const elAppTitle = document.getElementById('login-app-title');
+            if (elAppTitle) elAppTitle.innerText = dict.appTitle;
+            const elAppSub = document.getElementById('login-app-subtitle');
+            if (elAppSub) elAppSub.innerText = dict.appSubtitle;
+            const elLblEmail = document.getElementById('lbl-login-email');
+            if (elLblEmail) elLblEmail.innerText = dict.emailLabel;
+            const elLblPass = document.getElementById('lbl-login-password');
+            if (elLblPass) elLblPass.innerText = dict.passwordLabel;
+            const elLblRem = document.getElementById('lbl-login-remember');
+            if (elLblRem) elLblRem.innerText = dict.rememberMe;
+            const elDemoTitle = document.getElementById('lbl-login-demo-title');
+            if (elDemoTitle) elDemoTitle.innerText = dict.demoTitle;
+            const elBtnLogin = document.getElementById('btn-login-submit');
+            if (elBtnLogin) elBtnLogin.innerText = dict.loginBtn;
+
+            // Search placeholder
+            const globalSearch = document.getElementById('global-search-input');
+            if (globalSearch) globalSearch.placeholder = dict.searchPlaceholder;
+
+            // Header Create Quote Button
+            const txtBtnCreate = document.getElementById('txt-btn-create-quote');
+            if (txtBtnCreate) txtBtnCreate.innerText = dict.createQuote;
+
+            // Sidebar Navigation Items
+            const txtNavQuotes = document.querySelector('#nav-btn-quotes span.flex-1');
+            if (txtNavQuotes) txtNavQuotes.innerText = dict.navQuotes;
+            const txtNavDrafts = document.querySelector('#nav-btn-drafts span.flex-1');
+            if (txtNavDrafts) txtNavDrafts.innerText = dict.navDrafts;
+            const txtNavContracts = document.querySelector('#nav-btn-contracts span.flex-1');
+            if (txtNavContracts) txtNavContracts.innerText = dict.navContracts;
+            const txtNavCustomers = document.querySelector('#nav-btn-customers span.flex-1');
+            if (txtNavCustomers) txtNavCustomers.innerText = dict.navCustomers;
+            const txtNavTrash = document.querySelector('#nav-btn-trash span.flex-1');
+            if (txtNavTrash) txtNavTrash.innerText = dict.navTrash;
+            const txtNavReports = document.querySelector('#nav-btn-reports span.flex-1');
+            if (txtNavReports) txtNavReports.innerText = dict.navReports;
+            const txtNavDepts = document.querySelector('#nav-btn-departments span.flex-1');
+            if (txtNavDepts) txtNavDepts.innerText = dict.navDepts;
+            const txtNavUsers = document.querySelector('#nav-btn-admin-users span.flex-1');
+            if (txtNavUsers) txtNavUsers.innerText = dict.navUsers;
+            const txtNavSyslog = document.querySelector('#nav-btn-syslog span.flex-1');
+            if (txtNavSyslog) txtNavSyslog.innerText = dict.navSyslog;
+
+            // Report Header & Labels
+            const rptTitle = document.getElementById('rpt-title-text');
+            if (rptTitle) rptTitle.innerHTML = `<i class="fa-solid fa-chart-pie text-indigo-600"></i> ${dict.rptTitle}`;
+            const lblRptPeriod = document.getElementById('lbl-rpt-period');
+            if (lblRptPeriod) lblRptPeriod.innerText = dict.rptPeriod;
+            const lblRptStaff = document.getElementById('lbl-rpt-staff');
+            if (lblRptStaff) lblRptStaff.innerText = dict.rptStaff;
+
+            // Update Period Dropdown Options Text
+            const optPeriod = document.getElementById('rpt-filter-period');
+            if (optPeriod) {
+                const map = {
+                    ALL: dict.periodAll,
+                    THIS_WEEK: dict.periodThisWeek,
+                    THIS_MONTH: dict.periodThisMonth,
+                    LAST_MONTH: dict.periodLastMonth,
+                    THIS_YEAR: dict.periodThisYear,
+                    CUSTOM: dict.periodCustom
+                };
+                Array.from(optPeriod.options).forEach(opt => {
+                    if (map[opt.value]) opt.text = map[opt.value];
+                });
             }
-            empty?.classList.add('hidden');
 
-            tbody.innerHTML = filtered.map(q => {
-                const total = calculateQuoteGrandTotal(q);
-                const isDraft = q.status === 'DRAFT';
-                const versionTag = `v${q.version || 1}`;
-                const historyCount = (q.history && Array.isArray(q.history)) ? q.history.length : 0;
-                const isExpanded = expandedHistoryQuoteIds.has(q.id);
+            // Quote Modal Button Labels
+            const txtBtnDraft = document.getElementById('txt-modal-btn-draft');
+            if (txtBtnDraft) txtBtnDraft.innerText = dict.btnDraft;
+            const txtBtnUpdate = document.getElementById('txt-modal-btn-update');
+            if (txtBtnUpdate) txtBtnUpdate.innerText = dict.btnUpdate;
+            const txtBtnOfficial = document.getElementById('txt-modal-btn-official');
+            if (txtBtnOfficial) txtBtnOfficial.innerText = dict.btnSaveNewOfficial;
+            const txtBtnPrev = document.getElementById('txt-modal-btn-preview');
+            if (txtBtnPrev) txtBtnPrev.innerText = dict.btnPreview;
+            const txtBtnPrn = document.getElementById('txt-modal-btn-print');
+            if (txtBtnPrn) txtBtnPrn.innerText = dict.btnPrint;
+            const txtBtnCap = document.getElementById('txt-modal-btn-capture');
+            if (txtBtnCap) txtBtnCap.innerText = dict.btnCapture;
 
-                let mainRow = `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100 ${isExpanded ? 'bg-slate-50/80' : ''}">
-                        <td class="py-3 px-4 font-bold text-brand-orange font-mono">${q.refNo}</td>
-                        <td class="py-3 px-4 font-medium text-slate-800">${q.companyName || q.customerName}</td>
-                        <td class="py-3 px-4 text-slate-600 font-mono">${q.date}</td>
-                        <td class="py-3 px-4">${q.salesName}</td>
-                        <td class="py-3 px-4 text-right font-bold text-slate-900">${formatMoney(total, q.currency)}</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isDraft ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
-                                ${isDraft ? 'Nháp' : `Chính thức (${versionTag})`}
-                            </span>
-                        </td>
-                        <td class="py-3 px-4 text-center">
-                            <div class="inline-flex items-center gap-1.5 text-slate-600">
-                                <button onclick="viewQuote('${q.id}')" data-tooltip="Xem báo giá" class="p-1 hover:text-indigo-600"><i class="fa-solid fa-eye text-xs"></i></button>
-                                
-                                <button onclick="toggleQuoteHistory('${q.id}')" data-tooltip="Lịch sử thay đổi" class="p-1 hover:text-purple-600 relative">
-                                    <i class="fa-solid fa-clock-rotate-left text-xs"></i>
-                                    ${historyCount > 0 ? `<span class="absolute -top-1 -right-1 bg-purple-600 text-white text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">${historyCount}</span>` : ''}
-                                </button>
-                                
-                                <button onclick="quickCreateContractFromQuote('${q.id}')" data-tooltip="Tạo HĐ từ báo giá" class="p-1 hover:text-emerald-600 text-emerald-600"><i class="fa-solid fa-file-circle-plus text-xs"></i></button>
-                                
-                                <button onclick="editQuote('${q.id}')" data-tooltip="Sửa báo giá" class="p-1 hover:text-brand-orange"><i class="fa-solid fa-pen text-xs"></i></button>
-                                
-                                <button onclick="duplicateQuote('${q.id}')" data-tooltip="Nhân bản báo giá" class="p-1 hover:text-blue-600"><i class="fa-solid fa-copy text-xs"></i></button>
-                                
-                                <button onclick="deleteQuote('${q.id}')" data-tooltip="Chuyển vào Trash" class="p-1 hover:text-rose-600"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+            // Contract View Modal Button Label
+            const txtBtnAddAp = document.getElementById('cv-txt-btn-add-appendix');
+            if (txtBtnAddAp) txtBtnAddAp.innerText = dict.btnAddAppendix;
+            const headerBtnAddAp = document.querySelector('#cv-header-btn-create-appendix span');
+            if (headerBtnAddAp) headerBtnAddAp.innerText = dict.btnAddAppendix;
 
-                if (isExpanded) {
-                    mainRow += `
-                        <tr class="bg-slate-50/90 border-b border-slate-200">
-                            <td colspan="7" class="p-4">
-                                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-2">
-                                    <div class="flex items-center justify-between text-xs font-bold text-slate-700 border-b pb-2">
-                                        <span class="flex items-center gap-2">
-                                            <i class="fa-solid fa-clock-rotate-left text-purple-600"></i>
-                                            <span>Lịch sử chỉnh sửa báo giá: <strong>${q.refNo}</strong></span>
-                                            <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px]">Hiện tại: ${versionTag}</span>
-                                        </span>
-                                        <span class="text-slate-400 font-normal">Tổng số phiên bản cũ: ${historyCount}</span>
-                                    </div>
+            renderGreetingAndQuotesBanner();
+            showToast(isEng ? 'Switched to English interface' : 'Đã chuyển sang giao diện Tiếng Việt', 'info');
+        }
 
-                                    ${historyCount === 0 ? `
-                                        <div class="text-xs text-slate-400 italic py-2 text-center">Chưa có bản ghi lịch sử chỉnh sửa cho báo giá này.</div>
-                                    ` : `
-                                        <div class="overflow-x-auto">
-                                            <table class="w-full text-left text-xs border-collapse">
-                                                <thead>
-                                                    <tr class="bg-slate-100 text-slate-600 font-semibold uppercase text-[10px] border-b">
-                                                        <th class="py-2 px-3">Phiên bản</th>
-                                                        <th class="py-2 px-3">Ngày chỉnh sửa</th>
-                                                        <th class="py-2 px-3">Nhân viên thực hiện</th>
-                                                        <th class="py-2 px-3 text-right">Tổng tiền</th>
-                                                        <th class="py-2 px-3 text-center">Thao tác</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="divide-y divide-slate-100">
-                                                    ${q.history.map((h, hIdx) => `
-                                                        <tr class="hover:bg-slate-50 transition-all">
-                                                            <td class="py-2 px-3 font-bold text-purple-700 font-mono">${h.versionTag}</td>
-                                                            <td class="py-2 px-3 text-slate-600 font-mono">${h.editDate}</td>
-                                                            <td class="py-2 px-3 text-slate-800 font-medium">${h.salesName}</td>
-                                                            <td class="py-2 px-3 text-right font-bold text-slate-900">${formatMoney(h.grandTotal, h.currency)}</td>
-                                                            <td class="py-2 px-3 text-center">
-                                                                <button onclick="viewQuoteHistorySnapshot('${q.id}', ${hIdx})" data-tooltip="Xem lại bản ghi này" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-1">
-                                                                    <i class="fa-solid fa-eye text-xs"></i>
-                                                                    <span>Xem</span>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    `).join('')}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    `}
-                                </div>
-                            </td>
-                        </tr>
-                    `;
+        function renderGreetingAndQuotesBanner() {
+            const hour = new Date().getHours();
+            const isEng = currentSystemLanguage === 'EN';
+            const greetingEl = document.getElementById('greeting-banner');
+            const quoteEl = document.getElementById('motivation-quote');
+
+            if (greetingEl) {
+                if (isEng) {
+                    greetingEl.innerText = hour < 12 ? "Good morning! High energy! ☀️" : (hour < 18 ? "Good afternoon! High productivity! 🌤" : "Good evening! Closing deals! 🌙");
+                } else {
+                    greetingEl.innerText = hour < 12 ? "Chào buổi sáng năng lượng! ☀️" : (hour < 18 ? "Chào buổi chiều hiệu quả! 🌤" : "Chào buổi tối chốt deal! 🌙");
                 }
-
-                return mainRow;
-            }).join('');
-        }
-
-        function toggleQuoteHistory(quoteId) {
-            if (expandedHistoryQuoteIds.has(quoteId)) {
-                expandedHistoryQuoteIds.delete(quoteId);
-            } else {
-                expandedHistoryQuoteIds.add(quoteId);
             }
-            renderQuotesTable();
-        }
 
-        function viewQuoteHistorySnapshot(quoteId, historyIndex) {
-            const quote = quotesData.find(q => q.id === quoteId);
-            if (!quote || !quote.history || !quote.history[historyIndex]) return;
-
-            const snapshot = quote.history[historyIndex].snapshot;
-            activeQuote = JSON.parse(JSON.stringify(snapshot));
-            logSysActivity("Báo giá", "Xem", `Xem lại lịch sử phiên bản ${quote.history[historyIndex].versionTag} của ${quote.refNo}`);
-            updateQuotationPreview();
-            openPrintPreviewModal();
-        }
-
-        function duplicateQuote(quoteId) {
-            const found = quotesData.find(q => q.id === quoteId);
-            if (!found) return;
-
-            const dup = JSON.parse(JSON.stringify(found));
-            dup.id = 'q_' + Date.now();
-            dup.refNo = generateNextQuoteRef(dup.customerName);
-            dup.status = 'DRAFT';
-            dup.version = 1;
-            dup.history = [];
-            dup.date = new Date().toISOString().split('T')[0];
-
-            quotesData.unshift(dup);
-            logSysActivity("Báo giá", "Tạo mới", `Nhân bản báo giá mới ${dup.refNo} từ ${found.refNo}`);
-            renderQuotesTable();
-            updateBadges();
-            showToast(`Đã nhân bản báo giá mới: ${dup.refNo}`, "success");
-        }
-
-        function viewQuote(id) {
-            const q = quotesData.find(item => item.id === id);
-            if (!q) return;
-            activeQuote = JSON.parse(JSON.stringify(q));
-            logSysActivity("Báo giá", "Xem", `Xem chi tiết báo giá ${q.refNo}`);
-            updateQuotationPreview();
-            openPrintPreviewModal();
-        }
-
-        function editQuote(id) {
-            const q = quotesData.find(item => item.id === id);
-            if (!q) return;
-            activeQuote = JSON.parse(JSON.stringify(q));
-            logSysActivity("Báo giá", "Chỉnh sửa", `Mở giao diện sửa báo giá ${q.refNo}`);
-            populateModalFormFields();
-            updateQuoteConfigTogglesUI();
-            renderSeparatedLineItemInputs();
-            updateQuotationPreview();
-            document.getElementById('modal-btn-to-contract')?.classList.remove('hidden');
-            document.getElementById('quote-modal')?.classList.remove('hidden');
-        }
-
-        function deleteQuote(id) {
-            const idx = quotesData.findIndex(q => q.id === id);
-            if (idx >= 0) {
-                const deleted = quotesData.splice(idx, 1)[0];
-                trashData.unshift(deleted);
-                logSysActivity("Báo giá", "Xóa", `Chuyển báo giá ${deleted.refNo} vào Trash`);
-                renderQuotesTable();
-                updateBadges();
-                showToast(`Đã chuyển ${deleted.refNo} vào Trash`, "warning");
+            if (quoteEl) {
+                quoteEl.innerText = isEng 
+                    ? '"Discipline and persistence bridge the gap between goals and achievement! 🚀🎯"'
+                    : '"Kỷ luật và kiên trì là cầu nối giữa mục tiêu và thành tựu! 🚀🎯"';
             }
         }
 
@@ -2568,34 +2698,297 @@
                 email: firstCust.email || "",
                 mobile: firstCust.phone || "",
                 salesName: currentUser ? currentUser.name : "Lê Nguyễn Ngọc Ngân",
-                salesTitle: currentUser ? (currentUser.title || "Account Manager") : "Account Manager",
-                salesEmail: currentUser ? (currentUser.email || "demo@cloudpbx.vn") : "demo@cloudpbx.vn",
-                salesPhone: currentUser ? (currentUser.phone || "0902 328 534") : "0902 328 534",
                 salesUserId: currentUser ? currentUser.id : "usr_1",
+                salesTitle: currentUser ? currentUser.title : "Account Manager",
+                salesEmail: currentUser ? currentUser.email : "demo@cloudpbx.vn",
+                salesPhone: currentUser ? currentUser.phone : "0902 328 534",
                 deptId: currentUser ? currentUser.deptId : "dept_1",
-                status: 'DRAFT',
+                status: "OFFICIAL",
                 version: 1,
                 terms: DEFAULT_QUOTE_TERMS,
-                termSetup: 'PREPAID',
-                termCloud: 'YEARLY',
+                termSetup: "PREPAID",
+                termCloud: "YEARLY",
                 advancePct: 30,
                 advanceRem: 70,
                 advanceDays: 7,
-                brand: 'CLOUDPBX',
-                currency: 'VND',
-                docLang: 'VI',
+                notes: "",
+                brand: "CLOUDPBX",
+                currency: "VND",
+                docLang: "VI",
+                history: [],
                 lineItems: [
-                    { category: 1, code: "AD0001", desc: "Phí khởi tạo dịch vụ CloudPBX\nHướng dẫn cài đặt, vận hành", subtitle: "", price: 1000000, qty: 1, unit: "Lần", vatPct: 8 },
-                    { category: 2, code: "CPBX-STD-YR", desc: "CloudPBX Standard (20 máy nhánh)\nPhí dịch vụ 12 tháng", subtitle: "Cam kết SLA 99.9%", price: 529000, qty: 12, unit: "Tháng", vatPct: 8 }
+                    { category: 1, code: "AD0001", desc: "Phí khởi tạo dịch vụ CloudPBX\nHướng dẫn cài đặt, kịch bản, vận hành", subtitle: "Tặng gói hỗ trợ kỹ thuật Onsite", price: 1000000, qty: 1, unit: "Lần", vatPct: 8 },
+                    { category: 2, code: "CPBX-STD-YR", desc: "CloudPBX Standard (20 máy nhánh)\nPhí dịch vụ 12 tháng", subtitle: "Cam kết Uptime 99.9%", price: 535000, qty: 12, unit: "Tháng", vatPct: 8 }
                 ]
             };
 
+            document.getElementById('modal-title').innerText = "Soạn thảo Báo Giá";
+            document.getElementById('modal-ref-indicator').innerText = "Chế độ tạo mới";
+            document.getElementById('modal-btn-to-contract')?.classList.add('hidden');
+            // Hide Update button when creating new quote
+            document.getElementById('modal-btn-update')?.classList.add('hidden');
+            
             populateModalFormFields();
             updateQuoteConfigTogglesUI();
             renderSeparatedLineItemInputs();
             updateQuotationPreview();
-            document.getElementById('modal-btn-to-contract')?.classList.add('hidden');
             document.getElementById('quote-modal')?.classList.remove('hidden');
+        }
+
+        function viewQuote(quoteId) {
+            const q = quotesData.find(item => item.id === quoteId);
+            if (!q) return;
+            activeQuote = JSON.parse(JSON.stringify(q));
+            document.getElementById('modal-title').innerText = `Báo Giá: ${q.refNo}`;
+            document.getElementById('modal-ref-indicator').innerText = `Phiên bản hiện tại: v${q.version || 1} (${q.status === 'OFFICIAL' ? 'Chính thức' : 'Bản nháp'})`;
+            document.getElementById('modal-btn-to-contract')?.classList.remove('hidden');
+            
+            // Show Update button when viewing or editing an existing quote
+            const updateBtn = document.getElementById('modal-btn-update');
+            if (updateBtn) {
+                updateBtn.classList.remove('hidden');
+            }
+            
+            populateModalFormFields();
+            updateQuoteConfigTogglesUI();
+            renderSeparatedLineItemInputs();
+            updateQuotationPreview();
+            document.getElementById('quote-modal')?.classList.remove('hidden');
+        }
+
+        function editQuote(quoteId) {
+            const q = quotesData.find(item => item.id === quoteId);
+            if (!q) return;
+            activeQuote = JSON.parse(JSON.stringify(q));
+            document.getElementById('modal-title').innerText = `Chỉnh sửa Báo Giá: ${q.refNo}`;
+            document.getElementById('modal-ref-indicator').innerText = `Đang chỉnh sửa phiên bản v${q.version || 1} (${q.status === 'OFFICIAL' ? 'Chính thức' : 'Bản nháp'})`;
+            document.getElementById('modal-btn-to-contract')?.classList.remove('hidden');
+            
+            // Always display the Update button when editing
+            const updateBtn = document.getElementById('modal-btn-update');
+            if (updateBtn) {
+                updateBtn.classList.remove('hidden');
+            }
+            
+            populateModalFormFields();
+            updateQuoteConfigTogglesUI();
+            renderSeparatedLineItemInputs();
+            updateQuotationPreview();
+            document.getElementById('quote-modal')?.classList.remove('hidden');
+            showToast(`Mở chế độ chỉnh sửa cho ${q.refNo}`, "info");
+        }
+
+        function duplicateQuote(quoteId) {
+            const q = quotesData.find(item => item.id === quoteId);
+            if (!q) return;
+            const newQuote = JSON.parse(JSON.stringify(q));
+            newQuote.id = 'q_' + Date.now();
+            newQuote.refNo = generateNextQuoteRef(q.customerName);
+            newQuote.date = new Date().toISOString().split('T')[0];
+            newQuote.status = 'DRAFT';
+            newQuote.version = 1;
+            newQuote.history = [];
+            quotesData.unshift(newQuote);
+            logSysActivity("Báo giá", "Tạo mới", `Nhân bản báo giá từ ${q.refNo} thành ${newQuote.refNo}`);
+            renderQuotesTable();
+            updateBadges();
+            showToast(`Đã nhân bản thành công: ${newQuote.refNo}`, "success");
+        }
+
+        function deleteQuote(quoteId) {
+            const idx = quotesData.findIndex(q => q.id === quoteId);
+            if (idx >= 0) {
+                const deleted = quotesData.splice(idx, 1)[0];
+                trashData.unshift(deleted);
+                logSysActivity("Báo giá", "Xóa", `Chuyển báo giá ${deleted.refNo} vào Trash`);
+                renderQuotesTable();
+                updateBadges();
+                showToast(`Đã chuyển ${deleted.refNo} vào Trash`, "warning");
+            }
+        }
+
+        function toggleQuoteHistory(quoteId) {
+            if (expandedHistoryQuoteIds.has(quoteId)) {
+                expandedHistoryQuoteIds.delete(quoteId);
+            } else {
+                expandedHistoryQuoteIds.add(quoteId);
+            }
+            renderQuotesTable();
+        }
+
+        function viewHistorySnapshot(quoteId, versionTag) {
+            const q = quotesData.find(item => item.id === quoteId);
+            if (!q || !q.history) return;
+            const h = q.history.find(item => item.versionTag === versionTag);
+            if (!h || !h.snapshot) return;
+            activeQuote = JSON.parse(JSON.stringify(h.snapshot));
+            document.getElementById('modal-title').innerText = `Lịch sử Báo Giá: ${activeQuote.refNo} (${versionTag})`;
+            document.getElementById('modal-ref-indicator').innerText = `Xem lại phiên bản lưu lúc ${h.editDate} bởi ${h.salesName}`;
+            document.getElementById('modal-btn-to-contract')?.classList.add('hidden');
+            
+            populateModalFormFields();
+            updateQuoteConfigTogglesUI();
+            renderSeparatedLineItemInputs();
+            updateQuotationPreview();
+            document.getElementById('quote-modal')?.classList.remove('hidden');
+            showToast(`Đang xem bản lưu ${versionTag}`, "info");
+        }
+
+        function renderQuotesTable() {
+            const tbody = document.getElementById('quotes-table-body');
+            const emptyState = document.getElementById('quotes-empty-state');
+            if (!tbody) return;
+
+            const searchVal = (document.getElementById('filter-search')?.value || '').toLowerCase().trim();
+            const statusFilter = document.getElementById('filter-status')?.value || 'ALL';
+            const staffFilter = document.getElementById('filter-staff')?.value || 'ALL';
+
+            let quotes = getAccessibleQuotes();
+
+            if (statusFilter !== 'ALL') {
+                quotes = quotes.filter(q => q.status === statusFilter);
+            }
+            if (staffFilter !== 'ALL') {
+                quotes = quotes.filter(q => q.salesName === staffFilter || q.salesUserId === staffFilter);
+            }
+            if (searchVal) {
+                quotes = quotes.filter(q => 
+                    q.refNo.toLowerCase().includes(searchVal) || 
+                    (q.companyName || '').toLowerCase().includes(searchVal) ||
+                    (q.customerName || '').toLowerCase().includes(searchVal) ||
+                    (q.recipientPerson || '').toLowerCase().includes(searchVal)
+                );
+            }
+
+            if (quotes.length === 0) {
+                tbody.innerHTML = '';
+                if (emptyState) emptyState.classList.remove('hidden');
+                return;
+            }
+            if (emptyState) emptyState.classList.add('hidden');
+
+            tbody.innerHTML = quotes.map(q => {
+                const grandTotal = calculateQuoteGrandTotal(q);
+                const isExpanded = expandedHistoryQuoteIds.has(q.id);
+                const historyCount = (q.history && Array.isArray(q.history)) ? q.history.length : 0;
+                const statusBadge = q.status === 'OFFICIAL' 
+                    ? `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">OFFICIAL v${q.version || 1}</span>`
+                    : `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">DRAFT</span>`;
+
+                let row = `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100 transition-all ${isExpanded ? 'bg-slate-50/70' : 'bg-white'}">
+                        <td class="py-3 px-4">
+                            <span class="font-bold text-brand-orange font-mono cursor-pointer hover:underline" onclick="toggleQuoteHistory('${q.id}')">${q.refNo}</span>
+                        </td>
+                        <td class="py-3 px-4 font-bold text-slate-800 cursor-pointer hover:text-brand-orange" onclick="viewQuote('${q.id}')">
+                            <div>${q.companyName || q.customerName}</div>
+                            <div class="text-[10px] text-slate-400 font-normal">${q.recipientPerson || ''}</div>
+                        </td>
+                        <td class="py-3 px-4 text-slate-600 font-mono whitespace-nowrap">${q.date}</td>
+                        <td class="py-3 px-4 text-slate-700 whitespace-nowrap">${q.salesName}</td>
+                        <td class="py-3 px-4 text-right font-black text-slate-900 whitespace-nowrap">${formatMoney(grandTotal, q.currency)}</td>
+                        <td class="py-3 px-4 text-center whitespace-nowrap">${statusBadge}</td>
+                        <td class="py-3 px-4 text-center whitespace-nowrap">
+                            <div class="inline-flex items-center gap-1.5 text-slate-600">
+                                <button onclick="viewQuote('${q.id}')" data-tooltip="Xem báo giá" class="p-1 hover:text-indigo-600 transition-all"><i class="fa-solid fa-eye text-xs"></i></button>
+                                <button onclick="toggleQuoteHistory('${q.id}')" data-tooltip="Lịch sử phiên bản" class="p-1 hover:text-purple-600 relative transition-all">
+                                    <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                                    ${historyCount > 0 ? `<span class="absolute -top-1 -right-1 bg-purple-600 text-white text-[8px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">${historyCount}</span>` : ''}
+                                </button>
+                                <button onclick="quickCreateContractFromQuote('${q.id}')" data-tooltip="Tạo Hợp đồng" class="p-1 hover:text-emerald-600 transition-all"><i class="fa-solid fa-file-circle-plus text-xs"></i></button>
+                                <button onclick="quickCreateAppendixFromQuote('${q.id}')" data-tooltip="Tạo Phụ lục" class="p-1 hover:text-purple-600 transition-all"><i class="fa-solid fa-file-contract text-xs"></i></button>
+                                <button onclick="editQuote('${q.id}')" data-tooltip="Sửa báo giá" class="p-1 hover:text-amber-600 transition-all"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="duplicateQuote('${q.id}')" data-tooltip="Nhân bản" class="p-1 hover:text-blue-600 transition-all"><i class="fa-solid fa-copy text-xs"></i></button>
+                                <button onclick="deleteQuote('${q.id}')" data-tooltip="Xóa vào Trash" class="p-1 hover:text-rose-600 transition-all"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                if (isExpanded) {
+                    let historyRows = '';
+                    if (!q.history || q.history.length === 0) {
+                        historyRows = `<tr><td colspan="5" class="p-3 text-center text-slate-400 italic">Chưa có lịch sử chỉnh sửa phiên bản cho báo giá này.</td></tr>`;
+                    } else {
+                        historyRows = q.history.map(h => `
+                            <tr class="hover:bg-purple-50/50 border-b border-purple-100 text-xs">
+                                <td class="py-2 px-3 font-bold font-mono text-purple-700">${h.versionTag}</td>
+                                <td class="py-2 px-3 font-mono text-slate-600">${h.editDate}</td>
+                                <td class="py-2 px-3 text-slate-800 font-medium">${h.salesName}</td>
+                                <td class="py-2 px-3 text-right font-bold text-slate-900 whitespace-nowrap">${formatMoney(h.grandTotal, h.currency || q.currency)}</td>
+                                <td class="py-2 px-3 text-center">
+                                    <button onclick="viewHistorySnapshot('${q.id}', '${h.versionTag}')" class="px-2.5 py-0.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-full font-bold text-[11px] inline-flex items-center gap-1 transition-all">
+                                        <i class="fa-solid fa-eye text-[10px]"></i> <span>Xem</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+
+                    row += `
+                        <tr class="bg-purple-50/20 border-b border-slate-200">
+                            <td colspan="7" class="p-3 pl-8">
+                                <div class="bg-white p-3 rounded-xl border border-purple-200 shadow-sm space-y-2">
+                                    <div class="font-bold text-xs text-purple-900 flex items-center gap-2 border-b pb-1.5">
+                                        <i class="fa-solid fa-clock-rotate-left text-purple-600"></i>
+                                        <span>Lịch sử các phiên bản của báo giá: <strong class="text-slate-900">${q.refNo}</strong> (Hiện tại: v${q.version || 1})</span>
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-left border-collapse text-xs">
+                                            <thead>
+                                                <tr class="bg-purple-50 text-purple-900 text-[10px] font-bold uppercase border-b border-purple-200">
+                                                    <th class="py-1.5 px-3">Phiên bản</th>
+                                                    <th class="py-1.5 px-3">Thời gian lưu</th>
+                                                    <th class="py-1.5 px-3">Người thực hiện</th>
+                                                    <th class="py-1.5 px-3 text-right">Tổng giá trị</th>
+                                                    <th class="py-1.5 px-3 text-center">Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-purple-50">
+                                                ${historyRows}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                return row;
+            }).join('');
+        }
+
+        function populateStaffFilterDropdown() {
+            const filterStaff = document.getElementById('filter-staff');
+            const wrapper = document.getElementById('filter-staff-wrapper');
+            const rptFilterStaff = document.getElementById('rpt-filter-staff');
+            const rptWrapper = document.getElementById('rpt-filter-staff-wrapper');
+
+            if (!currentUser) return;
+
+            // Users only see their own performance; Manager, Admin, and Superadmin see staff filter
+            if (currentUser.type === 'User') {
+                wrapper?.classList.add('hidden');
+                rptWrapper?.classList.add('hidden');
+                return;
+            }
+
+            wrapper?.classList.remove('hidden');
+            rptWrapper?.classList.remove('hidden');
+
+            let staffList = usersData.filter(u => u.type === 'User' || u.type === 'Manager');
+            // Manager is strictly constrained to staff in their assigned department
+            if (currentUser.type === 'Manager') {
+                staffList = staffList.filter(u => u.deptId === currentUser.deptId);
+            }
+
+            const staffOptions = staffList.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+            const isEng = currentSystemLanguage === 'EN';
+            const defaultOpt = `<option value="ALL">${isEng ? '-- All Staff --' : '-- Tất cả nhân viên --'}</option>`;
+
+            if (filterStaff) filterStaff.innerHTML = defaultOpt + staffOptions;
+            if (rptFilterStaff) rptFilterStaff.innerHTML = defaultOpt + staffOptions;
         }
 
         function populateModalFormFields() {
@@ -2759,6 +3152,40 @@
             updateQuotationPreview();
         }
 
+        function updateExistingQuote() {
+            if (!activeQuote) return;
+            const existingIdx = quotesData.findIndex(q => q.id === activeQuote.id);
+            if (existingIdx >= 0) {
+                if (activeQuote.status === 'OFFICIAL') {
+                    const oldVer = quotesData[existingIdx].version || 1;
+                    const newVer = oldVer + 1;
+                    document.getElementById('confirm-old-version').innerText = `v${oldVer}`;
+                    document.getElementById('confirm-new-version').innerText = `v${newVer}`;
+                    document.getElementById('edit-official-confirm-modal')?.classList.remove('hidden');
+                    return;
+                }
+                performSaveQuoteExecution('DRAFT', false);
+            } else {
+                performSaveQuoteExecution('DRAFT', false);
+            }
+        }
+
+        function saveAsNewOfficialQuote() {
+            if (!activeQuote) return;
+            const existingIdx = quotesData.findIndex(q => q.id === activeQuote.id);
+            if (existingIdx >= 0) {
+                const newRef = generateNextQuoteRef(activeQuote.customerName);
+                activeQuote.id = 'q_' + Date.now();
+                activeQuote.refNo = newRef;
+                activeQuote.version = 1;
+                activeQuote.history = [];
+                performSaveQuoteExecution('OFFICIAL', false);
+                showToast(`Đã lưu thành Báo giá Mới: ${newRef}`, 'success');
+            } else {
+                performSaveQuoteExecution('OFFICIAL', false);
+            }
+        }
+
         function saveCurrentQuote(status) {
             if (!activeQuote) return;
 
@@ -2773,7 +3200,7 @@
                 pendingSaveStatusType = status;
                 document.getElementById('confirm-old-version').innerText = `v${oldVer}`;
                 document.getElementById('confirm-new-version').innerText = `v${newVer}`;
-                document.getElementById('edit-official-confirm-modal').classList.remove('hidden');
+                document.getElementById('edit-official-confirm-modal')?.classList.remove('hidden');
                 return;
             }
 
@@ -2782,11 +3209,11 @@
 
         function cancelOfficialEditModal() {
             pendingSaveStatusType = null;
-            document.getElementById('edit-official-confirm-modal').classList.add('hidden');
+            document.getElementById('edit-official-confirm-modal')?.classList.add('hidden');
         }
 
         function executeOfficialEditSave() {
-            document.getElementById('edit-official-confirm-modal').classList.add('hidden');
+            document.getElementById('edit-official-confirm-modal')?.classList.add('hidden');
             performSaveQuoteExecution('OFFICIAL', true);
         }
 
@@ -2840,7 +3267,7 @@
                 logSysActivity("Báo giá", "Tạo mới", `Tạo mới báo giá ${activeQuote.refNo} (${status})`);
             }
 
-            document.getElementById('quote-modal').classList.add('hidden');
+            document.getElementById('quote-modal')?.classList.add('hidden');
             renderQuotesTable();
             updateBadges();
 
@@ -2852,7 +3279,7 @@
         }
 
         function confirmCloseModal() {
-            document.getElementById('quote-modal').classList.add('hidden');
+            document.getElementById('quote-modal')?.classList.add('hidden');
         }
 
         function updateQuotationPreview() {
@@ -2862,20 +3289,17 @@
             activeQuote.recipientTitle = document.getElementById('form-recipient-title')?.value || activeQuote.recipientTitle;
             activeQuote.terms = document.getElementById('form-quote-terms')?.value || activeQuote.terms;
 
-            // Read live sales info inputs
             activeQuote.salesName = document.getElementById('form-sales-name')?.value || activeQuote.salesName || '';
             activeQuote.salesTitle = document.getElementById('form-sales-title')?.value || activeQuote.salesTitle || '';
             activeQuote.salesEmail = document.getElementById('form-sales-email')?.value || activeQuote.salesEmail || '';
             activeQuote.salesPhone = document.getElementById('form-sales-phone')?.value || activeQuote.salesPhone || '';
 
-            // Update Brand Header as shown in Image #3 (CLOUDPBX) and Image #4 (DNTG)
             const brandBadgeName = document.getElementById('pv-brand-badge-name');
             const brandHeaderTitle = document.getElementById('pv-brand-header-title');
             const brandSubtitle = document.getElementById('pv-brand-subtitle');
             const brandEmail = document.getElementById('pv-brand-email');
 
             if (activeQuote.brand === 'DNTG') {
-                // Image #4: DNTG
                 if (brandBadgeName) {
                     brandBadgeName.innerText = 'DNTG';
                     brandBadgeName.className = 'text-xl font-extrabold text-[#003566] tracking-tight leading-none mb-1';
@@ -2890,7 +3314,6 @@
                 }
                 if (brandEmail) brandEmail.innerText = 'hello@dntg.com.vn';
             } else {
-                // Image #3: CLOUDPBX
                 if (brandBadgeName) {
                     brandBadgeName.innerText = 'CLOUDPBX';
                     brandBadgeName.className = 'text-xl font-extrabold text-brand-orange tracking-tight leading-none mb-1';
@@ -2904,21 +3327,20 @@
                     brandSubtitle.className = 'text-[9px] text-slate-500 uppercase tracking-wider font-semibold';
                 }
                 if (brandEmail) brandEmail.innerText = 'hello@cloudpbx.vn';
-        }
+            }
 
-        document.getElementById('pv-quote-ref').innerText = activeQuote.refNo;
-        const rawDate = activeQuote.date || '';
-        const dateParts = rawDate.split('-');
-        const formattedDate = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : rawDate;
-        document.getElementById('pv-quote-date').innerText = formattedDate;
+            document.getElementById('pv-quote-ref').innerText = activeQuote.refNo;
+            const rawDate = activeQuote.date || '';
+            const dateParts = rawDate.split('-');
+            const formattedDate = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : rawDate;
+            document.getElementById('pv-quote-date').innerText = formattedDate;
 
-        document.getElementById('pv-recipient-person').innerText = activeQuote.recipientPerson || '---';
-        document.getElementById('pv-recipient-title').innerText = activeQuote.recipientTitle || '---';
+            document.getElementById('pv-recipient-person').innerText = activeQuote.recipientPerson || '---';
+            document.getElementById('pv-recipient-title').innerText = activeQuote.recipientTitle || '---';
             document.getElementById('pv-recipient-company').innerText = activeQuote.companyName || '---';
             document.getElementById('pv-recipient-address').innerText = activeQuote.address || '---';
             document.getElementById('pv-terms-content-display').innerText = activeQuote.terms || DEFAULT_QUOTE_TERMS;
 
-            // Render Payment Terms Preview
             const setupVal = document.querySelector('input[name="term_setup"]:checked')?.value || activeQuote.termSetup || 'PREPAID';
             const cloudVal = document.querySelector('input[name="term_cloud"]:checked')?.value || activeQuote.termCloud || 'YEARLY';
             const advPct = document.getElementById('form-advance-pct')?.value || activeQuote.advancePct || 30;
@@ -2938,7 +3360,6 @@
             if (setupDisp) setupDisp.innerText = setupText;
             if (cloudDisp) cloudDisp.innerText = cloudText;
 
-            // Render Live Sales Signatory on Preview
             const salesSignName = document.getElementById('pv-sales-sign-name');
             const salesSignTitle = document.getElementById('pv-sales-sign-title');
             const salesSignContact = document.getElementById('pv-sales-sign-contact');
@@ -2947,7 +3368,6 @@
             if (salesSignTitle) salesSignTitle.innerText = activeQuote.salesTitle || 'Account Manager';
             if (salesSignContact) salesSignContact.innerText = `Phone: ${activeQuote.salesPhone || '---'} | Email: ${activeQuote.salesEmail || '---'}`;
 
-            // Update ISSUED red seal stamp
             const stampText = document.getElementById('pv-stamp-text');
             if (stampText) {
                 const parts = (activeQuote.date || '').split('-');
@@ -2955,54 +3375,188 @@
                 stampText.innerText = `ISSUED ${dStr}`;
             }
 
-            // Render Preview Table
             const tbody = document.getElementById('pv-table-body');
             if (!tbody) return;
 
-            let html = '';
-            const c1 = activeQuote.lineItems.filter(i => Number(i.category) !== 2);
-            const c2 = activeQuote.lineItems.filter(i => Number(i.category) === 2);
+            let cat1Items = (activeQuote.lineItems || []).filter(item => Number(item.category) === 1);
+            let cat2Items = (activeQuote.lineItems || []).filter(item => Number(item.category) === 2);
 
-            let sub1 = 0, sub2 = 0, stt = 1;
-            if (c1.length > 0) {
-                html += `<tr class="bg-slate-100 font-bold"><td colspan="8" class="p-1 px-2 uppercase text-[9.5px]">I. PHÍ THANH TOÁN MỘT LẦN</td></tr>`;
-                c1.forEach(item => {
-                    const tot = calculateLineItemTotal(item);
-                    sub1 += tot;
-                    const descFormatted = item.desc ? item.desc.replace(/\n/g, '<br>') : '';
-                    const subFormatted = item.subtitle ? `<div class="text-rose-600 italic font-semibold text-[9px] mt-0.5">(${item.subtitle})</div>` : '';
-                    html += `<tr><td class="p-1 text-center font-mono">${item.code || ''}</td><td class="p-1 text-center font-bold">${stt++}</td><td class="p-1 font-bold">${descFormatted}${subFormatted}</td><td class="p-1 text-right whitespace-nowrap">${formatMoney(item.price, activeQuote.currency, false)}</td><td class="p-1 text-center">${item.qty}</td><td class="p-1 text-center">${item.unit}</td><td class="p-1 text-center">${item.vatPct}%</td><td class="p-1 text-right font-bold whitespace-nowrap">${formatMoney(tot, activeQuote.currency, false)}</td></tr>`;
+            let html = '';
+            let stt = 1;
+
+            if (cat1Items.length > 0) {
+                html += `
+                    <tr class="bg-slate-100/90 font-bold text-slate-800 text-[10px]">
+                        <td colspan="8" class="p-1.5 font-bold">I. PHÍ THANH TOÁN 1 LẦN (Khởi tạo / Thiết bị)</td>
+                    </tr>
+                `;
+                cat1Items.forEach(item => {
+                    const lineTot = calculateLineItemTotal(item);
+                    html += `
+                        <tr class="text-[9.5px]">
+                            <td class="p-1 border-r font-mono text-center">${item.code || ''}</td>
+                            <td class="p-1 border-r text-center">${stt++}</td>
+                            <td class="p-1 border-r">
+                                <div class="font-semibold text-slate-800 whitespace-pre-line">${item.desc || ''}</div>
+                                ${item.subtitle ? `<div class="text-[9px] text-rose-600 italic">${item.subtitle}</div>` : ''}
+                            </td>
+                            <td class="p-1 border-r text-right whitespace-nowrap">${formatMoney(item.price, activeQuote.currency, false)}</td>
+                            <td class="p-1 border-r text-center font-bold">${item.qty}</td>
+                            <td class="p-1 border-r text-center">${item.unit}</td>
+                            <td class="p-1 border-r text-center">${item.vatPct}%</td>
+                            <td class="p-1 text-right font-bold whitespace-nowrap">${formatMoney(lineTot, activeQuote.currency, false)}</td>
+                        </tr>
+                    `;
                 });
             }
-            if (c2.length > 0) {
-                stt = 1;
-                html += `<tr class="bg-slate-100 font-bold"><td colspan="8" class="p-1 px-2 uppercase text-[9.5px]">II. PHÍ DUY TRÌ DỊCH VỤ</td></tr>`;
-                c2.forEach(item => {
-                    const tot = calculateLineItemTotal(item);
-                    sub2 += tot;
-                    const descFormatted = item.desc ? item.desc.replace(/\n/g, '<br>') : '';
-                    const subFormatted = item.subtitle ? `<div class="text-rose-600 italic font-semibold text-[9px] mt-0.5">(${item.subtitle})</div>` : '';
-                    html += `<tr><td class="p-1 text-center font-mono">${item.code || ''}</td><td class="p-1 text-center font-bold">${stt++}</td><td class="p-1 font-bold">${descFormatted}${subFormatted}</td><td class="p-1 text-right whitespace-nowrap">${formatMoney(item.price, activeQuote.currency, false)}</td><td class="p-1 text-center">${item.qty}</td><td class="p-1 text-center">${item.unit}</td><td class="p-1 text-center">${item.vatPct}%</td><td class="p-1 text-right font-bold whitespace-nowrap">${formatMoney(tot, activeQuote.currency, false)}</td></tr>`;
+
+            if (cat2Items.length > 0) {
+                html += `
+                    <tr class="bg-slate-100/90 font-bold text-slate-800 text-[10px]">
+                        <td colspan="8" class="p-1.5 font-bold">II. PHÍ DUY TRÌ DỊCH VỤ (CloudPBX)</td>
+                    </tr>
+                `;
+                cat2Items.forEach(item => {
+                    const lineTot = calculateLineItemTotal(item);
+                    html += `
+                        <tr class="text-[9.5px]">
+                            <td class="p-1 border-r font-mono text-center">${item.code || ''}</td>
+                            <td class="p-1 border-r text-center">${stt++}</td>
+                            <td class="p-1 border-r">
+                                <div class="font-semibold text-slate-800 whitespace-pre-line">${item.desc || ''}</div>
+                                ${item.subtitle ? `<div class="text-[9px] text-rose-600 italic">${item.subtitle}</div>` : ''}
+                            </td>
+                            <td class="p-1 border-r text-right whitespace-nowrap">${formatMoney(item.price, activeQuote.currency, false)}</td>
+                            <td class="p-1 border-r text-center font-bold">${item.qty}</td>
+                            <td class="p-1 border-r text-center">${item.unit}</td>
+                            <td class="p-1 border-r text-center">${item.vatPct}%</td>
+                            <td class="p-1 text-right font-bold whitespace-nowrap">${formatMoney(lineTot, activeQuote.currency, false)}</td>
+                        </tr>
+                    `;
                 });
             }
-            const grand = sub1 + sub2;
-            html += `<tr class="bg-slate-200 font-bold border-t-2"><td colspan="7" class="p-1.5 text-right uppercase whitespace-nowrap">TỔNG CỘNG (ĐÃ GỒM VAT):</td><td class="p-1.5 text-right font-black text-sm whitespace-nowrap text-slate-900">${formatMoney(grand, activeQuote.currency, true)}</td></tr>`;
+
+            const grandTotal = calculateQuoteGrandTotal(activeQuote);
+            html += `
+                <tr class="bg-slate-50 font-bold border-t border-slate-300 text-[10px]">
+                    <td colspan="7" class="p-1.5 text-right font-extrabold uppercase">TỔNG CỘNG (ĐÃ GỒM VAT):</td>
+                    <td class="p-1.5 text-right font-black text-brand-orange whitespace-nowrap">${formatMoney(grandTotal, activeQuote.currency)}</td>
+                </tr>
+            `;
+
             tbody.innerHTML = html;
         }
 
+        function handleRptPeriodChange() {
+            const period = document.getElementById('rpt-filter-period')?.value;
+            const customWrapper = document.getElementById('rpt-custom-date-wrapper');
+            if (customWrapper) {
+                customWrapper.classList.toggle('hidden', period !== 'CUSTOM');
+            }
+            if (period === 'CUSTOM') {
+                const fromInput = document.getElementById('rpt-custom-from');
+                const toInput = document.getElementById('rpt-custom-to');
+                if (fromInput && !fromInput.value) {
+                    const d = new Date();
+                    d.setDate(1);
+                    fromInput.value = d.toISOString().split('T')[0];
+                }
+                if (toInput && !toInput.value) {
+                    toInput.value = new Date().toISOString().split('T')[0];
+                }
+            }
+            renderReports();
+        }
+
         function renderReports() {
-            const accessibleQuotes = getAccessibleQuotes();
-            const accessibleContracts = getAccessibleContracts();
+            const rptStaffFilter = document.getElementById('rpt-filter-staff')?.value || 'ALL';
+            const periodFilter = document.getElementById('rpt-filter-period')?.value || 'THIS_MONTH';
 
-            document.getElementById('rpt-total-count').innerText = accessibleQuotes.length;
+            let accessibleQuotes = getAccessibleQuotes();
+            let accessibleContracts = getAccessibleContracts();
+
+            if (rptStaffFilter !== 'ALL') {
+                accessibleQuotes = accessibleQuotes.filter(q => q.salesName === rptStaffFilter || q.salesUserId === rptStaffFilter);
+                accessibleContracts = accessibleContracts.filter(c => c.salesName === rptStaffFilter || c.salesUserId === rptStaffFilter);
+            }
+
+            const now = new Date();
+            const curY = now.getFullYear();
+            const curM = now.getMonth();
+
+            const parseDate = (dStr) => {
+                if (!dStr) return null;
+                const parts = dStr.split('-');
+                if (parts.length === 3) return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                return null;
+            };
+
+            if (periodFilter === 'THIS_MONTH') {
+                const mPrefix = `${curY}-${String(curM + 1).padStart(2, '0')}`;
+                accessibleQuotes = accessibleQuotes.filter(q => q.date && q.date.startsWith(mPrefix));
+                accessibleContracts = accessibleContracts.filter(c => c.date && c.date.startsWith(mPrefix));
+            } else if (periodFilter === 'THIS_WEEK') {
+                const day = now.getDay() || 7;
+                const monday = new Date(now);
+                monday.setDate(now.getDate() - day + 1);
+                monday.setHours(0, 0, 0, 0);
+
+                const sunday = new Date(monday);
+                sunday.setDate(monday.getDate() + 6);
+                sunday.setHours(23, 59, 59, 999);
+
+                accessibleQuotes = accessibleQuotes.filter(q => {
+                    const d = parseDate(q.date);
+                    return d && d >= monday && d <= sunday;
+                });
+                accessibleContracts = accessibleContracts.filter(c => {
+                    const d = parseDate(c.date);
+                    return d && d >= monday && d <= sunday;
+                });
+            } else if (periodFilter === 'LAST_MONTH') {
+                const prevDate = new Date(curY, curM - 1, 1);
+                const lmPrefix = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, '0')}`;
+                accessibleQuotes = accessibleQuotes.filter(q => q.date && q.date.startsWith(lmPrefix));
+                accessibleContracts = accessibleContracts.filter(c => c.date && c.date.startsWith(lmPrefix));
+            } else if (periodFilter === 'THIS_YEAR') {
+                const yPrefix = String(curY);
+                accessibleQuotes = accessibleQuotes.filter(q => q.date && q.date.startsWith(yPrefix));
+                accessibleContracts = accessibleContracts.filter(c => c.date && c.date.startsWith(yPrefix));
+            } else if (periodFilter === 'CUSTOM') {
+                const fromVal = document.getElementById('rpt-custom-from')?.value;
+                const toVal = document.getElementById('rpt-custom-to')?.value;
+                const fromDate = fromVal ? parseDate(fromVal) : null;
+                const toDate = toVal ? parseDate(toVal) : null;
+                if (toDate) toDate.setHours(23, 59, 59, 999);
+
+                if (fromDate || toDate) {
+                    accessibleQuotes = accessibleQuotes.filter(q => {
+                        const d = parseDate(q.date);
+                        if (!d) return false;
+                        if (fromDate && d < fromDate) return false;
+                        if (toDate && d > toDate) return false;
+                        return true;
+                    });
+                    accessibleContracts = accessibleContracts.filter(c => {
+                        const d = parseDate(c.date);
+                        if (!d) return false;
+                        if (fromDate && d < fromDate) return false;
+                        if (toDate && d > toDate) return false;
+                        return true;
+                    });
+                }
+            }
+            // If periodFilter === 'ALL', no date filtering is applied
+
+            const quotesForKpi = accessibleQuotes;
+            document.getElementById('rpt-total-count').innerText = quotesForKpi.length;
             document.getElementById('rpt-contract-count').innerText = accessibleContracts.length;
-            document.getElementById('rpt-draft-count').innerText = accessibleQuotes.filter(q => q.status === 'DRAFT').length;
+            document.getElementById('rpt-draft-count').innerText = quotesForKpi.filter(q => q.status === 'DRAFT').length;
 
-            // DOANH THU THỰC TẾ = Doanh thu báo giá VNĐ + (Doanh thu báo giá USD * 25.450)
             let totalVnd = 0;
             let totalUsd = 0;
 
-            accessibleQuotes.forEach(q => {
+            quotesForKpi.forEach(q => {
                 const qTotal = calculateQuoteGrandTotal(q);
                 if (q.currency === 'USD') {
                     totalUsd += qTotal;
@@ -3013,12 +3567,10 @@
 
             const realRevenueVnd = totalVnd + (totalUsd * EXCHANGE_RATE_USD_VND);
 
-            // Display in Card
             document.getElementById('rpt-real-revenue-converted').innerText = formatMoney(realRevenueVnd, 'VND', true);
             document.getElementById('rpt-sub-vnd').innerText = formatMoney(totalVnd, 'VND', true);
             document.getElementById('rpt-sub-usd').innerText = formatMoney(totalUsd, 'USD', true);
 
-            // Staff breakdown table
             const tbody = document.getElementById('rpt-staff-performance-tbody');
             if (!tbody) return;
 
@@ -3029,8 +3581,12 @@
                 staffList = staffList.filter(u => u.id === currentUser.id);
             }
 
+            if (rptStaffFilter !== 'ALL') {
+                staffList = staffList.filter(u => u.name === rptStaffFilter);
+            }
+
             tbody.innerHTML = staffList.map(stf => {
-                const stfQuotes = accessibleQuotes.filter(q => q.salesUserId === stf.id || q.salesName === stf.name);
+                const stfQuotes = quotesForKpi.filter(q => q.salesUserId === stf.id || q.salesName === stf.name);
                 const stfContracts = accessibleContracts.filter(c => c.salesUserId === stf.id || c.salesName === stf.name);
                 const dept = departmentsData.find(d => d.id === stf.deptId);
 
@@ -3043,95 +3599,13 @@
 
                 return `
                     <tr class="hover:bg-slate-50">
-                        <td class="py-2.5 px-3 font-bold text-slate-800">${stf.name}</td>
-                        <td class="py-2.5 px-3 text-slate-500">${dept ? dept.name : '---'}</td>
-                        <td class="py-2.5 px-3 text-center font-bold">${stfQuotes.length}</td>
-                        <td class="py-2.5 px-3 text-center font-bold text-emerald-700">${stfContracts.length}</td>
-                        <td class="py-2.5 px-3 text-right font-semibold text-slate-800">${formatMoney(stfVnd, 'VND')}</td>
-                        <td class="py-2.5 px-3 text-right font-semibold text-indigo-600">${formatMoney(stfUsd, 'USD')}</td>
-                        <td class="py-2.5 px-3 text-right font-extrabold text-slate-900">${formatMoney(stfConverted, 'VND')}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function renderSysLogTable() {
-            const tbody = document.getElementById('syslog-table-body');
-            if (!tbody) return;
-
-            const search = (document.getElementById('syslog-search')?.value || '').toLowerCase().trim();
-            const moduleVal = document.getElementById('syslog-filter-module')?.value || 'ALL';
-            const actionVal = document.getElementById('syslog-filter-action')?.value || 'ALL';
-            const dateVal = document.getElementById('syslog-filter-date')?.value;
-
-            const filtered = sysLogsData.filter(log => {
-                if (moduleVal !== 'ALL' && log.module !== moduleVal) return false;
-                if (actionVal !== 'ALL' && log.action !== actionVal) return false;
-                if (dateVal && !log.timestamp.startsWith(dateVal)) return false;
-                if (search) {
-                    const match = log.timestamp.toLowerCase().includes(search) ||
-                                  log.userName.toLowerCase().includes(search) ||
-                                  log.role.toLowerCase().includes(search) ||
-                                  log.module.toLowerCase().includes(search) ||
-                                  log.action.toLowerCase().includes(search) ||
-                                  log.detail.toLowerCase().includes(search);
-                    if (!match) return false;
-                }
-                return true;
-            });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Không tìm thấy bản ghi nhật ký nào.</td></tr>';
-                return;
-            }
-
-            const actionColors = {
-                "Xem": "bg-blue-100 text-blue-800",
-                "Tạo mới": "bg-emerald-100 text-emerald-800",
-                "Chỉnh sửa": "bg-amber-100 text-amber-800",
-                "Xóa": "bg-rose-100 text-rose-800",
-                "Đăng nhập": "bg-purple-100 text-purple-800",
-                "Đăng xuất": "bg-slate-100 text-slate-800"
-            };
-
-            tbody.innerHTML = filtered.map(log => `
-                <tr class="hover:bg-slate-50 border-b border-slate-100">
-                    <td class="py-2.5 px-3 font-mono text-slate-500">${log.timestamp}</td>
-                    <td class="py-2.5 px-3 font-bold text-slate-800">${log.userName}</td>
-                    <td class="py-2.5 px-3"><span class="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 font-semibold">${log.role}</span></td>
-                    <td class="py-2.5 px-3 font-semibold text-slate-700">${log.module}</td>
-                    <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${actionColors[log.action] || 'bg-slate-100'}">${log.action}</span></td>
-                    <td class="py-2.5 px-3 text-slate-600">${log.detail}</td>
-                </tr>
-            `).join('');
-        }
-
-        function clearAllSysLogs() {
-            if (currentUser.type !== 'Superadmin') return;
-            sysLogsData = [];
-            renderSysLogTable();
-            updateBadges();
-            showToast("Đã xóa toàn bộ SysLog!", "info");
-        }
-
-        function renderDepartmentsTable() {
-            const tbody = document.getElementById('dept-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = departmentsData.map(d => {
-                const mgr = usersData.find(u => u.id === d.managerId);
-                const count = usersData.filter(u => u.deptId === d.id).length;
-                return `
-                    <tr class="hover:bg-slate-50 border-b">
-                        <td class="py-2.5 px-4 font-mono font-bold text-cyan-700">${d.code}</td>
-                        <td class="py-2.5 px-4 font-bold text-slate-800">${d.name}</td>
-                        <td class="py-2.5 px-4">${mgr ? mgr.name : '<span class="text-slate-400 italic">Chưa chỉ định</span>'}</td>
-                        <td class="py-2.5 px-4 text-center font-bold text-slate-700">${count}</td>
-                        <td class="py-2.5 px-4 text-center">
-                            <div class="inline-flex items-center gap-2">
-                                <button onclick="editDepartment('${d.id}')" data-tooltip="Sửa phòng ban" class="p-1 text-slate-600 hover:text-cyan-600 transition-all"><i class="fa-solid fa-pen text-xs"></i></button>
-                                <button onclick="deleteDepartment('${d.id}')" data-tooltip="Xóa phòng ban" class="p-1 text-slate-600 hover:text-rose-600 transition-all"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                        </td>
+                        <td class="py-2.5 px-3 font-bold text-slate-800 whitespace-nowrap">${stf.name}</td>
+                        <td class="py-2.5 px-3 text-slate-500 whitespace-nowrap">${dept ? dept.name : '---'}</td>
+                        <td class="py-2.5 px-3 text-center font-bold whitespace-nowrap">${stfQuotes.length}</td>
+                        <td class="py-2.5 px-3 text-center font-bold text-emerald-700 whitespace-nowrap">${stfContracts.length}</td>
+                        <td class="py-2.5 px-3 text-right font-semibold text-slate-800 whitespace-nowrap">${formatMoney(stfVnd, 'VND')}</td>
+                        <td class="py-2.5 px-3 text-right font-semibold text-indigo-600 whitespace-nowrap">${formatMoney(stfUsd, 'USD')}</td>
+                        <td class="py-2.5 px-3 text-right font-extrabold text-slate-900 whitespace-nowrap">${formatMoney(stfConverted, 'VND')}</td>
                     </tr>
                 `;
             }).join('');
@@ -3140,11 +3614,11 @@
         function openDepartmentModal() {
             const editingIdEl = document.getElementById('dept-editing-id');
             if (editingIdEl) editingIdEl.value = '';
-            document.getElementById('dept-modal-title').innerText = 'Thêm Phòng Ban Mới';
+            const titleEl = document.getElementById('dept-modal-title');
+            if (titleEl) titleEl.innerText = 'Thêm Phòng Ban Mới';
             const mgrSel = document.getElementById('dept-manager-select');
             if (mgrSel) {
                 mgrSel.innerHTML = '<option value="">-- Chọn Trưởng phòng --</option>' + usersData.map(u => `<option value="${u.id}">${u.name} (${u.type})</option>`).join('');
-                mgrSel.value = '';
             }
             const codeEl = document.getElementById('dept-code');
             const nameEl = document.getElementById('dept-name');
@@ -3207,6 +3681,86 @@
                 renderDepartmentsTable();
                 showToast("Đã xóa phòng ban!", "warning");
             }
+        }
+
+        function renderDepartmentsTable() {
+            const tbody = document.getElementById('dept-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = departmentsData.map(d => {
+                const mgr = usersData.find(u => u.id === d.managerId);
+                const count = usersData.filter(u => u.deptId === d.id).length;
+                return `
+                    <tr class="hover:bg-slate-50 border-b">
+                        <td class="py-2.5 px-4 font-mono font-bold text-cyan-700">${d.code}</td>
+                        <td class="py-2.5 px-4 font-bold text-slate-800">${d.name}</td>
+                        <td class="py-2.5 px-4 text-slate-700">${mgr ? mgr.name : '<span class="text-slate-400 italic">Chưa chỉ định</span>'}</td>
+                        <td class="py-2.5 px-4 text-center font-bold text-slate-700">${count}</td>
+                        <td class="py-2.5 px-4 text-center">
+                            <div class="inline-flex items-center gap-2">
+                                <button onclick="editDepartment('${d.id}')" data-tooltip="Sửa phòng ban" class="p-1 text-slate-600 hover:text-cyan-600 transition-all"><i class="fa-solid fa-pen text-xs"></i></button>
+                                <button onclick="deleteDepartment('${d.id}')" data-tooltip="Xóa phòng ban" class="p-1 text-slate-600 hover:text-rose-600 transition-all"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderSysLogTable() {
+            const tbody = document.getElementById('syslog-table-body');
+            if (!tbody) return;
+            const searchVal = (document.getElementById('syslog-search')?.value || '').toLowerCase().trim();
+            const moduleFilter = document.getElementById('syslog-filter-module')?.value || 'ALL';
+            const actionFilter = document.getElementById('syslog-filter-action')?.value || 'ALL';
+            const dateFilter = document.getElementById('syslog-filter-date')?.value || '';
+
+            let logs = sysLogsData;
+            if (moduleFilter !== 'ALL') logs = logs.filter(l => l.module === moduleFilter);
+            if (actionFilter !== 'ALL') logs = logs.filter(l => l.action === actionFilter);
+            if (dateFilter) logs = logs.filter(l => l.timestamp && l.timestamp.startsWith(dateFilter));
+            if (searchVal) {
+                logs = logs.filter(l =>
+                    (l.timestamp || '').toLowerCase().includes(searchVal) ||
+                    (l.userName || '').toLowerCase().includes(searchVal) ||
+                    (l.role || '').toLowerCase().includes(searchVal) ||
+                    (l.module || '').toLowerCase().includes(searchVal) ||
+                    (l.action || '').toLowerCase().includes(searchVal) ||
+                    (l.detail || '').toLowerCase().includes(searchVal)
+                );
+            }
+
+            if (logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Không có nhật ký nào phù hợp.</td></tr>';
+                return;
+            }
+
+            const actionColors = {
+                'Xem': 'bg-blue-100 text-blue-800',
+                'Tạo mới': 'bg-emerald-100 text-emerald-800',
+                'Chỉnh sửa': 'bg-amber-100 text-amber-800',
+                'Xóa': 'bg-rose-100 text-rose-800',
+                'Đăng nhập': 'bg-purple-100 text-purple-800',
+                'Đăng xuất': 'bg-slate-100 text-slate-800'
+            };
+
+            tbody.innerHTML = logs.map(l => `
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="py-2.5 px-3 font-mono text-[11px] text-slate-600 whitespace-nowrap">${l.timestamp}</td>
+                    <td class="py-2.5 px-3 font-bold text-slate-800 whitespace-nowrap">${l.userName}</td>
+                    <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">${l.role}</span></td>
+                    <td class="py-2.5 px-3 font-medium text-slate-700 whitespace-nowrap">${l.module}</td>
+                    <td class="py-2.5 px-3 text-center whitespace-nowrap"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${actionColors[l.action] || 'bg-slate-100 text-slate-700'}">${l.action}</span></td>
+                    <td class="py-2.5 px-3 text-slate-700">${l.detail}</td>
+                </tr>
+            `).join('');
+        }
+
+        function clearAllSysLogs() {
+            sysLogsData = [];
+            logSysActivity("SysLog", "Xóa", "Xóa sạch toàn bộ nhật ký hệ thống");
+            renderSysLogTable();
+            updateBadges();
+            showToast("Đã xóa sạch toàn bộ nhật ký!", "warning");
         }
 
         function renderAdminUsersTable() {
@@ -3400,7 +3954,7 @@
             if (!tbody) return;
             const search = (document.getElementById('contract-filter-search')?.value || '').toLowerCase().trim();
             const contracts = getAccessibleContracts();
-            const filtered = contracts.filter(c => !search || c.refNo.toLowerCase().includes(search) || c.companyName.toLowerCase().includes(search));
+            const filtered = contracts.filter(c => !search || c.refNo.toLowerCase().includes(search) || (c.companyName || '').toLowerCase().includes(search));
 
             tbody.innerHTML = filtered.map((c, idx) => {
                 const appendicesCount = (c.appendices && Array.isArray(c.appendices)) ? c.appendices.length : 0;
@@ -3415,14 +3969,14 @@
                                 <span class="font-bold text-emerald-700 font-mono text-xs cursor-pointer hover:underline" onclick="toggleContractAppendices('${c.id}')">${c.refNo}</span>
                             </div>
                         </td>
-                        <td class="py-3 px-4 font-bold text-slate-800 text-xs">${c.companyName}</td>
-                        <td class="py-3 px-4 text-slate-600 font-mono text-xs">${c.date}</td>
-                        <td class="py-3 px-4 text-slate-700 text-xs">${c.salesName}</td>
+                        <td class="py-3 px-4 font-bold text-slate-800 text-xs">${c.companyName || c.customerName}</td>
+                        <td class="py-3 px-4 text-slate-600 font-mono text-xs whitespace-nowrap">${c.date}</td>
+                        <td class="py-3 px-4 text-slate-700 text-xs whitespace-nowrap">${c.salesName}</td>
                         <td class="py-3 px-4 text-right font-extrabold text-slate-900 text-xs whitespace-nowrap">${formatMoney(c.totalValue, 'VND')}</td>
-                        <td class="py-3 px-4 text-center">
+                        <td class="py-3 px-4 text-center whitespace-nowrap">
                             <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">${c.status}</span>
                         </td>
-                        <td class="py-3 px-4 text-center">
+                        <td class="py-3 px-4 text-center whitespace-nowrap">
                             <div class="inline-flex items-center gap-2 text-slate-600">
                                 <button onclick="viewContractDetailsModal('${c.id}')" data-tooltip="Xem hợp đồng" class="p-1 hover:text-indigo-600 text-slate-600 transition-all">
                                     <i class="fa-regular fa-eye text-sm"></i>
@@ -3452,14 +4006,14 @@
                     } else {
                         appendixRows = c.appendices.map(ap => `
                             <tr class="hover:bg-purple-50/40 border-b border-purple-50 transition-all text-xs">
-                                <td class="py-3 px-4 font-mono font-bold text-purple-700">${ap.refNo}</td>
-                                <td class="py-3 px-4 text-slate-600 font-mono">${ap.date}</td>
-                                <td class="py-3 px-4 text-slate-700">${ap.salesName}</td>
+                                <td class="py-3 px-4 font-mono font-bold text-purple-700 whitespace-nowrap cursor-pointer hover:underline" onclick="viewAppendixDetailsModal('${c.id}', '${ap.id}')" title="Nhấn để xem phụ lục">${ap.refNo}</td>
+                                <td class="py-3 px-4 text-slate-600 font-mono whitespace-nowrap">${ap.date}</td>
+                                <td class="py-3 px-4 text-slate-700 whitespace-nowrap">${ap.salesName}</td>
                                 <td class="py-3 px-4 text-right font-bold text-slate-900 whitespace-nowrap">${formatMoney(ap.totalValue, 'VND')}</td>
-                                <td class="py-3 px-4 text-center">
+                                <td class="py-3 px-4 text-center whitespace-nowrap">
                                     <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold bg-purple-100 text-purple-800">${ap.status}</span>
                                 </td>
-                                <td class="py-3 px-4 text-center">
+                                <td class="py-3 px-4 text-center whitespace-nowrap">
                                     <div class="inline-flex items-center gap-1.5">
                                         <button onclick="viewAppendixDetailsModal('${c.id}', '${ap.id}')" class="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-full font-bold text-xs inline-flex items-center gap-1 transition-all">
                                             <i class="fa-solid fa-eye text-xs"></i> <span>Xem</span>
@@ -3474,22 +4028,22 @@
                     }
 
                     rows += `
-                        <tr class="bg-purple-50/20 border-b border-slate-200">
-                            <td colspan="8" class="p-4 px-8">
-                                <div class="bg-white rounded-2xl border border-purple-200/80 p-5 shadow-sm space-y-4">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2 font-bold text-slate-800 text-xs">
+                        <tr class="bg-purple-50/30 border-b border-slate-200">
+                            <td colspan="8" class="p-4 pl-12">
+                                <div class="bg-white p-4 rounded-xl border border-purple-200 shadow-sm space-y-3">
+                                    <div class="flex items-center justify-between border-b pb-2">
+                                        <div class="font-bold text-xs text-purple-900 flex items-center gap-2">
                                             <i class="fa-solid fa-folder-tree text-purple-600"></i>
-                                            <span>Danh sách Phụ lục thuộc hợp đồng: <strong class="text-slate-900 font-mono">${c.refNo}</strong></span>
+                                            <span>Danh sách Phụ lục thuộc hợp đồng: <strong class="text-slate-900">${c.refNo}</strong></span>
                                         </div>
-                                        <button onclick="openNewAppendixModal('${c.id}')" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5">
-                                            <i class="fa-solid fa-plus text-[10px]"></i> <span>+ Tạo Phụ lục mới</span>
+                                        <button onclick="openNewAppendixModal('${c.id}')" class="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm">
+                                            + + Tạo Phụ lục mới
                                         </button>
                                     </div>
                                     <div class="overflow-x-auto">
                                         <table class="w-full text-left border-collapse text-xs">
                                             <thead>
-                                                <tr class="bg-purple-50/60 text-purple-900 font-bold uppercase text-[10px] border-b border-purple-100">
+                                                <tr class="bg-purple-50 text-purple-900 text-[10.5px] font-bold uppercase border-b border-purple-200">
                                                     <th class="py-2.5 px-4">SỐ PHỤ LỤC</th>
                                                     <th class="py-2.5 px-4">NGÀY KÝ</th>
                                                     <th class="py-2.5 px-4">NHÂN VIÊN</th>
@@ -3498,7 +4052,7 @@
                                                     <th class="py-2.5 px-4 text-center">THAO TÁC</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="divide-y divide-purple-50">
+                                            <tbody class="divide-y divide-purple-100">
                                                 ${appendixRows}
                                             </tbody>
                                         </table>
@@ -3538,13 +4092,114 @@
             document.getElementById('contract-view-modal')?.classList.add('hidden');
         }
 
+        function populateAndOpenContractViewModal(data) {
+            document.getElementById('cv-modal-header-title').innerText = data.isAppendix ? `Chi tiết Phụ lục: ${data.refNo}` : `Chi tiết Hợp đồng: ${data.refNo}`;
+            const typeBadge = document.getElementById('cv-doc-type-badge');
+            if (typeBadge) {
+                typeBadge.innerText = data.isAppendix ? 'Phụ lục hợp đồng' : 'Hợp đồng chính';
+                typeBadge.className = data.isAppendix ? 'px-2.5 py-0.5 rounded-full text-[10.5px] font-bold uppercase bg-purple-100 text-purple-800 border border-purple-200' : 'px-2.5 py-0.5 rounded-full text-[10.5px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200';
+            }
+            document.getElementById('cv-doc-ref').innerText = data.refNo;
+            document.getElementById('cv-doc-status').innerText = data.status;
+            document.getElementById('cv-doc-customer').innerText = data.companyName;
+            document.getElementById('cv-doc-cid').innerText = `[${data.customerCid}]`;
+            document.getElementById('cv-doc-date').innerText = data.date;
+            document.getElementById('cv-doc-sales').innerText = data.salesName;
+            document.getElementById('cv-doc-total-value').innerText = formatMoney(data.totalValue, 'VND');
+            
+            const parentWrapper = document.getElementById('cv-doc-parent-wrapper');
+            if (parentWrapper) {
+                parentWrapper.classList.toggle('hidden', !data.isAppendix);
+                if (data.parentRef) {
+                    document.getElementById('cv-doc-parent-ref').innerText = data.parentRef;
+                }
+            }
+            
+            document.getElementById('cv-doc-source-quote').innerText = data.sourceQuoteRef || 'Chưa liên kết';
+            document.getElementById('cv-doc-notes').innerText = data.notes || 'Không có ghi chú riêng.';
+
+            // Populate products table from source quote
+            const itemsWrapper = document.getElementById('cv-items-table-wrapper');
+            const sourceQuote = quotesData.find(q => q.refNo === data.sourceQuoteRef);
+            
+            const btnViewQuote = document.getElementById('cv-btn-view-source-quote');
+            const btnPrintQuote = document.getElementById('cv-btn-print-quote');
+            
+            if (sourceQuote) {
+                document.getElementById('cv-quote-status-tag').innerText = `(${sourceQuote.status === 'OFFICIAL' ? 'Chính thức v' + (sourceQuote.version || 1) : 'Lưu nháp'})`;
+                if (btnViewQuote) {
+                    btnViewQuote.onclick = () => { closeContractViewModal(); viewQuote(sourceQuote.id); };
+                    btnViewQuote.classList.remove('hidden');
+                }
+                if (btnPrintQuote) {
+                    btnPrintQuote.onclick = () => {
+                        closeContractViewModal();
+                        activeQuote = JSON.parse(JSON.stringify(sourceQuote));
+                        updateQuotationPreview();
+                        triggerPrintPDF();
+                    };
+                    btnPrintQuote.classList.remove('hidden');
+                }
+
+                if (sourceQuote.lineItems && sourceQuote.lineItems.length > 0) {
+                    itemsWrapper.innerHTML = `
+                        <table class="w-full text-left border-collapse quotation-table text-xs">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 font-bold uppercase text-[10px] border-b">
+                                    <th class="p-2 text-center w-8">#</th>
+                                    <th class="p-2 w-20">Mã</th>
+                                    <th class="p-2">Tên sản phẩm / Dịch vụ</th>
+                                    <th class="p-2 text-right">Đơn giá</th>
+                                    <th class="p-2 text-center w-12">SL</th>
+                                    <th class="p-2 text-center w-14">ĐVT</th>
+                                    <th class="p-2 text-center w-12">VAT</th>
+                                    <th class="p-2 text-right">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${sourceQuote.lineItems.map((item, idx) => {
+                                    const tot = calculateLineItemTotal(item);
+                                    return `
+                                        <tr>
+                                            <td class="p-2 text-center text-slate-400 font-bold">${idx + 1}</td>
+                                            <td class="p-2 font-mono font-bold text-slate-700">${item.code || ''}</td>
+                                            <td class="p-2 font-semibold text-slate-800">
+                                                <div>${(item.desc || '').replace(/\n/g, '<br>')}</div>
+                                                ${item.subtitle ? `<div class="text-[10px] text-rose-600 italic mt-0.5">${item.subtitle}</div>` : ''}
+                                            </td>
+                                            <td class="p-2 text-right whitespace-nowrap">${formatMoney(item.price, sourceQuote.currency, false)}</td>
+                                            <td class="p-2 text-center font-bold">${item.qty}</td>
+                                            <td class="p-2 text-center">${item.unit}</td>
+                                            <td class="p-2 text-center">${item.vatPct}%</td>
+                                            <td class="p-2 text-right font-bold text-slate-900 whitespace-nowrap">${formatMoney(tot, sourceQuote.currency)}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    itemsWrapper.innerHTML = '<div class="p-4 text-center text-slate-400 italic">Báo giá liên kết chưa có sản phẩm.</div>';
+                }
+            } else {
+                document.getElementById('cv-quote-status-tag').innerText = '';
+                if (btnViewQuote) btnViewQuote.classList.add('hidden');
+                if (btnPrintQuote) btnPrintQuote.classList.add('hidden');
+                itemsWrapper.innerHTML = '<div class="p-4 text-center text-slate-400 italic">Không tìm thấy Báo giá tham chiếu cho chứng từ này.</div>';
+            }
+
+            document.getElementById('contract-view-modal')?.classList.remove('hidden');
+        }
+
         function viewContractDetailsModal(contractId) {
             const c = contractsData.find(item => item.id === contractId);
             if (!c) return;
+            currentViewingContract = { ...c, isAppendix: false };
 
             logSysActivity("Hợp đồng", "Xem", `Xem chi tiết hợp đồng ${c.refNo}`);
             populateAndOpenContractViewModal({
                 isAppendix: false,
+                id: c.id,
                 refNo: c.refNo,
                 parentRef: null,
                 companyName: c.companyName || c.customerName,
@@ -3563,12 +4218,15 @@
             if (!parent || !parent.appendices) return;
             const ap = parent.appendices.find(a => a.id === appendixId);
             if (!ap) return;
+            currentViewingContract = { ...ap, isAppendix: true, parentContractId: contractId };
 
             logSysActivity("Phụ lục", "Xem", `Xem chi tiết phụ lục ${ap.refNo}`);
             populateAndOpenContractViewModal({
                 isAppendix: true,
+                id: ap.id,
                 refNo: ap.refNo,
                 parentRef: parent.refNo,
+                parentContractId: contractId,
                 companyName: ap.companyName || parent.companyName || ap.customerName,
                 customerCid: ap.customerName || parent.customerName,
                 date: ap.date,
@@ -3580,173 +4238,11 @@
             });
         }
 
-        function populateAndOpenContractViewModal(data) {
-            const modal = document.getElementById('contract-view-modal');
-            if (!modal) return;
-
-            // Header labels
-            document.getElementById('cv-modal-header-title').innerText = data.isAppendix ? `Chi tiết Phụ lục Hợp đồng - ${data.refNo}` : `Chi tiết Hợp đồng - ${data.refNo}`;
-            document.getElementById('cv-modal-header-subtitle').innerText = data.isAppendix ? `Phụ lục bổ sung thuộc hợp đồng gốc ${data.parentRef || '---'}` : `Xem thông tin hợp đồng chính và danh mục sản phẩm từ báo giá liên quan`;
-
-            // Document summary card
-            const typeBadge = document.getElementById('cv-doc-type-badge');
-            if (data.isAppendix) {
-                typeBadge.innerText = 'Phụ lục hợp đồng';
-                typeBadge.className = 'px-2.5 py-0.5 rounded-full text-[10.5px] font-bold uppercase bg-purple-100 text-purple-800 border border-purple-200';
-            } else {
-                typeBadge.innerText = 'Hợp đồng chính';
-                typeBadge.className = 'px-2.5 py-0.5 rounded-full text-[10.5px] font-bold uppercase bg-emerald-100 text-emerald-800 border border-emerald-200';
-            }
-
-            document.getElementById('cv-doc-ref').innerText = data.refNo;
-            document.getElementById('cv-doc-status').innerText = data.status || 'Đã ký';
-            document.getElementById('cv-doc-customer').innerText = data.companyName;
-            document.getElementById('cv-doc-cid').innerText = `[${data.customerCid}]`;
-            document.getElementById('cv-doc-date').innerText = data.date;
-            document.getElementById('cv-doc-sales').innerText = data.salesName;
-            document.getElementById('cv-doc-total-value').innerText = formatMoney(data.totalValue, 'VND');
-            document.getElementById('cv-doc-notes').innerText = data.notes || 'Không có ghi chú đặc biệt.';
-
-            // Parent Contract (if appendix)
-            const parentWrapper = document.getElementById('cv-doc-parent-wrapper');
-            if (data.isAppendix && data.parentRef) {
-                parentWrapper.classList.remove('hidden');
-                document.getElementById('cv-doc-parent-ref').innerText = data.parentRef;
-            } else {
-                parentWrapper.classList.add('hidden');
-            }
-
-            // Source quote link & actions
-            const quoteRefEl = document.getElementById('cv-doc-source-quote');
-            const viewQuoteBtn = document.getElementById('cv-btn-view-source-quote');
-            const printQuoteBtn = document.getElementById('cv-btn-print-quote');
-            const quoteStatusTag = document.getElementById('cv-quote-status-tag');
-            const tableWrapper = document.getElementById('cv-items-table-wrapper');
-
-            const relatedQuote = data.sourceQuoteRef ? quotesData.find(q => q.refNo === data.sourceQuoteRef) : null;
-
-            if (data.sourceQuoteRef && data.sourceQuoteRef !== '---') {
-                quoteRefEl.innerText = data.sourceQuoteRef;
-                quoteRefEl.classList.remove('text-slate-400', 'bg-slate-50', 'border-slate-200');
-                quoteRefEl.classList.add('text-brand-orange', 'bg-orange-50', 'border-orange-200');
-
-                if (relatedQuote) {
-                    viewQuoteBtn.classList.remove('hidden');
-                    printQuoteBtn.classList.remove('hidden');
-                    viewQuoteBtn.onclick = () => {
-                        closeContractViewModal();
-                        viewQuote(relatedQuote.id);
-                    };
-                    printQuoteBtn.onclick = () => {
-                        closeContractViewModal();
-                        viewQuote(relatedQuote.id);
-                    };
-                    quoteStatusTag.innerHTML = `Báo giá: <strong class="font-mono text-brand-orange">${relatedQuote.refNo}</strong> (Phiên bản v${relatedQuote.version || 1} - ${relatedQuote.status === 'OFFICIAL' ? '<span class="text-emerald-700 font-bold">Chính thức</span>' : '<span class="text-amber-700 font-bold">Lưu nháp</span>'})`;
-                } else {
-                    viewQuoteBtn.classList.add('hidden');
-                    printQuoteBtn.classList.add('hidden');
-                    quoteStatusTag.innerHTML = `<span class="text-amber-700 italic"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Báo giá không còn trong danh sách hoạt động.</span>`;
-                }
-            } else {
-                quoteRefEl.innerText = 'Không có báo giá liên kết';
-                quoteRefEl.classList.add('text-slate-400', 'bg-slate-50', 'border-slate-200');
-                quoteRefEl.classList.remove('text-brand-orange', 'bg-orange-50', 'border-orange-200');
-                viewQuoteBtn.classList.add('hidden');
-                printQuoteBtn.classList.add('hidden');
-                quoteStatusTag.innerHTML = `<span class="text-slate-400 italic">Không có dữ liệu báo giá tham chiếu</span>`;
-            }
-
-            // Render Product Line Items Table from Related Quote
-            if (relatedQuote && relatedQuote.lineItems && Array.isArray(relatedQuote.lineItems) && relatedQuote.lineItems.length > 0) {
-                const currency = relatedQuote.currency || 'VND';
-                const cat1 = relatedQuote.lineItems.filter(i => Number(i.category) !== 2);
-                const cat2 = relatedQuote.lineItems.filter(i => Number(i.category) === 2);
-
-                let sub1 = 0, sub2 = 0, stt1 = 1, stt2 = 1;
-                let rowsHtml = '';
-
-                if (cat1.length > 0) {
-                    rowsHtml += `<tr class="bg-slate-100 font-bold"><td colspan="8" class="py-2 px-3 uppercase text-[10px] text-slate-800 tracking-wider">I. PHÍ THANH TOÁN MỘT LẦN (KHỞI TẠO / THIẾT BỊ)</td></tr>`;
-                    cat1.forEach(item => {
-                        const lineTot = calculateLineItemTotal(item);
-                        sub1 += lineTot;
-                        const descFormatted = item.desc ? item.desc.replace(/\n/g, '<br>') : '';
-                        const subFormatted = item.subtitle ? `<div class="text-rose-600 italic font-semibold text-[9.5px] mt-0.5">(${item.subtitle})</div>` : '';
-                        rowsHtml += `
-                            <tr class="hover:bg-slate-50/80 border-b border-slate-100">
-                                <td class="py-2.5 px-3 text-center font-bold text-slate-400">${stt1++}</td>
-                                <td class="py-2.5 px-3 text-center font-mono font-bold text-slate-700">${item.code || '---'}</td>
-                                <td class="py-2.5 px-3 font-semibold text-slate-800 leading-snug">${descFormatted}${subFormatted}</td>
-                                <td class="py-2.5 px-3 text-right font-medium text-slate-800 whitespace-nowrap">${formatMoney(item.price, currency, false)}</td>
-                                <td class="py-2.5 px-3 text-center font-bold">${item.qty}</td>
-                                <td class="py-2.5 px-3 text-center text-slate-600">${item.unit || 'Lần'}</td>
-                                <td class="py-2.5 px-3 text-center font-semibold text-slate-700">${item.vatPct}%</td>
-                                <td class="py-2.5 px-3 text-right font-bold text-slate-900 whitespace-nowrap">${formatMoney(lineTot, currency, false)}</td>
-                            </tr>
-                        `;
-                    });
-                }
-
-                if (cat2.length > 0) {
-                    rowsHtml += `<tr class="bg-slate-100 font-bold"><td colspan="8" class="py-2 px-3 uppercase text-[10px] text-slate-800 tracking-wider">II. PHÍ DUY TRÌ DỊCH VỤ (THÁNG / QUÝ / NĂM)</td></tr>`;
-                    cat2.forEach(item => {
-                        const lineTot = calculateLineItemTotal(item);
-                        sub2 += lineTot;
-                        const descFormatted = item.desc ? item.desc.replace(/\n/g, '<br>') : '';
-                        const subFormatted = item.subtitle ? `<div class="text-rose-600 italic font-semibold text-[9.5px] mt-0.5">(${item.subtitle})</div>` : '';
-                        rowsHtml += `
-                            <tr class="hover:bg-slate-50/80 border-b border-slate-100">
-                                <td class="py-2.5 px-3 text-center font-bold text-slate-400">${stt2++}</td>
-                                <td class="py-2.5 px-3 text-center font-mono font-bold text-slate-700">${item.code || '---'}</td>
-                                <td class="py-2.5 px-3 font-semibold text-slate-800 leading-snug">${descFormatted}${subFormatted}</td>
-                                <td class="py-2.5 px-3 text-right font-medium text-slate-800 whitespace-nowrap">${formatMoney(item.price, currency, false)}</td>
-                                <td class="py-2.5 px-3 text-center font-bold">${item.qty}</td>
-                                <td class="py-2.5 px-3 text-center text-slate-600">${item.unit || 'Tháng'}</td>
-                                <td class="py-2.5 px-3 text-center font-semibold text-slate-700">${item.vatPct}%</td>
-                                <td class="py-2.5 px-3 text-right font-bold text-slate-900 whitespace-nowrap">${formatMoney(lineTot, currency, false)}</td>
-                            </tr>
-                        `;
-                    });
-                }
-
-                const grandTotal = sub1 + sub2;
-                rowsHtml += `
-                    <tr class="bg-slate-100/90 font-bold border-t-2 border-slate-300">
-                        <td colspan="7" class="py-2.5 px-3 text-right uppercase text-[10.5px] text-slate-700 whitespace-nowrap">TỔNG GIÁ TRỊ THEO BÁO GIÁ (ĐÃ GỒM VAT):</td>
-                        <td class="py-2.5 px-3 text-right font-black text-sm text-slate-900 whitespace-nowrap">${formatMoney(grandTotal, currency, true)}</td>
-                    </tr>
-                `;
-
-                tableWrapper.innerHTML = `
-                    <table class="w-full text-left border-collapse quotation-table text-xs">
-                        <thead>
-                            <tr class="bg-slate-100/80 text-slate-600 text-[10px] font-bold uppercase border-b border-slate-300 text-center">
-                                <th class="py-2 px-3 w-10">STT</th>
-                                <th class="py-2 px-3 w-20">MÃ SP/DV</th>
-                                <th class="py-2 px-3 text-left">MÔ TẢ SẢN PHẨM / DỊCH VỤ</th>
-                                <th class="py-2 px-3 w-24 text-right whitespace-nowrap">ĐƠN GIÁ (${currency})</th>
-                                <th class="py-2 px-3 w-12">SL</th>
-                                <th class="py-2 px-3 w-14">ĐƠN VỊ</th>
-                                <th class="py-2 px-3 w-12">VAT</th>
-                                <th class="py-2 px-3 w-28 text-right whitespace-nowrap">THÀNH TIỀN (${currency})</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            ${rowsHtml}
-                        </tbody>
-                    </table>
-                `;
-            } else {
-                tableWrapper.innerHTML = `
-                    <div class="p-6 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                        <i class="fa-solid fa-file-invoice text-3xl mb-2 text-slate-300 block"></i>
-                        <p class="font-medium text-xs text-slate-600">Hợp đồng này chưa có danh mục sản phẩm từ báo giá tham chiếu.</p>
-                        <p class="text-[11px] text-slate-400 mt-1">Giá trị ghi nhận trên hợp đồng hiện tại là <strong class="text-slate-700">${formatMoney(data.totalValue, 'VND')}</strong>.</p>
-                    </div>
-                `;
-            }
-
-            modal.classList.remove('hidden');
+        function handleCreateAppendixFromViewModal() {
+            if (!currentViewingContract) return;
+            const targetParentId = currentViewingContract.isAppendix ? currentViewingContract.parentContractId : currentViewingContract.id;
+            closeContractViewModal();
+            openNewAppendixModal(targetParentId);
         }
 
         function quickCreateContractFromQuote(quoteId) {
@@ -3759,94 +4255,47 @@
             showToast(`Đã nạp sẵn thông tin từ báo giá ${q.refNo}`, "success");
         }
 
-        function createContractFromActiveQuote() {
-            if (!activeQuote) return;
-            document.getElementById('quote-modal').classList.add('hidden');
-            quickCreateContractFromQuote(activeQuote.id);
+        function quickCreateAppendixFromQuote(quoteId) {
+            const q = quotesData.find(item => item.id === quoteId);
+            if (!q) return;
+
+            // Find an existing contract for this customer
+            const custContracts = contractsData.filter(c => c.customerName === q.customerName);
+            if (custContracts.length === 0) {
+                showToast(`Khách hàng ${q.customerName} chưa có Hợp đồng gốc! Vui lòng tạo Hợp đồng trước.`, "warning");
+                quickCreateContractFromQuote(quoteId);
+                return;
+            }
+
+            const parentCtr = custContracts[0];
+            openNewAppendixModal(parentCtr.id);
+            selectCustomerForContract(q.customerName);
+            document.getElementById('ctr-source-quote-select').value = q.refNo;
+            handleQuoteSelectForContract(q.refNo);
+            showToast(`Đã khởi tạo Phụ lục từ báo giá ${q.refNo}`, "success");
         }
 
-        function openNewContractModal() {
-            document.getElementById('contract-modal-title').innerText = "Tạo Hợp đồng chính mới";
-            document.getElementById('ctr-type').value = "CONTRACT";
-            document.getElementById('ctr-editing-id').value = "";
-            document.getElementById('ctr-editing-is-appendix').value = "false";
-            document.getElementById('parent-contract-wrapper').classList.add('hidden');
-
-            const firstCust = customersData[0] || { cid: "MAMA", companyName: "MAMA BOX CORP" };
-            selectCustomerForContract(firstCust.cid);
-            document.getElementById('ctr-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('ctr-status').value = "Đã ký";
-            document.getElementById('ctr-total-value').value = 5000000;
-            document.getElementById('ctr-notes').value = "";
-            document.getElementById('contract-modal').classList.remove('hidden');
-        }
-
-        function editContract(contractId) {
-            const c = contractsData.find(item => item.id === contractId);
-            if (!c) return;
-            document.getElementById('contract-modal-title').innerText = `Chỉnh sửa Hợp đồng ${c.refNo}`;
-            document.getElementById('ctr-editing-id').value = c.id;
-            document.getElementById('ctr-editing-is-appendix').value = "false";
-            document.getElementById('ctr-type').value = "CONTRACT";
-            document.getElementById('parent-contract-wrapper').classList.add('hidden');
-            document.getElementById('ctr-ref').value = c.refNo;
-            selectCustomerForContract(c.customerName);
-            document.getElementById('ctr-date').value = c.date;
-            document.getElementById('ctr-status').value = c.status;
-            document.getElementById('ctr-total-value').value = c.totalValue;
-            document.getElementById('ctr-notes').value = c.notes || '';
-            document.getElementById('contract-modal').classList.remove('hidden');
-        }
-
-        function editAppendix(parentContractId, appendixId) {
-            const parent = contractsData.find(item => item.id === parentContractId);
-            if (!parent || !parent.appendices) return;
-            const ap = parent.appendices.find(item => item.id === appendixId);
-            if (!ap) return;
-
-            document.getElementById('contract-modal-title').innerText = `Chỉnh sửa Phụ lục ${ap.refNo}`;
-            document.getElementById('ctr-editing-id').value = ap.id;
-            document.getElementById('ctr-editing-is-appendix').value = "true";
-            document.getElementById('ctr-editing-parent-id').value = parentContractId;
-            document.getElementById('ctr-type').value = "APPENDIX";
-            document.getElementById('parent-contract-wrapper').classList.remove('hidden');
-
+        function populateParentContractsForCustomer(customerCid) {
             const parentSel = document.getElementById('ctr-parent-id');
-            parentSel.innerHTML = contractsData.map(c => `<option value="${c.id}">${c.refNo} - ${c.companyName}</option>`).join('');
-            parentSel.value = parentContractId;
+            if (!parentSel) return;
+            const relevant = contractsData.filter(c => c.customerName === customerCid);
 
-            document.getElementById('ctr-ref').value = ap.refNo;
-            selectCustomerForContract(ap.customerName);
-            document.getElementById('ctr-date').value = ap.date;
-            document.getElementById('ctr-status').value = ap.status;
-            document.getElementById('ctr-total-value').value = ap.totalValue;
-            document.getElementById('ctr-notes').value = ap.notes || '';
-            document.getElementById('contract-modal').classList.remove('hidden');
-        }
-
-        function openNewAppendixModal(parentContractId) {
-            openNewContractModal();
-            document.getElementById('ctr-editing-id').value = "";
-            document.getElementById('ctr-editing-is-appendix').value = "true";
-            document.getElementById('ctr-type').value = "APPENDIX";
-            document.getElementById('parent-contract-wrapper').classList.remove('hidden');
-            document.getElementById('contract-modal-title').innerText = "Tạo Phụ lục Hợp đồng mới";
-
-            const parentSel = document.getElementById('ctr-parent-id');
-            parentSel.innerHTML = contractsData.map(c => `<option value="${c.id}">${c.refNo} - ${c.companyName}</option>`).join('');
-            parentSel.value = parentContractId;
-            handleParentContractSelect(parentContractId);
+            if (relevant.length === 0) {
+                parentSel.innerHTML = '<option value="">-- Khách hàng này chưa có Hợp đồng gốc nào --</option>';
+                document.getElementById('ctr-ref').value = `CTR-NEW-${customerCid}-AP01`;
+            } else {
+                parentSel.innerHTML = relevant.map(c => `<option value="${c.id}">${c.refNo} - ${c.companyName} (${formatMoney(c.totalValue, 'VND')})</option>`).join('');
+                document.getElementById('ctr-ref').value = generateNextAppendixRef(relevant[0].refNo);
+            }
         }
 
         function handleContractTypeChange(type) {
             const isAp = type === 'APPENDIX';
             document.getElementById('parent-contract-wrapper').classList.toggle('hidden', !isAp);
+            const cid = document.getElementById('ctr-customer-select').value;
             if (isAp) {
-                const parentSel = document.getElementById('ctr-parent-id');
-                parentSel.innerHTML = contractsData.map(c => `<option value="${c.id}">${c.refNo} - ${c.companyName}</option>`).join('');
-                if (contractsData.length > 0) handleParentContractSelect(contractsData[0].id);
+                populateParentContractsForCustomer(cid);
             } else {
-                const cid = document.getElementById('ctr-customer-select').value;
                 document.getElementById('ctr-ref').value = generateNextContractRef(cid);
             }
         }
@@ -3858,34 +4307,213 @@
             selectCustomerForContract(parent.customerName);
         }
 
-        function closeContractModal() { document.getElementById('contract-modal').classList.add('hidden'); }
+        function selectCustomerForContract(cid) {
+            document.getElementById('ctr-cust-autocomplete-list')?.classList.add('hidden');
+            const c = customersData.find(item => item.cid === cid);
+            if (!c) return;
+            document.getElementById('ctr-cust-search-input').value = `[${c.cid}] ${c.companyName}`;
+            document.getElementById('ctr-customer-select').value = c.cid;
+            const type = document.getElementById('ctr-type').value;
+
+            if (type === 'CONTRACT') {
+                document.getElementById('ctr-ref').value = generateNextContractRef(c.cid);
+            } else {
+                // Populate parent contracts specifically for this customer
+                populateParentContractsForCustomer(c.cid);
+            }
+
+            // Populate Quote Select for this customer
+            const quoteSel = document.getElementById('ctr-source-quote-select');
+            const custQuotes = quotesData.filter(q => q.customerName === c.cid);
+            quoteSel.innerHTML = '<option value="">-- Chọn báo giá liên kết --</option>' + custQuotes.map(q => `<option value="${q.refNo}">${q.refNo} (${formatMoney(calculateQuoteGrandTotal(q), q.currency)})</option>`).join('');
+        }
+
+        function searchCustomerForContract(val) {
+            const list = document.getElementById('ctr-cust-autocomplete-list');
+            if (!list) return;
+            const q = (val || '').trim().toLowerCase();
+            if (!q) { list.classList.add('hidden'); return; }
+            const matches = customersData.filter(c => c.cid.toLowerCase().includes(q) || c.companyName.toLowerCase().includes(q) || (c.contactPerson || '').toLowerCase().includes(q));
+            if (matches.length === 0) {
+                list.innerHTML = '<div class="p-2 text-slate-400 text-xs">Không tìm thấy khách hàng</div>';
+                list.classList.remove('hidden');
+                return;
+            }
+            list.innerHTML = matches.map(c => `
+                <div onclick="selectCustomerForContract('${c.cid}')" class="p-2 hover:bg-slate-100 cursor-pointer flex justify-between items-center text-xs">
+                    <div>
+                        <span class="font-bold text-teal-700 font-mono">[${c.cid}]</span>
+                        <span class="font-semibold text-slate-800 ml-1">${c.companyName}</span>
+                    </div>
+                    <span class="text-slate-400 text-[10px]">${c.phone || ''}</span>
+                </div>
+            `).join('');
+            list.classList.remove('hidden');
+        }
+
+        function handleQuoteSelectForContract(quoteRef) {
+            const quote = quotesData.find(q => q.refNo === quoteRef);
+            if (!quote) return;
+            const hiddenRef = document.getElementById('ctr-source-quote-ref');
+            if (hiddenRef) hiddenRef.value = quote.refNo;
+            const totalValInput = document.getElementById('ctr-total-value');
+            if (totalValInput) {
+                const total = calculateQuoteGrandTotal(quote);
+                const valVnd = quote.currency === 'USD' ? Math.round(total * EXCHANGE_RATE_USD_VND) : Math.round(total);
+                totalValInput.value = valVnd;
+            }
+        }
+
+        function searchCustomerForQuote(val) {
+            const list = document.getElementById('quote-cust-autocomplete-list');
+            if (!list) return;
+            const q = (val || '').trim().toLowerCase();
+            if (!q) { list.classList.add('hidden'); return; }
+            const matches = customersData.filter(c => c.cid.toLowerCase().includes(q) || c.companyName.toLowerCase().includes(q) || (c.contactPerson || '').toLowerCase().includes(q));
+            if (matches.length === 0) {
+                list.innerHTML = '<div class="p-2 text-slate-400 text-xs">Không tìm thấy khách hàng</div>';
+                list.classList.remove('hidden');
+                return;
+            }
+            list.innerHTML = matches.map(c => `
+                <div onclick="selectCustomerForQuote('${c.cid}')" class="p-2 hover:bg-slate-100 cursor-pointer flex justify-between items-center text-xs">
+                    <div>
+                        <span class="font-bold text-teal-700 font-mono">[${c.cid}]</span>
+                        <span class="font-semibold text-slate-800 ml-1">${c.companyName}</span>
+                    </div>
+                    <span class="text-slate-400 text-[10px]">${c.phone || ''}</span>
+                </div>
+            `).join('');
+            list.classList.remove('hidden');
+        }
+
+        function selectCustomerForQuote(cid) {
+            const list = document.getElementById('quote-cust-autocomplete-list');
+            if (list) list.classList.add('hidden');
+            const c = customersData.find(item => item.cid === cid);
+            if (!c) return;
+            const input = document.getElementById('quote-cust-search-input');
+            if (input) input.value = `[${c.cid}] ${c.companyName}`;
+            const selHidden = document.getElementById('form-customer-select');
+            if (selHidden) selHidden.value = c.cid;
+
+            if (activeQuote) {
+                activeQuote.customerName = c.cid;
+                activeQuote.companyName = c.companyName;
+                activeQuote.recipientPerson = c.contactPerson || '';
+                activeQuote.address = c.address || '';
+                activeQuote.email = c.email || '';
+                activeQuote.mobile = c.phone || '';
+
+                const isNew = !quotesData.some(q => q.id === activeQuote.id && q.status === 'OFFICIAL');
+                if (isNew) {
+                    activeQuote.refNo = generateNextQuoteRef(c.cid);
+                    const refEl = document.getElementById('form-quote-ref');
+                    if (refEl) refEl.value = activeQuote.refNo;
+                }
+            }
+            populateModalFormFields();
+            updateQuotationPreview();
+        }
+
+        function openNewContractModal() {
+            document.getElementById('ctr-editing-id').value = '';
+            document.getElementById('ctr-editing-is-appendix').value = 'false';
+            document.getElementById('ctr-editing-parent-id').value = '';
+            document.getElementById('ctr-type').value = 'CONTRACT';
+            document.getElementById('contract-modal-title').innerText = 'Tạo Hợp đồng chính mới';
+            document.getElementById('parent-contract-wrapper').classList.add('hidden');
+            
+            const firstCust = customersData[0] || { cid: 'MAMA', companyName: 'MAMA BOX CORP' };
+            selectCustomerForContract(firstCust.cid);
+            document.getElementById('ctr-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('ctr-status').value = 'Đã ký';
+            document.getElementById('ctr-total-value').value = 5000000;
+            document.getElementById('ctr-notes').value = '';
+            document.getElementById('contract-modal')?.classList.remove('hidden');
+        }
+
+        function closeContractModal() {
+            document.getElementById('contract-modal')?.classList.add('hidden');
+        }
+
+        function editContract(contractId) {
+            const c = contractsData.find(item => item.id === contractId);
+            if (!c) return;
+            document.getElementById('ctr-editing-id').value = c.id;
+            document.getElementById('ctr-editing-is-appendix').value = 'false';
+            document.getElementById('ctr-type').value = 'CONTRACT';
+            document.getElementById('contract-modal-title').innerText = `Chỉnh sửa Hợp đồng: ${c.refNo}`;
+            document.getElementById('parent-contract-wrapper').classList.add('hidden');
+            
+            selectCustomerForContract(c.customerName);
+            document.getElementById('ctr-ref').value = c.refNo;
+            document.getElementById('ctr-date').value = c.date;
+            document.getElementById('ctr-status').value = c.status;
+            document.getElementById('ctr-total-value').value = c.totalValue;
+            document.getElementById('ctr-notes').value = c.notes || '';
+            if (c.sourceQuoteRef) {
+                document.getElementById('ctr-source-quote-select').value = c.sourceQuoteRef;
+            }
+            document.getElementById('contract-modal')?.classList.remove('hidden');
+        }
+
+        function editAppendix(contractId, appendixId) {
+            const parent = contractsData.find(c => c.id === contractId);
+            if (!parent || !parent.appendices) return;
+            const ap = parent.appendices.find(a => a.id === appendixId);
+            if (!ap) return;
+            document.getElementById('ctr-editing-id').value = ap.id;
+            document.getElementById('ctr-editing-is-appendix').value = 'true';
+            document.getElementById('ctr-editing-parent-id').value = contractId;
+            document.getElementById('ctr-type').value = 'APPENDIX';
+            document.getElementById('contract-modal-title').innerText = `Chỉnh sửa Phụ lục: ${ap.refNo}`;
+            document.getElementById('parent-contract-wrapper').classList.remove('hidden');
+            
+            selectCustomerForContract(ap.customerName || parent.customerName);
+            populateParentContractsForCustomer(ap.customerName || parent.customerName);
+            document.getElementById('ctr-parent-id').value = contractId;
+            document.getElementById('ctr-ref').value = ap.refNo;
+            document.getElementById('ctr-date').value = ap.date;
+            document.getElementById('ctr-status').value = ap.status;
+            document.getElementById('ctr-total-value').value = ap.totalValue;
+            document.getElementById('ctr-notes').value = ap.notes || '';
+            document.getElementById('contract-modal')?.classList.remove('hidden');
+        }
 
         function handleSaveContract(e) {
             e.preventDefault();
             const editingId = document.getElementById('ctr-editing-id').value;
-            const isAppendix = document.getElementById('ctr-editing-is-appendix').value === "true";
-            const type = document.getElementById('ctr-type').value;
+            const isAppendix = document.getElementById('ctr-editing-is-appendix').value === 'true' || document.getElementById('ctr-type').value === 'APPENDIX';
+            const parentId = document.getElementById('ctr-parent-id').value;
             const refNo = document.getElementById('ctr-ref').value;
-            const cid = document.getElementById('ctr-customer-select').value;
-            const cust = customersData.find(c => c.cid === cid);
+            const customerCid = document.getElementById('ctr-customer-select').value;
+            const customer = customersData.find(c => c.cid === customerCid);
+            const companyName = customer ? customer.companyName : customerCid;
             const date = document.getElementById('ctr-date').value;
             const status = document.getElementById('ctr-status').value;
             const totalValue = Number(document.getElementById('ctr-total-value').value) || 0;
-            const sourceQuoteRef = document.getElementById('ctr-source-quote-ref').value;
+            const sourceQuoteRef = document.getElementById('ctr-source-quote-select').value;
             const notes = document.getElementById('ctr-notes').value;
+            const salesName = currentUser ? currentUser.name : 'Lê Nguyễn Ngọc Ngân';
+            const salesUserId = currentUser ? currentUser.id : 'usr_1';
+            const deptId = currentUser ? currentUser.deptId : 'dept_1';
 
             if (editingId) {
                 if (isAppendix) {
-                    const parentId = document.getElementById('ctr-editing-parent-id').value;
-                    const parent = contractsData.find(c => c.id === parentId);
-                    if (parent && parent.appendices) {
-                        const ap = parent.appendices.find(a => a.id === editingId);
-                        if (ap) {
-                            ap.date = date;
-                            ap.status = status;
-                            ap.totalValue = totalValue;
-                            ap.notes = notes;
-                            logSysActivity("Phụ lục", "Chỉnh sửa", `Cập nhật phụ lục ${ap.refNo}`);
+                    for (let c of contractsData) {
+                        if (c.appendices) {
+                            const ap = c.appendices.find(a => a.id === editingId);
+                            if (ap) {
+                                ap.date = date;
+                                ap.status = status;
+                                ap.totalValue = totalValue;
+                                ap.notes = notes;
+                                ap.sourceQuoteRef = sourceQuoteRef;
+                                logSysActivity('Phụ lục', 'Chỉnh sửa', `Cập nhật phụ lục ${ap.refNo}`);
+                                showToast(`Đã cập nhật phụ lục ${ap.refNo}`, 'success');
+                                break;
+                            }
                         }
                     }
                 } else {
@@ -3895,54 +4523,55 @@
                         c.status = status;
                         c.totalValue = totalValue;
                         c.notes = notes;
-                        logSysActivity("Hợp đồng", "Chỉnh sửa", `Cập nhật hợp đồng ${c.refNo}`);
+                        c.sourceQuoteRef = sourceQuoteRef;
+                        logSysActivity('Hợp đồng', 'Chỉnh sửa', `Cập nhật hợp đồng ${c.refNo}`);
+                        showToast(`Đã cập nhật hợp đồng ${c.refNo}`, 'success');
                     }
                 }
-                showToast(`Đã lưu thay đổi ${refNo}!`, "success");
             } else {
-                if (type === 'CONTRACT') {
-                    const newCtr = {
-                        id: 'ctr_' + Date.now(),
-                        refNo: refNo,
-                        customerName: cid,
-                        companyName: cust ? cust.companyName : cid,
-                        date: date,
-                        salesName: currentUser ? currentUser.name : "Sales",
-                        salesUserId: currentUser ? currentUser.id : "usr_1",
-                        deptId: currentUser ? currentUser.deptId : "dept_1",
-                        sourceQuoteRef: sourceQuoteRef,
-                        totalValue: totalValue,
-                        status: status,
-                        notes: notes,
-                        appendices: []
-                    };
-                    contractsData.unshift(newCtr);
-                    logSysActivity("Hợp đồng", "Tạo mới", `Tạo hợp đồng chính ${refNo} (${formatMoney(totalValue, 'VND')})`);
-                } else {
-                    const parentId = document.getElementById('ctr-parent-id').value;
-                    const parent = contractsData.find(c => c.id === parentId);
+                if (isAppendix) {
+                    const parent = contractsData.find(item => item.id === parentId);
                     if (parent) {
                         parent.appendices = parent.appendices || [];
                         const newAp = {
                             id: 'ap_' + Date.now(),
                             refNo: refNo,
                             parentContractId: parentId,
-                            customerName: cid,
-                            companyName: cust ? cust.companyName : cid,
+                            customerName: customerCid,
+                            companyName: companyName,
                             date: date,
-                            salesName: currentUser ? currentUser.name : "Sales",
-                            salesUserId: currentUser ? currentUser.id : "usr_1",
-                            deptId: currentUser ? currentUser.deptId : "dept_1",
+                            salesName: salesName,
+                            salesUserId: salesUserId,
+                            deptId: deptId,
                             sourceQuoteRef: sourceQuoteRef,
                             totalValue: totalValue,
                             status: status,
                             notes: notes
                         };
                         parent.appendices.unshift(newAp);
-                        logSysActivity("Phụ lục", "Tạo mới", `Tạo phụ lục ${refNo} thuộc HĐ ${parent.refNo}`);
+                        logSysActivity('Phụ lục', 'Tạo mới', `Tạo mới phụ lục ${newAp.refNo}`);
+                        showToast(`Đã lưu phụ lục mới: ${newAp.refNo}`, 'success');
                     }
+                } else {
+                    const newContract = {
+                        id: 'ctr_' + Date.now(),
+                        refNo: refNo,
+                        customerName: customerCid,
+                        companyName: companyName,
+                        date: date,
+                        salesName: salesName,
+                        salesUserId: salesUserId,
+                        deptId: deptId,
+                        sourceQuoteRef: sourceQuoteRef,
+                        totalValue: totalValue,
+                        status: status,
+                        notes: notes,
+                        appendices: []
+                    };
+                    contractsData.unshift(newContract);
+                    logSysActivity('Hợp đồng', 'Tạo mới', `Tạo mới hợp đồng ${newContract.refNo}`);
+                    showToast(`Đã lưu hợp đồng mới: ${newContract.refNo}`, 'success');
                 }
-                showToast(`Đã lưu ${refNo}!`, "success");
             }
 
             closeContractModal();
@@ -3950,127 +4579,87 @@
             updateBadges();
         }
 
-        function searchCustomerForQuote(q) {
-            const list = document.getElementById('quote-cust-autocomplete-list');
-            if (!list) return;
-            const query = (q || '').toLowerCase().trim();
-            const matches = customersData.filter(c => c.cid.toLowerCase().includes(query) || c.companyName.toLowerCase().includes(query));
-            if (matches.length === 0) { list.classList.add('hidden'); return; }
-            list.innerHTML = matches.map(c => `
-                <div onclick="selectCustomerForQuote('${c.cid}')" class="p-2 hover:bg-slate-50 cursor-pointer">
-                    <strong class="text-teal-700 font-mono">[${c.cid}]</strong> ${c.companyName}
-                </div>
-            `).join('');
-            list.classList.remove('hidden');
+        function createContractFromActiveQuote() {
+            if (!activeQuote) return;
+            document.getElementById('quote-modal')?.classList.add('hidden');
+            openNewContractModal();
+            selectCustomerForContract(activeQuote.customerName);
+            document.getElementById('ctr-source-quote-select').value = activeQuote.refNo;
+            handleQuoteSelectForContract(activeQuote.refNo);
+            showToast(`Đã chuyển thông tin từ báo giá ${activeQuote.refNo}`, 'success');
         }
 
-        function selectCustomerForQuote(cid) {
-            document.getElementById('quote-cust-autocomplete-list')?.classList.add('hidden');
-            const c = customersData.find(item => item.cid === cid);
-            if (!c || !activeQuote) return;
-            activeQuote.customerName = c.cid;
-            activeQuote.companyName = c.companyName;
-            activeQuote.recipientPerson = c.contactPerson || '';
-            activeQuote.address = c.address || '';
-            activeQuote.email = c.email || '';
-            activeQuote.mobile = c.phone || '';
-            activeQuote.refNo = generateNextQuoteRef(c.cid);
-            populateModalFormFields();
-            updateQuotationPreview();
-        }
+        function openNewAppendixModal(parentContractId) {
+            openNewContractModal();
+            document.getElementById('ctr-editing-id').value = "";
+            document.getElementById('ctr-editing-is-appendix').value = "true";
+            document.getElementById('ctr-type').value = "APPENDIX";
+            document.getElementById('parent-contract-wrapper').classList.remove('hidden');
+            document.getElementById('contract-modal-title').innerText = "Tạo Phụ lục Hợp đồng mới";
 
-        function searchCustomerForContract(q) {
-            const list = document.getElementById('ctr-cust-autocomplete-list');
-            if (!list) return;
-            const query = (q || '').toLowerCase().trim();
-            const matches = customersData.filter(c => c.cid.toLowerCase().includes(query) || c.companyName.toLowerCase().includes(query));
-            if (matches.length === 0) { list.classList.add('hidden'); return; }
-            list.innerHTML = matches.map(c => `
-                <div onclick="selectCustomerForContract('${c.cid}')" class="p-2 hover:bg-slate-50 cursor-pointer">
-                    <strong class="text-emerald-700 font-mono">[${c.cid}]</strong> ${c.companyName}
-                </div>
-            `).join('');
-            list.classList.remove('hidden');
-        }
-
-        function selectCustomerForContract(cid) {
-            document.getElementById('ctr-cust-autocomplete-list')?.classList.add('hidden');
-            const c = customersData.find(item => item.cid === cid);
-            if (!c) return;
-            document.getElementById('ctr-cust-search-input').value = `[${c.cid}] ${c.companyName}`;
-            document.getElementById('ctr-customer-select').value = c.cid;
-            const type = document.getElementById('ctr-type').value;
-            if (type === 'CONTRACT') {
-                document.getElementById('ctr-ref').value = generateNextContractRef(c.cid);
-            }
-
-            // Populate Quote Select for this customer
-            const quoteSel = document.getElementById('ctr-source-quote-select');
-            const custQuotes = quotesData.filter(q => q.customerName === c.cid);
-            quoteSel.innerHTML = '<option value="">-- Chọn báo giá liên kết --</option>' + custQuotes.map(q => `<option value="${q.refNo}">${q.refNo} (${formatMoney(calculateQuoteGrandTotal(q), q.currency)})</option>`).join('');
-        }
-
-        function handleQuoteSelectForContract(ref) {
-            document.getElementById('ctr-source-quote-ref').value = ref || '';
-            if (ref) {
-                const q = quotesData.find(item => item.refNo === ref);
-                if (q) {
-                    document.getElementById('ctr-total-value').value = calculateQuoteGrandTotal(q);
-                    showToast(`Đã áp dụng giá trị từ ${ref}`, "info");
-                }
+            const parent = contractsData.find(c => c.id === parentContractId);
+            if (parent) {
+                selectCustomerForContract(parent.customerName);
+                populateParentContractsForCustomer(parent.customerName);
+                document.getElementById('ctr-parent-id').value = parentContractId;
+                document.getElementById('ctr-ref').value = generateNextAppendixRef(parent.refNo);
             }
         }
 
         function renderCustomersTable() {
             const tbody = document.getElementById('customers-table-body');
             if (!tbody) return;
-            const search = (document.getElementById('customer-filter-search')?.value || '').toLowerCase().trim();
-            const filtered = customersData.filter(c => !search || c.cid.toLowerCase().includes(search) || c.companyName.toLowerCase().includes(search) || c.phone.includes(search));
+            const searchVal = (document.getElementById('customer-filter-search')?.value || '').toLowerCase().trim();
 
-            const statusBadges = {
-                "Đang giao dịch": "bg-emerald-100 text-emerald-800 border-emerald-200",
-                "Tiềm năng": "bg-amber-100 text-amber-800 border-amber-200",
-                "Mới": "bg-blue-100 text-blue-800 border-blue-200",
-                "Ngừng hợp tác": "bg-slate-100 text-slate-700 border-slate-200"
+            const filtered = customersData.filter(c => {
+                if (!searchVal) return true;
+                return (c.cid || '').toLowerCase().includes(searchVal) ||
+                       (c.companyName || '').toLowerCase().includes(searchVal) ||
+                       (c.contactPerson || '').toLowerCase().includes(searchVal) ||
+                       (c.phone || '').toLowerCase().includes(searchVal) ||
+                       (c.email || '').toLowerCase().includes(searchVal);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 italic">Không tìm thấy khách hàng nào phù hợp.</td></tr>';
+                return;
+            }
+
+            const statusBadgeStyles = {
+                'Đang giao dịch': 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                'Tiềm năng': 'bg-amber-100 text-amber-800 border-amber-200',
+                'Mới': 'bg-blue-100 text-blue-800 border-blue-200',
+                'Ngừng hợp tác': 'bg-slate-100 text-slate-700 border-slate-200'
             };
 
             tbody.innerHTML = filtered.map(c => {
                 const isExpanded = expandedCustomerIds.has(c.id);
                 const currentTab = customerDrawerActiveTab[c.id] || 'quotes';
-
                 const custQuotes = quotesData.filter(q => q.customerName === c.cid);
                 const custContracts = contractsData.filter(ct => ct.customerName === c.cid);
 
-                let mainRow = `
-                    <tr class="hover:bg-slate-50/80 border-b border-slate-100 transition-all ${isExpanded ? 'bg-slate-50/50' : 'bg-white'}">
-                        <td class="py-3 px-4 font-mono font-bold text-teal-700 text-xs cursor-pointer hover:underline" onclick="toggleCustomerDrawer('${c.id}')">${c.cid}</td>
-                        <td class="py-3 px-4 font-bold text-slate-800 text-xs cursor-pointer hover:text-brand-orange transition-all" onclick="toggleCustomerDrawer('${c.id}')">${c.companyName}</td>
-                        <td class="py-3 px-4 text-slate-700 text-xs">${c.contactPerson || '---'}</td>
-                        <td class="py-3 px-4 text-xs text-slate-600 space-y-0.5">
-                            <div class="flex items-center gap-1.5">
-                                <i class="fa-solid fa-phone text-slate-400 text-[10px]"></i>
-                                <span>${c.phone || '---'}</span>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <i class="fa-solid fa-envelope text-slate-400 text-[10px]"></i>
-                                <span>${c.email || '---'}</span>
-                            </div>
+                let rowHtml = `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100 transition-all ${isExpanded ? 'bg-slate-50/60' : 'bg-white'}">
+                        <td class="py-3.5 px-4 font-mono font-bold text-teal-700 cursor-pointer hover:underline" onclick="toggleCustomerDrawer('${c.id}')" title="Nhấn để xem chi tiết">${c.cid}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-800 cursor-pointer hover:text-teal-700" onclick="toggleCustomerDrawer('${c.id}')">${c.companyName}</td>
+                        <td class="py-3.5 px-4 text-slate-700 font-medium">${c.contactPerson || '---'}</td>
+                        <td class="py-3.5 px-4 text-slate-600 text-xs">
+                            <div class="flex items-center gap-1.5"><i class="fa-solid fa-phone text-slate-400 text-[10px]"></i><span>${c.phone || '---'}</span></div>
+                            <div class="flex items-center gap-1.5 mt-0.5"><i class="fa-solid fa-envelope text-slate-400 text-[10px]"></i><span>${c.email || '---'}</span></div>
                         </td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="px-3 py-1 rounded-full text-[11px] font-semibold border ${statusBadges[c.status] || 'bg-slate-100 text-slate-700 border-slate-200'}">
-                                ${c.status}
-                            </span>
+                        <td class="py-3.5 px-4 text-center">
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold border ${statusBadgeStyles[c.status] || 'bg-slate-100 text-slate-700'}">${c.status || 'Mới'}</span>
                         </td>
-                        <td class="py-3 px-4 text-center">
+                        <td class="py-3.5 px-4 text-center">
                             <div class="inline-flex items-center gap-2 text-slate-600">
-                                <button onclick="toggleCustomerDrawer('${c.id}')" data-tooltip="Xem chi tiết 3 Tab" class="p-1 hover:text-teal-600 text-slate-600 transition-all">
-                                    <i class="fa-solid fa-address-card text-sm"></i>
+                                <button onclick="toggleCustomerDrawer('${c.id}')" data-tooltip="Xem chi tiết (3 Tab)" class="p-1 hover:text-teal-700 transition-all">
+                                    <i class="fa-solid fa-id-card text-sm"></i>
                                 </button>
-                                <button onclick="editCustomer('${c.id}')" data-tooltip="Sửa thông tin KH" class="p-1 hover:text-brand-orange text-slate-600 transition-all">
-                                    <i class="fa-solid fa-pen-to-square text-sm"></i>
+                                <button onclick="editCustomer('${c.id}')" data-tooltip="Sửa thông tin khách hàng" class="p-1 hover:text-amber-600 transition-all">
+                                    <i class="fa-regular fa-pen-to-square text-sm"></i>
                                 </button>
-                                <button onclick="createQuoteForCustomer('${c.cid}')" data-tooltip="Tạo báo giá cho KH" class="p-1 hover:text-blue-600 text-slate-600 transition-all">
-                                    <i class="fa-solid fa-file-invoice text-sm"></i>
+                                <button onclick="createQuoteForCustomer('${c.cid}')" data-tooltip="Tạo báo giá cho khách này" class="p-1 hover:text-brand-orange transition-all">
+                                    <i class="fa-solid fa-file-circle-plus text-sm"></i>
                                 </button>
                             </div>
                         </td>
@@ -4081,38 +4670,11 @@
                     let tabContentHtml = '';
 
                     if (currentTab === 'quotes') {
-                        let quoteRows = '';
-                        if (custQuotes.length === 0) {
-                            quoteRows = `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic text-xs">Chưa có báo giá nào cho khách hàng này.</td></tr>`;
-                        } else {
-                            quoteRows = custQuotes.map(q => {
-                                const total = calculateQuoteGrandTotal(q);
-                                return `
-                                    <tr class="hover:bg-slate-50 border-b border-slate-100 transition-all text-xs">
-                                        <td class="py-2.5 px-4 font-bold text-brand-orange font-mono">${q.refNo}</td>
-                                        <td class="py-2.5 px-4 text-slate-600 font-mono">${q.date}</td>
-                                        <td class="py-2.5 px-4 text-slate-700">${q.salesName}</td>
-                                        <td class="py-2.5 px-4 text-right font-bold text-slate-900">${formatMoney(total, q.currency)}</td>
-                                        <td class="py-2.5 px-4 text-center">
-                                            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold ${q.status === 'OFFICIAL' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                                                ${q.status}
-                                            </span>
-                                        </td>
-                                        <td class="py-2.5 px-4 text-center">
-                                            <button onclick="viewQuote('${q.id}')" data-tooltip="Xem báo giá" class="p-1 hover:text-indigo-600 text-slate-600">
-                                                <i class="fa-regular fa-eye text-sm"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `;
-                            }).join('');
-                        }
-
                         tabContentHtml = `
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse text-xs">
+                            <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <table class="w-full text-left text-xs border-collapse">
                                     <thead>
-                                        <tr class="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] border-b border-slate-200">
+                                        <tr class="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] border-b">
                                             <th class="py-2.5 px-4">SỐ BÁO GIÁ</th>
                                             <th class="py-2.5 px-4">NGÀY TẠO</th>
                                             <th class="py-2.5 px-4">NHÂN VIÊN</th>
@@ -4122,39 +4684,28 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
-                                        ${quoteRows}
+                                        ${custQuotes.length === 0 ? `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic">Chưa có báo giá nào cho khách hàng này.</td></tr>` : custQuotes.map(q => `
+                                            <tr class="hover:bg-slate-50">
+                                                <td class="py-2 px-4 font-bold text-brand-orange font-mono cursor-pointer hover:underline" onclick="viewQuote('${q.id}')">${q.refNo}</td>
+                                                <td class="py-2 px-4 text-slate-600 font-mono">${q.date}</td>
+                                                <td class="py-2 px-4 font-medium text-slate-800">${q.salesName}</td>
+                                                <td class="py-2 px-4 text-right font-bold text-slate-900 whitespace-nowrap">${formatMoney(calculateQuoteGrandTotal(q), q.currency)}</td>
+                                                <td class="py-2 px-4 text-center"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${q.status === 'OFFICIAL' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${q.status}</span></td>
+                                                <td class="py-2 px-4 text-center">
+                                                    <button onclick="viewQuote('${q.id}')" data-tooltip="Xem báo giá" class="p-1 hover:text-indigo-600"><i class="fa-solid fa-eye text-xs"></i></button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
                                     </tbody>
                                 </table>
                             </div>
                         `;
                     } else if (currentTab === 'contracts') {
-                        let contractRows = '';
-                        if (custContracts.length === 0) {
-                            contractRows = `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic text-xs">Chưa có hợp đồng nào cho khách hàng này.</td></tr>`;
-                        } else {
-                            contractRows = custContracts.map(ct => `
-                                <tr class="hover:bg-slate-50 border-b border-slate-100 transition-all text-xs">
-                                    <td class="py-2.5 px-4 font-bold text-emerald-700 font-mono">${ct.refNo}</td>
-                                    <td class="py-2.5 px-4 text-slate-600 font-mono">${ct.date}</td>
-                                    <td class="py-2.5 px-4 text-slate-700">${ct.salesName}</td>
-                                    <td class="py-2.5 px-4 text-right font-bold text-slate-900">${formatMoney(ct.totalValue, 'VND')}</td>
-                                    <td class="py-2.5 px-4 text-center">
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${ct.status}</span>
-                                    </td>
-                                    <td class="py-2.5 px-4 text-center">
-                                        <button onclick="viewContractDetailsModal('${ct.id}')" data-tooltip="Xem hợp đồng" class="p-1 hover:text-emerald-700 text-slate-600">
-                                            <i class="fa-regular fa-eye text-sm"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            `).join('');
-                        }
-
                         tabContentHtml = `
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse text-xs">
+                            <div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <table class="w-full text-left text-xs border-collapse">
                                     <thead>
-                                        <tr class="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] border-b border-slate-200">
+                                        <tr class="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] border-b">
                                             <th class="py-2.5 px-4">SỐ HỢP ĐỒNG / PHỤ LỤC</th>
                                             <th class="py-2.5 px-4">NGÀY KÝ</th>
                                             <th class="py-2.5 px-4">NHÂN VIÊN</th>
@@ -4164,45 +4715,51 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
-                                        ${contractRows}
+                                        ${custContracts.length === 0 ? `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic">Chưa có hợp đồng nào cho khách hàng này.</td></tr>` : custContracts.map(ct => `
+                                            <tr class="hover:bg-slate-50">
+                                                <td class="py-2 px-4 font-bold text-emerald-700 font-mono cursor-pointer hover:underline" onclick="viewContractDetailsModal('${ct.id}')">${ct.refNo}</td>
+                                                <td class="py-2 px-4 text-slate-600 font-mono">${ct.date}</td>
+                                                <td class="py-2 px-4 font-medium text-slate-800">${ct.salesName}</td>
+                                                <td class="py-2 px-4 text-right font-bold text-slate-900 whitespace-nowrap">${formatMoney(ct.totalValue, 'VND')}</td>
+                                                <td class="py-2 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${ct.status}</span></td>
+                                                <td class="py-2 px-4 text-center">
+                                                    <button onclick="viewContractDetailsModal('${ct.id}')" data-tooltip="Xem hợp đồng" class="p-1 hover:text-emerald-700"><i class="fa-solid fa-eye text-xs"></i></button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
                                     </tbody>
                                 </table>
                             </div>
                         `;
                     } else if (currentTab === 'notes') {
                         tabContentHtml = `
-                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
-                                <div class="font-bold text-slate-700 flex items-center justify-between">
-                                    <span>Ghi chú & Lịch sử chăm sóc khách hàng</span>
-                                    <button onclick="saveCustomerInlineNotes('${c.id}')" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded text-xs font-semibold">Lưu ghi chú</button>
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-xs text-slate-700 uppercase flex items-center gap-1.5"><i class="fa-solid fa-note-sticky text-amber-500"></i> Ghi chú khách hàng & thói quen giao dịch:</span>
+                                    <button onclick="saveCustomerInlineNotes('${c.id}')" class="px-3 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded text-xs font-bold transition-all shadow-sm">Lưu ghi chú</button>
                                 </div>
-                                <textarea id="cust-inline-notes-${c.id}" rows="3" class="w-full p-2 border border-slate-300 rounded-lg text-xs outline-none bg-white">${c.notes || ''}</textarea>
+                                <textarea id="cust-inline-notes-${c.id}" rows="3" class="w-full p-2.5 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-teal-500" placeholder="Nhập ghi chú...">${c.notes || ''}</textarea>
                             </div>
                         `;
                     }
 
-                    mainRow += `
-                        <tr class="bg-teal-50/20 border-b border-slate-200">
-                            <td colspan="6" class="p-4 px-8">
-                                <div class="bg-white rounded-2xl border border-teal-200/90 p-5 shadow-sm space-y-4">
-                                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
-                                        <div class="flex items-center gap-2">
-                                            <button onclick="switchCustomerDrawerTab('${c.id}', 'quotes')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${currentTab === 'quotes' ? 'bg-teal-700 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">
-                                                <i class="fa-solid fa-file-invoice"></i>
-                                                <span>Báo giá (${custQuotes.length})</span>
+                    rowHtml += `
+                        <tr class="bg-slate-50 border-b border-slate-200">
+                            <td colspan="6" class="p-4 pl-10">
+                                <div class="bg-slate-100/80 p-4 rounded-2xl border border-teal-200/80 shadow-sm space-y-3">
+                                    <div class="flex items-center justify-between border-b border-slate-200 pb-2 flex-wrap gap-2">
+                                        <div class="flex gap-2 flex-wrap">
+                                            <button onclick="switchCustomerDrawerTab('${c.id}', 'quotes')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${currentTab === 'quotes' ? 'bg-teal-600 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-200'}">
+                                                <i class="fa-solid fa-file-invoice mr-1"></i> Báo giá (${custQuotes.length})
                                             </button>
-                                            <button onclick="switchCustomerDrawerTab('${c.id}', 'contracts')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${currentTab === 'contracts' ? 'bg-teal-700 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">
-                                                <i class="fa-solid fa-file-contract"></i>
-                                                <span>Hợp đồng & Phụ lục (${custContracts.length})</span>
+                                            <button onclick="switchCustomerDrawerTab('${c.id}', 'contracts')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${currentTab === 'contracts' ? 'bg-teal-600 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-200'}">
+                                                <i class="fa-solid fa-file-contract mr-1"></i> Hợp đồng & Phụ lục (${custContracts.length})
                                             </button>
-                                            <button onclick="switchCustomerDrawerTab('${c.id}', 'notes')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${currentTab === 'notes' ? 'bg-teal-700 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">
-                                                <i class="fa-solid fa-note-sticky"></i>
-                                                <span>Ghi chú & Lịch sử</span>
+                                            <button onclick="switchCustomerDrawerTab('${c.id}', 'notes')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${currentTab === 'notes' ? 'bg-teal-600 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-200'}">
+                                                <i class="fa-solid fa-note-sticky mr-1"></i> Ghi chú & Lịch sử
                                             </button>
                                         </div>
-                                        <div class="text-xs text-slate-500 font-medium">
-                                            <span>Khách hàng:</span> <strong class="text-slate-900">${c.companyName}</strong>
-                                        </div>
+                                        <div class="text-xs text-slate-500 font-medium">Khách hàng: <strong class="text-teal-900">${c.companyName}</strong></div>
                                     </div>
                                     <div>
                                         ${tabContentHtml}
@@ -4213,7 +4770,7 @@
                     `;
                 }
 
-                return mainRow;
+                return rowHtml;
             }).join('');
         }
 
@@ -4333,12 +4890,27 @@
             const paper = document.getElementById('printable-quotation-area');
             if (container && paper) {
                 container.innerHTML = '';
-                container.appendChild(paper.cloneNode(true));
+                const clone = paper.cloneNode(true);
+                clone.id = 'preview-modal-cloned-paper';
+                container.appendChild(clone);
             }
             document.getElementById('print-preview-modal').classList.remove('hidden');
         }
         function closePrintPreviewModal() { document.getElementById('print-preview-modal').classList.add('hidden'); }
-        function triggerPrintPDF() { window.print(); }
+        
+        let previousDocTitle = '';
+        window.addEventListener('beforeprint', () => {
+            previousDocTitle = document.title;
+            document.title = ''; // Removes browser default header text and URL printing in header/footer
+        });
+        window.addEventListener('afterprint', () => {
+            document.title = previousDocTitle || 'CLOUDPBX eSales System (R1) - Quản lý Báo giá, Hợp đồng & Khách hàng';
+        });
+
+        function triggerPrintPDF() { 
+            window.print(); 
+        }
+
         function triggerScreenCapture() {
             const paper = document.getElementById('printable-quotation-area');
             if (!paper) return;
@@ -4418,9 +4990,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const hour = new Date().getHours();
-            document.getElementById('greeting-banner').innerText = hour < 12 ? "Chào buổi sáng năng lượng! ☀" : (hour < 18 ? "Chào buổi chiều hiệu quả! 🌤" : "Chào buổi tối chốt deal! 🌙");
-            document.getElementById('motivation-quote').innerText = '"Kỷ luật và kiên trì là cầu nối giữa mục tiêu và thành tựu! 🚀🎯"';
+            renderGreetingAndQuotesBanner();
         });
     </script>
 </body>
