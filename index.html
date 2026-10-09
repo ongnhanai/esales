@@ -1364,10 +1364,15 @@
                 </button>
             </div>
             <form onsubmit="handleSaveCustomer(event)" class="p-6 space-y-3.5 text-xs text-left">
-                <div class="grid grid-cols-2 gap-3">
+                <input type="hidden" id="cust-editing-id" value="">
+                <div class="grid grid-cols-3 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Mã CID (Duy nhất) *</label>
                         <input type="text" id="cust-cid" oninput="validateCidInput(this)" required class="w-full px-3 py-1.5 border rounded-lg font-bold uppercase text-teal-700 outline-none" placeholder="VD: MAMA">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Mã Số Thuế (MST)</label>
+                        <input type="text" id="cust-tax-code" class="w-full px-3 py-1.5 border rounded-lg font-mono text-slate-800 outline-none" placeholder="VD: 0315897621">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Trạng thái *</label>
@@ -1732,10 +1737,10 @@
 
         // Customers Data
         let customersData = [
-            { id: "c_1", cid: "MAMA", companyName: "MAMA BOX CORP", contactPerson: "Ms Thủy", phone: "0332877968", email: "thuy.mama@gmail.com", address: "728-730 Võ Văn Kiệt, P.1, Q.5, TP.HCM", status: "Đang giao dịch", notes: "Khách VIP, thanh toán đúng hạn." },
-            { id: "c_2", cid: "GLOBALTECH", companyName: "GLOBAL TECHNOLOGY INT", contactPerson: "Mr Robert", phone: "0901234567", email: "contact@globaltech.io", address: "Tòa nhà Saigon Centre, Q.1, TP.HCM", status: "Tiềm năng", notes: "Quan tâm gói Enterprise CloudPBX." },
-            { id: "c_3", cid: "VIETRICE", companyName: "CÔNG TY XNK GẠO VIỆT", contactPerson: "Ms Lan", phone: "0988776655", email: "info@vietrice.vn", address: "KCN Tân Tạo, Bình Tân, TP.HCM", status: "Mới", notes: "Cần khảo sát hạ tầng." },
-            { id: "c_4", cid: "SAIGONHOTEL", companyName: "SAIGON LUXURY HOTEL", contactPerson: "Mr Hoàng", phone: "0911223344", email: "manager@saigonhotel.com", address: "23 Đồng Khởi, Q.1, TP.HCM", status: "Đang giao dịch", notes: "Khách sạn 4 sao trung tâm." }
+            { id: "c_1", cid: "MAMA", taxCode: "0315897621", companyName: "MAMA BOX CORP", contactPerson: "Ms Thủy", phone: "0332877968", email: "thuy.mama@gmail.com", address: "728-730 Võ Văn Kiệt, P.1, Q.5, TP.HCM", status: "Đang giao dịch", notes: "Khách VIP, thanh toán đúng hạn." },
+            { id: "c_2", cid: "GLOBALTECH", taxCode: "0314567890", companyName: "GLOBAL TECHNOLOGY INT", contactPerson: "Mr Robert", phone: "0901234567", email: "contact@globaltech.io", address: "Tòa nhà Saigon Centre, Q.1, TP.HCM", status: "Tiềm năng", notes: "Quan tâm gói Enterprise CloudPBX." },
+            { id: "c_3", cid: "VIETRICE", taxCode: "0309876543", companyName: "CÔNG TY XNK GẠO VIỆT", contactPerson: "Ms Lan", phone: "0988776655", email: "info@vietrice.vn", address: "KCN Tân Tạo, Bình Tân, TP.HCM", status: "Mới", notes: "Cần khảo sát hạ tầng." },
+            { id: "c_4", cid: "SAIGONHOTEL", taxCode: "0301122334", companyName: "SAIGON LUXURY HOTEL", contactPerson: "Mr Hoàng", phone: "0911223344", email: "manager@saigonhotel.com", address: "23 Đồng Khởi, Q.1, TP.HCM", status: "Đang giao dịch", notes: "Khách sạn 4 sao trung tâm." }
         ];
 
         const DEFAULT_QUOTE_TERMS = `• Đơn giá đã bao gồm thuế GTGT (VAT) theo từng mục tương ứng.\n• Giá dịch vụ chưa bao gồm phí chọn số đẹp, cước phát sinh thực tế khi sử dụng, phí thuê bao đầu số.\n• Hàng hóa (nếu có) được bảo hành theo tiêu chuẩn nhà sản xuất.`;
@@ -4624,6 +4629,7 @@
             const filtered = customersData.filter(c => {
                 if (!searchVal) return true;
                 return (c.cid || '').toLowerCase().includes(searchVal) ||
+                       (c.taxCode || '').toLowerCase().includes(searchVal) ||
                        (c.companyName || '').toLowerCase().includes(searchVal) ||
                        (c.contactPerson || '').toLowerCase().includes(searchVal) ||
                        (c.phone || '').toLowerCase().includes(searchVal) ||
@@ -4650,7 +4656,10 @@
 
                 let rowHtml = `
                     <tr class="hover:bg-slate-50 border-b border-slate-100 transition-all ${isExpanded ? 'bg-slate-50/60' : 'bg-white'}">
-                        <td class="py-3.5 px-4 font-mono font-bold text-teal-700 cursor-pointer hover:underline" onclick="toggleCustomerDrawer('${c.id}')" title="Nhấn để xem chi tiết">${c.cid}</td>
+                        <td class="py-3 px-4 cursor-pointer hover:underline" onclick="toggleCustomerDrawer('${c.id}')" title="Nhấn để xem chi tiết">
+                            <div class="font-mono font-bold text-teal-700 text-xs">${c.cid}</div>
+                            <div class="text-[10px] font-mono text-slate-500">${c.taxCode ? 'MST: ' + c.taxCode : '<span class="text-slate-400 italic">Chưa có MST</span>'}</div>
+                        </td>
                         <td class="py-3.5 px-4 font-bold text-slate-800 cursor-pointer hover:text-teal-700" onclick="toggleCustomerDrawer('${c.id}')">${c.companyName}</td>
                         <td class="py-3.5 px-4 text-slate-700 font-medium">${c.contactPerson || '---'}</td>
                         <td class="py-3.5 px-4 text-slate-600 text-xs">
@@ -4769,7 +4778,7 @@
                                                 <i class="fa-solid fa-note-sticky mr-1"></i> Ghi chú & Lịch sử
                                             </button>
                                         </div>
-                                        <div class="text-xs text-slate-500 font-medium">Khách hàng: <strong class="text-teal-900">${c.companyName}</strong></div>
+                                        <div class="text-xs text-slate-500 font-medium">Khách hàng: <strong class="text-teal-900">${c.companyName}</strong> ${c.taxCode ? `<span class="ml-1 text-slate-600 font-mono">(MST: ${c.taxCode})</span>` : ''}</div>
                                     </div>
                                     <div>
                                         ${tabContentHtml}
@@ -4812,15 +4821,40 @@
         function editCustomer(customerId) {
             const c = customersData.find(item => item.id === customerId);
             if (!c) return;
-            document.getElementById('customer-modal-title').innerText = "Chỉnh sửa Khách hàng";
-            document.getElementById('cust-cid').value = c.cid;
-            document.getElementById('cust-cid').readOnly = true;
-            document.getElementById('cust-company').value = c.companyName;
-            document.getElementById('cust-person').value = c.contactPerson || '';
-            document.getElementById('cust-phone').value = c.phone;
-            document.getElementById('cust-email').value = c.email;
-            document.getElementById('cust-address').value = c.address || '';
-            document.getElementById('cust-status').value = c.status;
+
+            const editIdEl = document.getElementById('cust-editing-id');
+            if (editIdEl) editIdEl.value = c.id;
+
+            const titleEl = document.getElementById('customer-modal-title');
+            if (titleEl) titleEl.innerText = "Chỉnh sửa Khách hàng";
+
+            const cidEl = document.getElementById('cust-cid');
+            if (cidEl) {
+                cidEl.value = c.cid;
+                cidEl.readOnly = true;
+            }
+
+            const taxEl = document.getElementById('cust-tax-code');
+            if (taxEl) taxEl.value = c.taxCode || '';
+
+            const compEl = document.getElementById('cust-company');
+            if (compEl) compEl.value = c.companyName || '';
+
+            const personEl = document.getElementById('cust-person');
+            if (personEl) personEl.value = c.contactPerson || '';
+
+            const phoneEl = document.getElementById('cust-phone');
+            if (phoneEl) phoneEl.value = c.phone || '';
+
+            const emailEl = document.getElementById('cust-email');
+            if (emailEl) emailEl.value = c.email || '';
+
+            const addrEl = document.getElementById('cust-address');
+            if (addrEl) addrEl.value = c.address || '';
+
+            const statusEl = document.getElementById('cust-status');
+            if (statusEl) statusEl.value = c.status || 'Mới';
+
             openCustomerModal();
         }
 
@@ -4829,29 +4863,60 @@
             selectCustomerForQuote(cid);
         }
 
-        function openCustomerModal() { document.getElementById('customer-modal').classList.remove('hidden'); }
+        function openCustomerModal() { document.getElementById('customer-modal')?.classList.remove('hidden'); }
         function closeCustomerModal() { 
-            document.getElementById('customer-modal').classList.add('hidden'); 
+            document.getElementById('customer-modal')?.classList.add('hidden'); 
             const cidInput = document.getElementById('cust-cid');
             if (cidInput) cidInput.readOnly = false;
+            const editingId = document.getElementById('cust-editing-id');
+            if (editingId) editingId.value = '';
+            const taxInput = document.getElementById('cust-tax-code');
+            if (taxInput) taxInput.value = '';
         }
         function validateCidInput(inp) { inp.value = cleanCidString(inp.value); }
         function handleSaveCustomer(e) {
             e.preventDefault();
-            const cid = cleanCidString(document.getElementById('cust-cid').value);
-            const companyName = document.getElementById('cust-company').value.trim();
-            const contactPerson = document.getElementById('cust-person').value.trim();
-            const phone = document.getElementById('cust-phone').value.trim();
-            const email = document.getElementById('cust-email').value.trim();
-            const address = document.getElementById('cust-address').value.trim();
-            const status = document.getElementById('cust-status').value;
+            const editingId = document.getElementById('cust-editing-id')?.value || '';
+            const cid = cleanCidString(document.getElementById('cust-cid')?.value || '');
+            const taxCode = document.getElementById('cust-tax-code')?.value.trim() || '';
+            const companyName = document.getElementById('cust-company')?.value.trim() || '';
+            const contactPerson = document.getElementById('cust-person')?.value.trim() || '';
+            const phone = document.getElementById('cust-phone')?.value.trim() || '';
+            const email = document.getElementById('cust-email')?.value.trim() || '';
+            const address = document.getElementById('cust-address')?.value.trim() || '';
+            const status = document.getElementById('cust-status')?.value || 'Mới';
 
-            customersData.unshift({ id: 'c_' + Date.now(), cid: cid, companyName: companyName, contactPerson: contactPerson, phone: phone, email: email, address: address, status: status });
-            logSysActivity("Khách hàng", "Tạo mới", `Thêm khách hàng mới ${companyName} (${cid})`);
+            if (editingId) {
+                const c = customersData.find(item => item.id === editingId);
+                if (c) {
+                    c.taxCode = taxCode;
+                    c.companyName = companyName;
+                    c.contactPerson = contactPerson;
+                    c.phone = phone;
+                    c.email = email;
+                    c.address = address;
+                    c.status = status;
+                    logSysActivity("Khách hàng", "Chỉnh sửa", `Cập nhật thông tin khách hàng ${companyName} (${cid})`);
+                    showToast(`Đã cập nhật khách hàng ${cid}`, "success");
+                }
+            } else {
+                customersData.unshift({ 
+                    id: 'c_' + Date.now(), 
+                    cid: cid, 
+                    taxCode: taxCode, 
+                    companyName: companyName, 
+                    contactPerson: contactPerson, 
+                    phone: phone, 
+                    email: email, 
+                    address: address, 
+                    status: status 
+                });
+                logSysActivity("Khách hàng", "Tạo mới", `Thêm khách hàng mới ${companyName} (${cid})`);
+                showToast(`Đã thêm khách hàng ${cid}`, "success");
+            }
             closeCustomerModal();
             renderCustomersTable();
             updateBadges();
-            showToast(`Đã thêm khách hàng ${cid}`, "success");
         }
 
         function renderTrashTable() {
@@ -4962,7 +5027,12 @@
 
             const mQuotes = quotesData.filter(item => item.refNo.toLowerCase().includes(query) || item.customerName.toLowerCase().includes(query) || (item.companyName || '').toLowerCase().includes(query));
             const mContracts = contractsData.filter(item => item.refNo.toLowerCase().includes(query) || item.companyName.toLowerCase().includes(query));
-            const mCust = customersData.filter(item => item.cid.toLowerCase().includes(query) || item.companyName.toLowerCase().includes(query) || item.phone.includes(query));
+            const mCust = customersData.filter(item => 
+                item.cid.toLowerCase().includes(query) || 
+                (item.taxCode || '').toLowerCase().includes(query) || 
+                item.companyName.toLowerCase().includes(query) || 
+                item.phone.includes(query)
+            );
 
             if (mQuotes.length === 0 && mContracts.length === 0 && mCust.length === 0) {
                 dropdown.innerHTML = '<div class="p-3 text-center text-slate-400 text-xs">Không tìm thấy kết quả phù hợp.</div>';
@@ -4986,7 +5056,7 @@
             if (mCust.length > 0) {
                 html += '<div class="bg-slate-50 px-3 py-1 font-bold text-[10px] text-slate-500 uppercase">Khách hàng</div>';
                 mCust.forEach(c => {
-                    html += `<div onclick="switchView('customers'); clearGlobalSearch();" class="p-2.5 hover:bg-slate-100 cursor-pointer text-xs flex justify-between"><div><strong class="text-teal-700 font-mono">[${c.cid}]</strong> ${c.companyName}</div><span class="text-slate-400">${c.phone}</span></div>`;
+                    html += `<div onclick="switchView('customers'); clearGlobalSearch();" class="p-2.5 hover:bg-slate-100 cursor-pointer text-xs flex justify-between"><div><strong class="text-teal-700 font-mono">[${c.cid}]</strong> ${c.companyName} ${c.taxCode ? `<span class="text-[10px] text-slate-500 font-mono">(MST: ${c.taxCode})</span>` : ''}</div><span class="text-slate-400">${c.phone}</span></div>`;
                 });
             }
             dropdown.innerHTML = html;
