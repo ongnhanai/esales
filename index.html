@@ -107,40 +107,79 @@
         }
 
         @media print {
-            body, html {
+            /* 1. Reset nền và căn lề cho trang in */
+            html, body {
                 background: white !important;
                 color: black !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                width: 100% !important;
                 height: auto !important;
+                min-height: auto !important;
                 overflow: visible !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            body * {
+
+            /* 2. ẨN HOÀN TOÀN TẤT CẢ các thành phần giao diện khỏi trang in */
+            body > * {
+                display: none !important;
                 visibility: hidden !important;
             }
-            #printable-quotation-area, #printable-quotation-area * {
-                visibility: visible !important;
-            }
-            #printable-quotation-area {
+
+            /* 3. CHỈ HIỂN THỊ DUY NHẤT 1 bản báo giá trong khung in cô lập */
+            body > #print-isolated-container {
                 display: block !important;
-                position: absolute !important;
+                visibility: visible !important;
+                position: relative !important;
                 left: 0 !important;
                 top: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
                 margin: 0 !important;
                 box-sizing: border-box !important;
-                padding: 12mm 15mm !important; /* Lề trang in an toàn cho nội dung tài liệu */
+                padding: 10mm 12mm !important; /* Lề chuẩn A4, tránh tràn trang */
                 background: white !important;
                 box-shadow: none !important;
                 border: none !important;
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
+
+            body > #print-isolated-container * {
+                visibility: visible !important;
+            }
+
+            #print-isolated-container table.quotation-table, 
+            #print-isolated-container table.quotation-table th, 
+            #print-isolated-container table.quotation-table td {
+                border: 1px solid #94a3b8 !important;
+                border-collapse: collapse !important;
+            }
+
+            /* Ẩn triệt để tất cả các cửa sổ modal hoặc giao diện nền */
+            #app-dashboard,
+            #login-view,
+            #quote-modal,
+            #print-preview-modal,
+            #contract-modal,
+            #contract-view-modal,
+            #customer-modal,
+            #dept-modal,
+            #user-admin-modal,
+            #reset-password-modal,
+            #profile-modal,
+            #toast-container {
+                display: none !important;
+                visibility: hidden !important;
             }
         }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+    <!-- Isolated Print Container (Displays exactly 1 copy during print, hides everything else) -->
+    <div id="print-isolated-container" class="hidden"></div>
 
     <!-- Toast Notifications Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-[9999] flex flex-col gap-2 no-print"></div>
@@ -163,7 +202,7 @@
 
                 <div class="flex justify-center mb-3">
                     <div class="bg-white px-3 py-2 rounded-xl shadow-sm flex items-center justify-center">
-                        <img src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" 
+                        <img id="login-system-logo" src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" 
                              alt="CloudPBX Logo" 
                              class="h-9 w-auto object-contain"
                              onerror="this.onerror=null; this.src='https://placehold.co/180x45/ffffff/f15a24?text=CLOUDPBX';">
@@ -192,7 +231,10 @@
                     <label id="lbl-login-password" class="block text-xs font-semibold text-slate-600 uppercase mb-1">Mật khẩu</label>
                     <div class="relative">
                         <i class="fa-solid fa-lock absolute left-3 top-3 text-slate-400"></i>
-                        <input type="password" id="login-password" name="password" autocomplete="current-password" required class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-orange focus:border-brand-orange outline-none bg-white" placeholder="••••••••">
+                        <input type="password" id="login-password" name="password" autocomplete="current-password" required class="w-full pl-10 pr-10 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-orange focus:border-brand-orange outline-none bg-white" placeholder="••••••••">
+                        <button type="button" onclick="togglePasswordVisibility('login-password', 'login-eye-icon')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-700 transition-colors p-0.5" title="Hiển thị / Ẩn mật khẩu">
+                            <i id="login-eye-icon" class="fa-solid fa-eye text-xs"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -203,12 +245,43 @@
                     </label>
                 </div>
                 
-                <div class="p-3 bg-slate-50 rounded-lg text-[11px] text-slate-600 space-y-1 border border-slate-200">
-                    <p id="lbl-login-demo-title" class="font-bold text-slate-700">Tài khoản thử nghiệm 4 vai trò:</p>
-                    <p>• <strong>Superadmin:</strong> superadmin@cloudpbx.vn / 123456</p>
-                    <p>• <strong>Admin:</strong> admin@cloudpbx.vn / 123456</p>
-                    <p>• <strong>Manager (Sales 1):</strong> manager@cloudpbx.vn / 123456</p>
-                    <p>• <strong>User (Sales):</strong> demo@cloudpbx.vn / 123456</p>
+                <div class="p-3.5 bg-slate-50/95 rounded-xl text-[11px] text-slate-600 space-y-2.5 border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <span id="lbl-login-demo-title" class="font-bold text-slate-700 text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-users text-brand-orange text-[11px]"></i>
+                            <span>Tài khoản thử nghiệm 4 vai trò (Click để nạp nhanh):</span>
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="quickFillLogin('superadmin@cloudpbx.vn', '123456')" class="p-2 rounded-xl border border-amber-200 bg-amber-50/80 hover:bg-amber-100 text-amber-950 text-left transition-all shadow-sm hover:shadow group flex flex-col justify-between">
+                            <div class="font-bold text-[11px] flex items-center justify-between">
+                                <span class="flex items-center gap-1">👑 Superadmin</span>
+                                <i class="fa-solid fa-circle-arrow-right text-[10px] text-amber-500 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
+                            </div>
+                            <div class="text-[9.5px] text-slate-500 font-mono mt-0.5 truncate">superadmin@cloudpbx.vn</div>
+                        </button>
+                        <button type="button" onclick="quickFillLogin('admin@cloudpbx.vn', '123456')" class="p-2 rounded-xl border border-purple-200 bg-purple-50/80 hover:bg-purple-100 text-purple-950 text-left transition-all shadow-sm hover:shadow group flex flex-col justify-between">
+                            <div class="font-bold text-[11px] flex items-center justify-between">
+                                <span class="flex items-center gap-1">🛠️ Admin IT</span>
+                                <i class="fa-solid fa-circle-arrow-right text-[10px] text-purple-500 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
+                            </div>
+                            <div class="text-[9.5px] text-slate-500 font-mono mt-0.5 truncate">admin@cloudpbx.vn</div>
+                        </button>
+                        <button type="button" onclick="quickFillLogin('manager@cloudpbx.vn', '123456')" class="p-2 rounded-xl border border-emerald-200 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-950 text-left transition-all shadow-sm hover:shadow group flex flex-col justify-between">
+                            <div class="font-bold text-[11px] flex items-center justify-between">
+                                <span class="flex items-center gap-1">👔 Manager</span>
+                                <i class="fa-solid fa-circle-arrow-right text-[10px] text-emerald-500 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
+                            </div>
+                            <div class="text-[9.5px] text-slate-500 font-mono mt-0.5 truncate">manager@cloudpbx.vn</div>
+                        </button>
+                        <button type="button" onclick="quickFillLogin('demo@cloudpbx.vn', '123456')" class="p-2 rounded-xl border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-950 text-left transition-all shadow-sm hover:shadow group flex flex-col justify-between">
+                            <div class="font-bold text-[11px] flex items-center justify-between">
+                                <span class="flex items-center gap-1">💼 User (Sales)</span>
+                                <i class="fa-solid fa-circle-arrow-right text-[10px] text-blue-500 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
+                            </div>
+                            <div class="text-[9.5px] text-slate-500 font-mono mt-0.5 truncate">demo@cloudpbx.vn</div>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="w-full py-2.5 px-4 bg-brand-orange hover:bg-brand-hover text-white font-semibold rounded-lg shadow-md transition-all flex items-center justify-center gap-2">
@@ -230,7 +303,7 @@
             <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="bg-white px-2 py-1.5 rounded-lg shadow-sm flex items-center justify-center">
-                        <img src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" 
+                        <img id="sidebar-system-logo" src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" 
                              alt="Logo" 
                              class="h-6 w-auto object-contain"
                              onerror="this.onerror=null; this.src='https://placehold.co/120x30/ffffff/f15a24?text=CLOUDPBX';">
@@ -298,30 +371,46 @@
                     <span class="flex-1">Báo cáo chi tiết</span>
                 </button>
 
-                <!-- Admin & Superadmin Navigation Menus -->
-                <button onclick="switchView('departments')" id="nav-btn-departments" class="nav-item hidden w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
-                    <i class="fa-solid fa-sitemap w-4 text-cyan-400 shrink-0"></i>
-                    <span class="flex-1">Quản lý Phòng ban</span>
-                </button>
-
-                <button onclick="switchView('admin-users')" id="nav-btn-admin-users" class="nav-item hidden w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
-                    <i class="fa-solid fa-users-gear w-4 text-purple-400 shrink-0"></i>
-                    <span class="flex-1">Nhân viên & RBAC</span>
-                </button>
-
-                <!-- Superadmin ONLY: SysLog Menu -->
-                <button onclick="switchView('syslog')" id="nav-btn-syslog" class="nav-item hidden w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
-                    <i class="fa-solid fa-shield-halved w-4 text-amber-400 shrink-0"></i>
-                    <span class="flex-1">Nhật ký SysLog</span>
-                    <span id="syslog-count-badge" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-mono">0</span>
-                </button>
+                <!-- Settings Menu (Admin & Superadmin only) with Sub-menus -->
+                <div id="nav-settings-group" class="hidden pt-1.5 border-t border-slate-800/80">
+                    <button type="button" onclick="toggleSettingsSubmenu()" id="nav-btn-settings" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-gear w-4 text-slate-400 shrink-0"></i>
+                            <span class="flex-1">Cài đặt (Setting)</span>
+                        </div>
+                        <i id="settings-menu-chevron" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200"></i>
+                    </button>
+                    <div id="nav-settings-submenu" class="pl-4 pr-1 py-1 space-y-1">
+                        <button type="button" onclick="switchView('settings-general')" id="nav-sub-general" class="nav-sub-item w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all text-left">
+                            <i class="fa-solid fa-sliders w-3 text-brand-orange shrink-0"></i>
+                            <span>Cài đặt chung</span>
+                        </button>
+                        <button type="button" onclick="switchView('departments')" id="nav-sub-departments" class="nav-sub-item w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all text-left">
+                            <i class="fa-solid fa-sitemap w-3 text-cyan-400 shrink-0"></i>
+                            <span>Quản lý Phòng ban</span>
+                        </button>
+                        <button type="button" onclick="switchView('admin-users')" id="nav-sub-admin-users" class="nav-sub-item w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all text-left">
+                            <i class="fa-solid fa-users-gear w-3 text-purple-400 shrink-0"></i>
+                            <span>Nhân viên & RBAC</span>
+                        </button>
+                        <!-- Syslog (Superadmin ONLY) -->
+                        <button type="button" onclick="switchView('syslog')" id="nav-sub-syslog" class="nav-sub-item hidden w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all text-left">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-shield-halved w-3 text-amber-400 shrink-0"></i>
+                                <span>Nhật ký SysLog</span>
+                            </div>
+                            <span id="syslog-count-badge" class="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded-full font-mono">0</span>
+                        </button>
+                    </div>
+                </div>
             </nav>
 
-            <div class="p-3 border-t border-slate-800">
-                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-semibold transition-all border border-rose-500/20">
+            <div class="p-3 border-t border-slate-800 space-y-2">
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-semibold transition-all border border-rose-500/20 shadow-sm">
                     <i class="fa-solid fa-power-off"></i>
-                    <span>Đăng xuất</span>
+                    <span id="txt-sidebar-logout">Đăng xuất</span>
                 </button>
+
             </div>
         </aside>
 
@@ -580,7 +669,7 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between gap-2 flex-wrap">
                                     <span class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">DOANH THU THỰC TẾ (VNĐ)</span>
-                                    <span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/70 whitespace-nowrap">
+                                    <span id="rpt-rate-badge" class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/70 whitespace-nowrap">
                                         1 USD = 27.000 VNĐ
                                     </span>
                                 </div>
@@ -595,7 +684,7 @@
                                         <span class="text-slate-400">•</span>
                                         <span>Tổng USD =</span>
                                         <strong id="rpt-sub-usd" class="text-indigo-600 font-bold">$0.00</strong>
-                                        <span class="text-[10px] text-slate-400 font-medium">(Tỷ giá: 27.000)</span>
+                                        <span id="rpt-sub-rate-label" class="text-[10px] text-slate-400 font-medium">(Tỷ giá: 27.000)</span>
                                     </div>
                                 </div>
                             </div>
@@ -628,7 +717,122 @@
                     </div>
                 </section>
 
-                <!-- VIEW 6: Departments Management (Admin / Superadmin) -->
+                                <!-- VIEW 9: General Settings (Cài đặt chung) -->
+                <section id="view-settings-general" class="hidden space-y-6 text-left">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-brand-orange"></i> Cài Đặt Chung Hệ Thống
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Tùy biến nhận diện thương hiệu (Logo) và thiết lập tỷ giá quy đổi tiền tệ</p>
+                        </div>
+                    </div>
+
+                    <!-- CARD 1: Cài đặt Logo hệ thống -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                        <div class="border-b pb-3 flex items-center justify-between flex-wrap gap-2">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                                    <i class="fa-solid fa-image text-blue-600"></i> Logo Hệ Thống & Báo Giá
+                                </h4>
+                                <p class="text-xs text-slate-500 mt-0.5">Logo hiển thị ở màn hình đăng nhập, thanh điều hướng sidebar và góc trên tờ báo giá</p>
+                            </div>
+                            <button type="button" onclick="resetSystemLogoToDefault()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 border border-slate-200">
+                                <i class="fa-solid fa-rotate-left text-xs"></i> Khôi phục logo mặc định
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                            <!-- Current Logo Preview Box -->
+                            <div class="p-5 bg-slate-50 rounded-xl border border-dashed border-slate-300 flex flex-col items-center justify-center min-h-[140px] text-center">
+                                <span class="text-[11px] font-semibold text-slate-500 uppercase mb-2">Xem trước Logo hiện tại</span>
+                                <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 max-w-[260px] flex items-center justify-center">
+                                    <img id="settings-logo-preview" src="https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png" alt="System Logo" class="h-12 max-w-full object-contain">
+                                </div>
+                                <span id="settings-logo-filename" class="text-[10px] text-slate-400 mt-2 font-mono truncate max-w-[260px]">logo-cloudpbx-web.png</span>
+                            </div>
+
+                            <!-- Upload Box -->
+                            <div class="space-y-3">
+                                <label class="block text-xs font-bold text-slate-700">Tải lên file logo mới (PNG, JPG, SVG, WebP)</label>
+                                <div class="relative">
+                                    <input type="file" id="settings-logo-file-input" accept="image/*" onchange="handleSystemLogoUpload(event)" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-brand-orange file:text-white hover:file:bg-brand-hover cursor-pointer border border-slate-300 rounded-xl bg-slate-50 p-1">
+                                </div>
+                                <p class="text-[11px] text-slate-500">Khuyến nghị: Ảnh có nền trong suốt (PNG), chiều cao tối thiểu 60px để hiển thị sắc nét nhất trên cả tài liệu in A4.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: Cài đặt Tỷ giá quy đổi (Exchange Rate) & Lịch sử -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-5">
+                        <div class="border-b pb-3 flex items-center justify-between flex-wrap gap-2">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                                    <i class="fa-solid fa-money-bill-transfer text-emerald-600"></i> Cài Đặt Tỷ Giá Quy Đổi (USD / VNĐ)
+                                </h4>
+                                <div class="mt-1 p-2.5 bg-amber-50/80 rounded-lg border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed space-y-1">
+                                    <div class="font-bold flex items-center gap-1.5 text-amber-950">
+                                        <i class="fa-solid fa-scale-balanced text-amber-600"></i>
+                                        <span>Quy định quy đổi tỷ giá tài chính:</span>
+                                    </div>
+                                    <p>• <strong>Tỷ giá mới:</strong> Chỉ có hiệu lực với những báo giá, hợp đồng, phụ lục phát sinh từ thời điểm áp dụng trở về sau.</p>
+                                    <p>• <strong>Số liệu quá khứ:</strong> Toàn bộ báo giá, hợp đồng và phụ lục trước đó đều được bảo lưu theo đúng tỷ giá cũ đã chốt tại thời điểm tạo, tuyệt đối không làm thay đổi số liệu kinh doanh của quá khứ.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-slate-500">Tỷ giá đang áp dụng:</span>
+                                <span id="settings-current-rate-badge" class="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 font-mono">1 USD = 27.000 VNĐ</span>
+                            </div>
+                        </div>
+
+                        <!-- Update Rate Form -->
+                        <form onsubmit="handleApplyNewExchangeRate(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                                <div class="md:col-span-4">
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Tỷ giá quy đổi mới (VNĐ / 1 USD) *</label>
+                                    <div class="relative">
+                                        <input type="number" id="settings-new-rate-input" min="1000" step="100" required class="w-full px-3 py-2 border rounded-lg text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-emerald-500 font-mono" placeholder="VD: 27500">
+                                        <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">VNĐ</span>
+                                    </div>
+                                </div>
+                                <div class="md:col-span-5">
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Ghi chú lý do thay đổi (Tùy chọn)</label>
+                                    <input type="text" id="settings-rate-note-input" class="w-full px-3 py-2 border rounded-lg text-xs outline-none focus:ring-2 focus:ring-emerald-500" placeholder="VD: Cập nhật theo tỷ giá ngân hàng VIB">
+                                </div>
+                                <div class="md:col-span-3">
+                                    <button type="submit" class="w-full py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs shadow transition-all flex items-center justify-center gap-1.5">
+                                        <i class="fa-solid fa-check"></i>
+                                        <span>Áp dụng tỷ giá mới</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Exchange Rate History Table -->
+                        <div class="space-y-2">
+                            <h5 class="text-xs font-bold text-slate-700 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-clock-rotate-left text-slate-400"></i> Lịch Sử Thay Đổi Tỷ Giá
+                            </h5>
+                            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-600 font-bold uppercase text-[10px] border-b">
+                                            <th class="py-2.5 px-3">Thời gian áp dụng</th>
+                                            <th class="py-2.5 px-3 text-right">Tỷ giá (VNĐ/USD)</th>
+                                            <th class="py-2.5 px-3">Người thực hiện</th>
+                                            <th class="py-2.5 px-3">Ghi chú</th>
+                                            <th class="py-2.5 px-3 text-center">Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="settings-rate-history-tbody" class="divide-y divide-slate-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+<!-- VIEW 6: Departments Management (Admin / Superadmin) -->
                 <section id="view-departments" class="hidden space-y-4">
                     <div class="flex justify-between items-center">
                         <div>
@@ -747,6 +951,12 @@
                             </thead>
                             <tbody id="syslog-table-body" class="divide-y divide-slate-100"></tbody>
                         </table>
+
+                        <!-- Syslog Pagination Bar (10 logs per page) -->
+                        <div id="syslog-pagination-wrapper" class="p-3 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 text-xs text-slate-600">
+                            <div id="syslog-pagination-info" class="font-medium">Hiển thị 1 - 10 trên tổng số 0 nhật ký</div>
+                            <div id="syslog-pagination-buttons" class="flex items-center gap-1"></div>
+                        </div>
                     </div>
                 </section>
             </div>
@@ -823,10 +1033,25 @@
 
                         <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
                             <label class="block text-[9px] font-bold text-slate-500 uppercase mb-1">Ngôn ngữ</label>
-                            <div class="flex items-center bg-slate-200/60 rounded p-0.5 text-xs font-bold">
-                                <button type="button" onclick="setQuoteDocLang('VI')" id="btn-doclang-vi" class="flex-1 py-1 rounded transition-all text-center">🇻🇳 VN</button>
+                            <div class="flex items-center bg-slate-200/60 rounded p-0.5 text-[11px] font-bold gap-0.5">
+                                <button type="button" onclick="setQuoteDocLang('VI')" id="btn-doclang-vi" class="flex-1 py-1 rounded transition-all text-center">🇻🇳 VI</button>
                                 <button type="button" onclick="setQuoteDocLang('EN')" id="btn-doclang-en" class="flex-1 py-1 rounded transition-all text-center">🇬🇧 EN</button>
+                                <button type="button" onclick="setQuoteDocLang('BI')" id="btn-doclang-bi" class="flex-1 py-1 rounded transition-all text-center">🌐 VI & EN</button>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Hiệu lực báo giá: 15 / 30 / 45 / 60 ngày -->
+                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-regular fa-clock text-brand-orange text-xs"></i>
+                            <label class="text-[10px] font-bold text-slate-700 uppercase">Hiệu lực báo giá:</label>
+                        </div>
+                        <div class="flex items-center bg-slate-200/60 rounded p-0.5 text-xs font-bold gap-1">
+                            <button type="button" onclick="setQuoteValidity(15)" id="btn-valid-15" class="px-2.5 py-1 rounded transition-all text-center">15 ngày</button>
+                            <button type="button" onclick="setQuoteValidity(30)" id="btn-valid-30" class="px-2.5 py-1 rounded transition-all text-center">30 ngày</button>
+                            <button type="button" onclick="setQuoteValidity(45)" id="btn-valid-45" class="px-2.5 py-1 rounded transition-all text-center">45 ngày</button>
+                            <button type="button" onclick="setQuoteValidity(60)" id="btn-valid-60" class="px-2.5 py-1 rounded transition-all text-center">60 ngày</button>
                         </div>
                     </div>
                 </div>
@@ -1029,10 +1254,13 @@
                         <div class="text-right space-y-1 shrink-0">
                             <h2 id="pv-doc-title" class="text-base font-bold text-slate-800 uppercase tracking-tight">BÁO GIÁ DỊCH VỤ</h2>
                             <div class="font-bold text-brand-orange text-xs whitespace-nowrap">
-                                <span>Số (Ref):</span> <span id="pv-quote-ref">QUO2609001-MAMA</span>
+                                <span id="pv-lbl-ref">Số:</span> <span id="pv-quote-ref">QUO2609001-MAMA</span>
                             </div>
                             <div class="text-slate-600 text-[10px] whitespace-nowrap">
-                                <span>Ngày:</span> <span id="pv-quote-date">23/09/2026</span>
+                                <span id="pv-lbl-date">Ngày:</span> <span id="pv-quote-date">23/09/2026</span>
+                            </div>
+                            <div id="pv-quote-validity-row" class="text-slate-600 text-[9.5px] whitespace-nowrap">
+                                <span id="pv-lbl-validity">Hiệu lực:</span> <strong id="pv-quote-validity" class="text-slate-800">30 ngày</strong> <span id="pv-quote-expiry" class="text-slate-500 font-mono">(Đến 23/10/2026)</span>
                             </div>
                         </div>
                     </div>
@@ -1044,7 +1272,7 @@
 
                     <!-- Recipient Info Table -->
                     <div>
-                        <div class="font-bold uppercase text-[10px] text-slate-700 mb-1">KÍNH GỬI / TO:</div>
+                        <div class="font-bold uppercase text-[10px] text-slate-700 mb-1" id="pv-recipient-header-title">KÍNH GỬI / TO:</div>
                         <table class="w-full border-collapse border border-slate-300 text-[10.5px] quotation-table">
                             <tbody>
                                 <tr class="border-b border-slate-300">
@@ -1074,14 +1302,14 @@
                         <table class="w-full border-collapse border border-slate-300 text-[10px] quotation-table">
                             <thead>
                                 <tr class="bg-slate-100 font-bold text-slate-800 border-b border-slate-300 text-center">
-                                    <th class="p-1 border-r border-slate-300 w-16">Mã</th>
-                                    <th class="p-1 border-r border-slate-300 w-8">STT</th>
-                                    <th class="p-1 border-r border-slate-300">Mô tả Sản phẩm / Dịch vụ</th>
-                                    <th class="p-1 border-r border-slate-300 w-24 text-right whitespace-nowrap">Đơn giá</th>
-                                    <th class="p-1 border-r border-slate-300 w-10">SL</th>
-                                    <th class="p-1 border-r border-slate-300 w-12">Đơn vị</th>
-                                    <th class="p-1 border-r border-slate-300 w-10">VAT</th>
-                                    <th class="p-1 w-28 text-right whitespace-nowrap">Tổng</th>
+                                    <th class="p-1 border-r border-slate-300 w-16" id="th-code">Mã</th>
+                                    <th class="p-1 border-r border-slate-300 w-8" id="th-stt">STT</th>
+                                    <th class="p-1 border-r border-slate-300" id="th-desc">Mô tả Sản phẩm / Dịch vụ</th>
+                                    <th class="p-1 border-r border-slate-300 w-24 text-right whitespace-nowrap" id="th-price">Đơn giá</th>
+                                    <th class="p-1 border-r border-slate-300 w-10" id="th-qty">SL</th>
+                                    <th class="p-1 border-r border-slate-300 w-12" id="th-unit">Đơn vị</th>
+                                    <th class="p-1 border-r border-slate-300 w-10" id="th-vat">VAT</th>
+                                    <th class="p-1 w-28 text-right whitespace-nowrap" id="th-total">Tổng</th>
                                 </tr>
                             </thead>
                             <tbody id="pv-table-body" class="divide-y divide-slate-200"></tbody>
@@ -1090,7 +1318,7 @@
 
                     <!-- Terms & Notes Display -->
                     <div class="text-[10px] space-y-1 text-slate-700 pt-1">
-                        <div class="font-bold uppercase text-slate-800">Ghi chú & Điều khoản dịch vụ:</div>
+                        <div class="font-bold uppercase text-slate-800" id="pv-lbl-terms-title">Ghi chú & Điều khoản dịch vụ:</div>
                         <div id="pv-terms-content-display" class="space-y-0.5 whitespace-pre-line leading-relaxed text-slate-700"></div>
                         <div id="pv-custom-notes-display" class="text-rose-700 font-medium italic mt-1"></div>
                     </div>
@@ -1385,8 +1613,8 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-600 mb-1">Tên Công Ty *</label>
-                    <input type="text" id="cust-company" required class="w-full px-3 py-1.5 border rounded-lg outline-none">
+                    <label class="block font-semibold text-slate-600 mb-1">Tên Công Ty / Khách Hàng (Tùy chọn)</label>
+                    <input type="text" id="cust-company" class="w-full px-3 py-1.5 border rounded-lg outline-none" placeholder="Nhập tên công ty hoặc để trống">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -1394,13 +1622,13 @@
                         <input type="text" id="cust-person" class="w-full px-3 py-1.5 border rounded-lg outline-none">
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-600 mb-1">Điện thoại *</label>
-                        <input type="text" id="cust-phone" required class="w-full px-3 py-1.5 border rounded-lg outline-none">
+                        <label class="block font-semibold text-slate-600 mb-1">Điện thoại (Tùy chọn)</label>
+                        <input type="text" id="cust-phone" class="w-full px-3 py-1.5 border rounded-lg outline-none" placeholder="VD: 0901234567">
                     </div>
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-600 mb-1">Email *</label>
-                    <input type="email" id="cust-email" required class="w-full px-3 py-1.5 border rounded-lg outline-none">
+                    <label class="block font-semibold text-slate-600 mb-1">Email (Tùy chọn)</label>
+                    <input type="email" id="cust-email" class="w-full px-3 py-1.5 border rounded-lg outline-none" placeholder="VD: contact@company.vn">
                 </div>
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">Địa chỉ</label>
@@ -1618,7 +1846,13 @@
 
     <script>
         /* Fixed exchange rate set strictly to 27.000 VNĐ / USD */
-        const EXCHANGE_RATE_USD_VND = 27000;
+        let currentSystemExchangeRate = 27000;
+        let currentSystemLogo = 'https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png';
+        let exchangeRateHistory = [
+            { id: 'rate_init', rate: 27000, appliedAt: '2026-09-01 08:00:00', appliedBy: 'Hệ thống (Mặc định)', note: 'Tỷ giá cơ sở ban đầu', status: 'ACTIVE' }
+        ];
+        let syslogCurrentPage = 1;
+        const syslogPageSize = 10;
         let currentUser = null;
         let activeQuote = null;
         let currentViewingContract = null;
@@ -1767,7 +2001,7 @@
                 notes: "Chiết khấu đặc biệt 10% theo cam kết hợp tác chiến lược.",
                 brand: "CLOUDPBX",
                 currency: "VND",
-                docLang: "VI",
+                docLang: "VI", validityDays: 30,
                 history: [
                     {
                         versionTag: "v2",
@@ -1795,8 +2029,9 @@
                             notes: "Bản chỉnh sửa số 2",
                             brand: "CLOUDPBX",
                             currency: "VND",
-                            docLang: "VI",
-                            lineItems: [
+                            docLang: "VI", validityDays: 30,
+                            exchangeRate: 27000,
+                lineItems: [
                                 { category: 1, code: "AD0001", desc: "Phí khởi tạo dịch vụ CloudPBX\nHướng dẫn cài đặt, vận hành", subtitle: "", price: 1000000, qty: 1, unit: "Lần", vatPct: 8 },
                                 { category: 2, code: "CPBX-STD-YR", desc: "CloudPBX Standard (10 máy nhánh)\nPhí dịch vụ 12 tháng", subtitle: "", price: 480000, qty: 12, unit: "Tháng", vatPct: 8 }
                             ]
@@ -1828,7 +2063,7 @@
                             notes: "Bản khởi tạo ban đầu",
                             brand: "CLOUDPBX",
                             currency: "VND",
-                            docLang: "VI",
+                            docLang: "VI", validityDays: 30,
                             lineItems: [
                                 { category: 1, code: "AD0001", desc: "Phí khởi tạo dịch vụ CloudPBX", subtitle: "", price: 1000000, qty: 1, unit: "Lần", vatPct: 8 }
                             ]
@@ -1860,7 +2095,7 @@
                 notes: "Bao gồm Dedicated IP riêng.",
                 brand: "CLOUDPBX",
                 currency: "USD",
-                docLang: "EN",
+                docLang: "EN", validityDays: 30,
                 history: [
                     {
                         versionTag: "v1",
@@ -1888,8 +2123,9 @@
                             notes: "Khởi tạo ban đầu",
                             brand: "CLOUDPBX",
                             currency: "USD",
-                            docLang: "EN",
-                            lineItems: [
+                            docLang: "EN", validityDays: 30,
+                            exchangeRate: 27000,
+                lineItems: [
                                 { category: 1, code: "SETUP-US", desc: "Enterprise CloudPBX Setup", subtitle: "", price: 300.00, qty: 1, unit: "Time", vatPct: 10 },
                                 { category: 2, code: "CPBX-ENT", desc: "Enterprise CloudPBX Unlimited Extensions (Monthly)", subtitle: "", price: 110.00, qty: 12, unit: "Month", vatPct: 10 }
                             ]
@@ -1921,7 +2157,7 @@
                 notes: "Hỗ trợ tích hợp CRM xuất nhập khẩu & định tuyến cuộc gọi chi nhánh Cần Thơ.",
                 brand: "CLOUDPBX",
                 currency: "VND",
-                docLang: "VI",
+                docLang: "VI", validityDays: 30,
                 history: [
                     {
                         versionTag: "v1",
@@ -1949,8 +2185,9 @@
                             notes: "Bản phác thảo đợt 1",
                             brand: "CLOUDPBX",
                             currency: "VND",
-                            docLang: "VI",
-                            lineItems: [
+                            docLang: "VI", validityDays: 30,
+                            exchangeRate: 27000,
+                lineItems: [
                                 { category: 1, code: "INIT-PRO", desc: "Khởi tạo tổng đài CloudPBX & đấu nối đầu số", subtitle: "", price: 2000000, qty: 1, unit: "Lần", vatPct: 8 },
                                 { category: 2, code: "CPBX-PRO-YR", desc: "CloudPBX Doanh nghiệp (Gói 20 máy nhánh)", subtitle: "", price: 590000, qty: 12, unit: "Tháng", vatPct: 8 }
                             ]
@@ -1983,7 +2220,7 @@
                 notes: "Tích hợp phần mềm quản lý khách sạn PMS Opera, đồng bộ trạng thái phòng tự động.",
                 brand: "DNTG",
                 currency: "VND",
-                docLang: "VI",
+                docLang: "VI", validityDays: 30,
                 history: [
                     {
                         versionTag: "v2",
@@ -2011,8 +2248,9 @@
                             notes: "Bản nâng cấp Gateway",
                             brand: "DNTG",
                             currency: "VND",
-                            docLang: "VI",
-                            lineItems: [
+                            docLang: "VI", validityDays: 30,
+                            exchangeRate: 27000,
+                lineItems: [
                                 { category: 1, code: "PMS-OPERA-INT", desc: "Module tích hợp PMS Opera & tổng đài phòng khách", subtitle: "", price: 8500000, qty: 1, unit: "Gói", vatPct: 8 },
                                 { category: 1, code: "DAG2000-48S", desc: "VoIP Gateway Dinstar DAG2000 48 cổng FXS", subtitle: "", price: 26500000, qty: 1, unit: "Thiết bị", vatPct: 8 },
                                 { category: 2, code: "CPBX-HOTEL-YR", desc: "Dịch vụ CloudPBX Hotel Enterprise (80 phòng)", subtitle: "", price: 1200000, qty: 12, unit: "Tháng", vatPct: 8 }
@@ -2045,7 +2283,7 @@
                             notes: "Khảo sát hạ tầng đợt 1",
                             brand: "DNTG",
                             currency: "VND",
-                            docLang: "VI",
+                            docLang: "VI", validityDays: 30,
                             lineItems: [
                                 { category: 1, code: "DAG2000-48S", desc: "VoIP Gateway Dinstar DAG2000 48 cổng FXS", subtitle: "", price: 26500000, qty: 1, unit: "Thiết bị", vatPct: 8 },
                                 { category: 2, code: "CPBX-HOTEL-YR", desc: "Dịch vụ CloudPBX Hotel Enterprise", subtitle: "", price: 1300000, qty: 12, unit: "Tháng", vatPct: 8 }
@@ -2079,7 +2317,7 @@
                 notes: "Gói mở rộng trung tâm chăm sóc khách hàng Call Center quốc tế (USD).",
                 brand: "CLOUDPBX",
                 currency: "USD",
-                docLang: "EN",
+                docLang: "EN", validityDays: 30,
                 history: [
                     {
                         versionTag: "v1",
@@ -2107,8 +2345,9 @@
                             notes: "Draft initial proposal",
                             brand: "CLOUDPBX",
                             currency: "USD",
-                            docLang: "EN",
-                            lineItems: [
+                            docLang: "EN", validityDays: 30,
+                            exchangeRate: 27000,
+                lineItems: [
                                 { category: 1, code: "CALLCTR-INIT", desc: "Omnichannel Call Center Setup", subtitle: "", price: 600.00, qty: 1, unit: "Package", vatPct: 10 },
                                 { category: 2, code: "AGENT-CC-YR", desc: "Call Center Cloud Agent Licenses", subtitle: "", price: 120.00, qty: 10, unit: "Month", vatPct: 10 }
                             ]
@@ -2251,6 +2490,7 @@
         ];
 
         let trashData = [];
+            saveAllDataToStorage();
 
         // SysLog Storage (Superadmin View)
         let sysLogsData = [
@@ -2258,6 +2498,125 @@
             { id: "log_2", timestamp: "2026-09-24 14:20:10", userName: "Lê Nguyễn Ngọc Ngân", role: "User", module: "Hợp đồng", action: "Tạo mới", detail: "Ký hợp đồng chính CTR2609001-MAMA từ QUO2609001-MAMA" },
             { id: "log_3", timestamp: "2026-09-28 09:45:00", userName: "Trần Minh Quân", role: "Manager", module: "Báo giá", action: "Tạo mới", detail: "Tạo báo giá quốc tế QUO2609002-GLOBALTECH ($1.790 USD)" }
         ];
+
+        /* --- LOCAL STORAGE STATE PERSISTENCE & RESTORE LAYER --- */
+        const STORAGE_KEY_PREFIX = 'cloudpbx_esales_v1_';
+
+        // Deep copy of initial demo data to allow pristine reset at any time
+        const INITIAL_SEED_DATA = {
+            departments: JSON.parse(JSON.stringify(departmentsData)),
+            users: JSON.parse(JSON.stringify(usersData)),
+            customers: JSON.parse(JSON.stringify(customersData)),
+            quotes: JSON.parse(JSON.stringify(quotesData)),
+            contracts: JSON.parse(JSON.stringify(contractsData)),
+            trash: JSON.parse(JSON.stringify(trashData)),
+            syslogs: JSON.parse(JSON.stringify(sysLogsData))
+        };
+
+        function saveAllDataToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY_PREFIX + 'departments', JSON.stringify(departmentsData));
+                localStorage.setItem(STORAGE_KEY_PREFIX + 'users', JSON.stringify(usersData));
+                localStorage.setItem(STORAGE_KEY_PREFIX + 'customers', JSON.stringify(customersData));
+                localStorage.setItem(STORAGE_KEY_PREFIX + 'quotes', JSON.stringify(quotesData));
+                localStorage.setItem(STORAGE_KEY_PREFIX + 'contracts', JSON.stringify(contractsData));
+                localStorage.setItem(STORAGE_KEY_PREFIX + 'trash', JSON.stringify(trashData));
+                localStorage.setItem(STORAGE_KEY_PREFIX + 'syslogs', JSON.stringify(sysLogsData));
+                localStorage.setItem(STORAGE_KEY_PREFIX + 'exchange_rate', String(currentSystemExchangeRate));
+                localStorage.setItem(STORAGE_KEY_PREFIX + 'exchange_history', JSON.stringify(exchangeRateHistory));
+                if (currentSystemLogo) {
+                    localStorage.setItem(STORAGE_KEY_PREFIX + 'system_logo', currentSystemLogo);
+                }
+            } catch (err) {
+                console.warn('LocalStorage save error:', err);
+            }
+        }
+
+        function loadAllDataFromStorage() {
+            try {
+                const d = localStorage.getItem(STORAGE_KEY_PREFIX + 'departments');
+                if (d) departmentsData = JSON.parse(d);
+                const u = localStorage.getItem(STORAGE_KEY_PREFIX + 'users');
+                if (u) usersData = JSON.parse(u);
+                const c = localStorage.getItem(STORAGE_KEY_PREFIX + 'customers');
+                if (c) customersData = JSON.parse(c);
+                const q = localStorage.getItem(STORAGE_KEY_PREFIX + 'quotes');
+                if (q) quotesData = JSON.parse(q);
+                const ct = localStorage.getItem(STORAGE_KEY_PREFIX + 'contracts');
+                if (ct) contractsData = JSON.parse(ct);
+                const t = localStorage.getItem(STORAGE_KEY_PREFIX + 'trash');
+                if (t) trashData = JSON.parse(t);
+                const sl = localStorage.getItem(STORAGE_KEY_PREFIX + 'syslogs');
+                if (sl) sysLogsData = JSON.parse(sl);
+                const exR = localStorage.getItem(STORAGE_KEY_PREFIX + 'exchange_rate');
+                if (exR) currentSystemExchangeRate = Number(exR) || 27000;
+                const exHist = localStorage.getItem(STORAGE_KEY_PREFIX + 'exchange_history');
+                if (exHist) exchangeRateHistory = JSON.parse(exHist);
+                const logo = localStorage.getItem(STORAGE_KEY_PREFIX + 'system_logo');
+                if (logo) {
+                    currentSystemLogo = logo;
+                    applySystemLogo(logo, 'custom-logo');
+                }
+            } catch (err) {
+                console.warn('LocalStorage load error:', err);
+            }
+        }
+
+        function confirmResetAllDemoData() {
+            if (confirm("Khôi phục dữ liệu gốc:\nBạn có chắc chắn muốn đặt lại toàn bộ hệ thống về dữ liệu mẫu mặc định không? Mọi dữ liệu thử nghiệm vừa tạo sẽ được làm mới.")) {
+                try {
+                    localStorage.removeItem(STORAGE_KEY_PREFIX + 'departments');
+                    localStorage.removeItem(STORAGE_KEY_PREFIX + 'users');
+                    localStorage.removeItem(STORAGE_KEY_PREFIX + 'customers');
+                    localStorage.removeItem(STORAGE_KEY_PREFIX + 'quotes');
+                    localStorage.removeItem(STORAGE_KEY_PREFIX + 'contracts');
+                    localStorage.removeItem(STORAGE_KEY_PREFIX + 'trash');
+                    localStorage.removeItem(STORAGE_KEY_PREFIX + 'syslogs');
+                } catch(e) {}
+
+                departmentsData = JSON.parse(JSON.stringify(INITIAL_SEED_DATA.departments));
+                usersData = JSON.parse(JSON.stringify(INITIAL_SEED_DATA.users));
+                customersData = JSON.parse(JSON.stringify(INITIAL_SEED_DATA.customers));
+                quotesData = JSON.parse(JSON.stringify(INITIAL_SEED_DATA.quotes));
+                contractsData = JSON.parse(JSON.stringify(INITIAL_SEED_DATA.contracts));
+                trashData = JSON.parse(JSON.stringify(INITIAL_SEED_DATA.trash));
+                sysLogsData = JSON.parse(JSON.stringify(INITIAL_SEED_DATA.syslogs));
+
+                saveAllDataToStorage();
+                updateBadges();
+                renderQuotesTable();
+                renderContractsTable();
+                renderCustomersTable();
+                renderDepartmentsTable();
+                renderAdminUsersTable();
+                renderSysLogTable();
+                renderReports();
+                showToast("Đã khôi phục dữ liệu mẫu thành công!", "success");
+            }
+        }
+
+        function quickFillLogin(email, pass) {
+            const emailInp = document.getElementById('login-username');
+            const passInp = document.getElementById('login-password');
+            if (emailInp) emailInp.value = email;
+            if (passInp) passInp.value = pass;
+            showToast(`Đã chọn tài khoản: ${email}`, "info");
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input || !icon) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash text-xs text-brand-orange';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye text-xs text-slate-400';
+            }
+        }
+
+
 
         function logSysActivity(module, action, detail) {
             const now = new Date();
@@ -2273,6 +2632,7 @@
                 detail: detail
             };
             sysLogsData.unshift(newLog);
+            saveAllDataToStorage();
             const badge = document.getElementById('syslog-count-badge');
             if (badge) badge.innerText = sysLogsData.length;
         }
@@ -2323,32 +2683,68 @@
             return num.toLocaleString('vi-VN') + (includeSuffix ? ' VNĐ' : '');
         }
 
-        function toggleGlobalAppLanguage() {
-            currentSystemLanguage = currentSystemLanguage === 'VI' ? 'EN' : 'VI';
-            const flagEl = document.getElementById('global-lang-flag');
-            const textEl = document.getElementById('global-lang-text');
-            if (flagEl) flagEl.innerText = currentSystemLanguage === 'VI' ? '🇻🇳' : '🇬🇧';
-            if (textEl) textEl.innerText = currentSystemLanguage === 'VI' ? 'Tiếng Việt' : 'English';
+// [Refactored: toggleGlobalAppLanguage moved to unified definition below]
 
-            const isEng = currentSystemLanguage === 'EN';
-            const txtBtnCreate = document.getElementById('txt-btn-create-quote');
-            if (txtBtnCreate) txtBtnCreate.innerText = isEng ? 'Create Quote' : 'Tạo báo giá';
+        function formatProductDescriptionHtml(desc) {
+            if (!desc) return '';
+            const lines = String(desc).split('\n');
+            const firstLine = (lines[0] || '').trim();
+            const remainingLines = lines.slice(1).join('\n').trim();
 
-            const txtNavQuotes = document.querySelector('#nav-btn-quotes span.flex-1');
-            if (txtNavQuotes) txtNavQuotes.innerText = isEng ? 'Quotes' : 'Báo giá';
-            const txtNavDrafts = document.querySelector('#nav-btn-drafts span.flex-1');
-            if (txtNavDrafts) txtNavDrafts.innerText = isEng ? 'Draft Quotes' : 'Báo giá (Nháp)';
-            const txtNavContracts = document.querySelector('#nav-btn-contracts span.flex-1');
-            if (txtNavContracts) txtNavContracts.innerText = isEng ? 'Contracts & Addendums' : 'Hợp đồng & Phụ lục';
-            const txtNavCustomers = document.querySelector('#nav-btn-customers span.flex-1');
-            if (txtNavCustomers) txtNavCustomers.innerText = isEng ? 'Customers' : 'Khách hàng';
-            const txtNavReports = document.querySelector('#nav-btn-reports span.flex-1');
-            if (txtNavReports) txtNavReports.innerText = isEng ? 'Reports' : 'Báo cáo chi tiết';
+            let html = '';
+            if (firstLine) {
+                html += `<div class="font-bold text-slate-900 leading-snug">${firstLine}</div>`;
+            }
+            if (remainingLines) {
+                html += `<div class="font-normal text-slate-600 whitespace-pre-line mt-0.5 leading-relaxed">${remainingLines}</div>`;
+            }
+            return html || '<span class="text-slate-400 italic">---</span>';
+        }
 
-            const rptTitle = document.getElementById('rpt-title-text');
-            if (rptTitle) rptTitle.innerText = isEng ? 'Revenue & Sales Performance Report' : 'Báo cáo Doanh thu & Hiệu suất kinh doanh';
+        function calculateExpiryDate(dateStr, days) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return '';
+            const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+            d.setDate(d.getDate() + (Number(days) || 30));
+            const dd = String(d.getDate()).padStart(2, '0');
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const yyyy = d.getFullYear();
+            return `${dd}/${mm}/${yyyy}`;
+        }
 
-            showToast(isEng ? 'Switched to English interface' : 'Đã chuyển sang giao diện Tiếng Việt', 'info');
+        function getDefaultQuoteTerms(lang, validityDays, expiryDate) {
+            const days = Number(validityDays) || 30;
+            const exp = expiryDate || '...';
+            if (lang === 'EN') {
+                return `• Unit prices include VAT as specified for each item.\n• Service charges exclude VIP numbers selection fees, actual call usage traffic, and number subscription fees.\n• This quotation is valid for ${days} days from the date of issue (until ${exp}).\n• Hardware/equipment (if any) is warranted according to manufacturer standards.`;
+            } else if (lang === 'BI') {
+                return `• Đơn giá đã bao gồm thuế GTGT (VAT) / Prices include VAT as specified.\n• Chưa bao gồm phí chọn số đẹp, cước cuộc gọi và phí duy trì đầu số / Excludes VIP number selection, call traffic & number rental fees.\n• Báo giá có hiệu lực trong vòng ${days} ngày (đến hết ngày ${exp}) / Valid for ${days} days (until ${exp}).\n• Hàng hóa bảo hành theo tiêu chuẩn nhà sản xuất / Hardware warranted by manufacturer standards.`;
+            } else {
+                return `• Đơn giá đã bao gồm thuế GTGT (VAT) theo từng mục tương ứng.\n• Giá dịch vụ chưa bao gồm phí chọn số đẹp, cước phát sinh thực tế khi sử dụng, phí thuê bao đầu số.\n• Báo giá có hiệu lực trong vòng ${days} ngày kể từ ngày phát hành (đến hết ngày ${exp}).\n• Hàng hóa (nếu có) được bảo hành theo tiêu chuẩn nhà sản xuất.`;
+            }
+        }
+
+        function getEffectiveExchangeRate(doc) {
+            if (!doc) return currentSystemExchangeRate || 27000;
+            // 1. Prioritize explicit frozen exchangeRate stamped on the document
+            if (doc.exchangeRate && Number(doc.exchangeRate) > 0) {
+                return Number(doc.exchangeRate);
+            }
+            // 2. Timeline resolution based on doc.date / createdAt against exchangeRateHistory
+            const docDate = doc.date || '';
+            if (docDate && exchangeRateHistory && exchangeRateHistory.length > 0) {
+                const sorted = [...exchangeRateHistory].sort((a, b) => (a.appliedAt > b.appliedAt ? 1 : -1));
+                let matchedRate = Number(sorted[0].rate) || 27000;
+                for (const item of sorted) {
+                    const itemDate = (item.appliedAt || '').split(' ')[0];
+                    if (itemDate && itemDate <= docDate) {
+                        matchedRate = Number(item.rate);
+                    }
+                }
+                return matchedRate;
+            }
+            return currentSystemExchangeRate || 27000;
         }
 
         function calculateLineItemTotal(item) {
@@ -2404,6 +2800,12 @@
             }
 
             currentUser = { ...user };
+            const remCb = document.getElementById('login-remember-me');
+            if (remCb && remCb.checked) {
+                try { localStorage.setItem('cloudpbx_remember_email', emailInput); } catch(e) {}
+            } else {
+                try { localStorage.removeItem('cloudpbx_remember_email'); } catch(e) {}
+            }
             document.getElementById('user-display-name').innerText = currentUser.name;
             document.getElementById('user-avatar').innerText = currentUser.name.charAt(0).toUpperCase();
 
@@ -2445,12 +2847,17 @@
             const isAdmin = currentUser.type === 'Admin';
             const isSuperOrAdmin = isSuper || isAdmin;
 
-            // 1. SysLog: Dành riêng cho Superadmin (User, Manager, Admin đều bị ẨN)
-            document.getElementById('nav-btn-syslog')?.classList.toggle('hidden', !isSuper);
+            // 1. Settings Menu Group (Admin & Superadmin only)
+            const settingsGroup = document.getElementById('nav-settings-group');
+            if (settingsGroup) {
+                settingsGroup.classList.toggle('hidden', !isSuperOrAdmin);
+            }
 
-            // 2. Quản lý phòng ban & Nhân viên & RBAC: Chỉ Superadmin & Admin được thấy (User & Manager bị ẨN)
-            document.getElementById('nav-btn-departments')?.classList.toggle('hidden', !isSuperOrAdmin);
-            document.getElementById('nav-btn-admin-users')?.classList.toggle('hidden', !isSuperOrAdmin);
+            // 2. SysLog Submenu Item (Superadmin ONLY)
+            const subSyslog = document.getElementById('nav-sub-syslog');
+            if (subSyslog) {
+                subSyslog.classList.toggle('hidden', !isSuper);
+            }
 
             // 3. Báo cáo chi tiết: Ẩn đối với tài khoản Admin
             document.getElementById('nav-btn-reports')?.classList.toggle('hidden', isAdmin);
@@ -2469,8 +2876,8 @@
                 showToast("Chỉ Superadmin mới có quyền truy cập SysLog!", "error");
                 return;
             }
-            if ((viewName === 'admin-users' || viewName === 'departments') && !(currentUser.type === 'Superadmin' || currentUser.type === 'Admin')) {
-                showToast("Bạn không có quyền truy cập mục quản trị!", "error");
+            if ((viewName === 'settings-general' || viewName === 'admin-users' || viewName === 'departments') && !(currentUser.type === 'Superadmin' || currentUser.type === 'Admin')) {
+                showToast("Bạn không có quyền truy cập mục cài đặt!", "error");
                 return;
             }
             if (viewName === 'reports' && currentUser.type === 'Admin') {
@@ -2478,12 +2885,21 @@
                 return;
             }
 
-            const views = ['quotes', 'contracts', 'customers', 'drafts', 'trash', 'reports', 'departments', 'admin-users', 'syslog'];
+            const views = ['quotes', 'contracts', 'customers', 'trash', 'reports', 'settings-general', 'departments', 'admin-users', 'syslog'];
             views.forEach(v => {
                 document.getElementById(`view-${v}`)?.classList.add('hidden');
                 const btn = document.getElementById(`nav-btn-${v}`);
                 if (btn) {
                     btn.className = `nav-item w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left`;
+                }
+            });
+
+            // Reset sub-items styling
+            const subItems = ['general', 'departments', 'admin-users', 'syslog'];
+            subItems.forEach(s => {
+                const subBtn = document.getElementById(`nav-sub-${s}`);
+                if (subBtn) {
+                    subBtn.className = `nav-sub-item w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all text-left`;
                 }
             });
 
@@ -2495,9 +2911,33 @@
                 activeBtn.className = `nav-item w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-white bg-brand-orange shadow text-left`;
             }
 
-            if (viewName === 'quotes') {
+            // If switching to one of the settings sub-views, highlight the sub-menu item and expand settings
+            if (['settings-general', 'departments', 'admin-users', 'syslog'].includes(viewName)) {
+                const settingsSubmenu = document.getElementById('nav-settings-submenu');
+                const chevron = document.getElementById('settings-menu-chevron');
+                if (settingsSubmenu) settingsSubmenu.classList.remove('hidden');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+
+                let subId = 'general';
+                if (viewName === 'departments') subId = 'departments';
+                else if (viewName === 'admin-users') subId = 'admin-users';
+                else if (viewName === 'syslog') subId = 'syslog';
+
+                const targetSub = document.getElementById(`nav-sub-${subId}`);
+                if (targetSub) {
+                    targetSub.className = `nav-sub-item w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-slate-800 shadow-sm border border-slate-700/60 transition-all text-left`;
+                }
+            }
+
+            if (viewName === 'drafts') {
+                const statusSelect = document.getElementById('filter-status');
+                if (statusSelect) statusSelect.value = 'DRAFT';
                 renderQuotesTable();
-            } else if (viewName === 'drafts') {
+            } else if (viewName === 'quotes') {
+                const statusSelect = document.getElementById('filter-status');
+                if (statusSelect && statusSelect.value === 'DRAFT') {
+                    statusSelect.value = 'ALL';
+                }
                 renderQuotesTable();
             } else if (viewName === 'contracts') {
                 renderContractsTable();
@@ -2507,11 +2947,14 @@
                 renderTrashTable();
             } else if (viewName === 'reports') {
                 renderReports();
+            } else if (viewName === 'settings-general') {
+                renderSettingsGeneralView();
             } else if (viewName === 'departments') {
                 renderDepartmentsTable();
             } else if (viewName === 'admin-users') {
                 renderAdminUsersTable();
             } else if (viewName === 'syslog') {
+                syslogCurrentPage = 1;
                 renderSysLogTable();
             }
 
@@ -2538,36 +2981,7 @@
             if (syslogBadge) syslogBadge.innerText = sysLogsData.length;
         }
 
-        function populateStaffFilterDropdown() {
-            const filterStaff = document.getElementById('filter-staff');
-            const wrapper = document.getElementById('filter-staff-wrapper');
-            const rptFilterStaff = document.getElementById('rpt-filter-staff');
-            const rptWrapper = document.getElementById('rpt-filter-staff-wrapper');
-
-            if (!currentUser) return;
-
-            // Users only see their own performance; Manager, Admin, and Superadmin see staff filter
-            if (currentUser.type === 'User') {
-                wrapper?.classList.add('hidden');
-                rptWrapper?.classList.add('hidden');
-                return;
-            }
-
-            wrapper?.classList.remove('hidden');
-            rptWrapper?.classList.remove('hidden');
-
-            let staffList = usersData.filter(u => u.type === 'User' || u.type === 'Manager');
-            // Manager is strictly constrained to staff in their assigned department
-            if (currentUser.type === 'Manager') {
-                staffList = staffList.filter(u => u.deptId === currentUser.deptId);
-            }
-
-            const staffOptions = staffList.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
-            const defaultOpt = '<option value="ALL">-- Tất cả nhân viên --</option>';
-
-            if (filterStaff) filterStaff.innerHTML = defaultOpt + staffOptions;
-            if (rptFilterStaff) rptFilterStaff.innerHTML = defaultOpt + staffOptions;
-        }
+// [Refactored: populateStaffFilterDropdown moved to unified definition below]
 
         function toggleGlobalAppLanguage() {
             currentSystemLanguage = currentSystemLanguage === 'VI' ? 'EN' : 'VI';
@@ -2718,6 +3132,7 @@
                 salesEmail: currentUser ? currentUser.email : "demo@cloudpbx.vn",
                 salesPhone: currentUser ? currentUser.phone : "0902 328 534",
                 deptId: currentUser ? currentUser.deptId : "dept_1",
+                exchangeRate: currentSystemExchangeRate,
                 status: "OFFICIAL",
                 version: 1,
                 terms: DEFAULT_QUOTE_TERMS,
@@ -2729,7 +3144,7 @@
                 notes: "",
                 brand: "CLOUDPBX",
                 currency: "VND",
-                docLang: "VI",
+                docLang: "VI", validityDays: 30,
                 history: [],
                 lineItems: [
                     { category: 1, code: "AD0001", desc: "Phí khởi tạo dịch vụ CloudPBX\nHướng dẫn cài đặt, kịch bản, vận hành", subtitle: "Tặng gói hỗ trợ kỹ thuật Onsite", price: 1000000, qty: 1, unit: "Lần", vatPct: 8 },
@@ -2804,6 +3219,7 @@
             newQuote.version = 1;
             newQuote.history = [];
             quotesData.unshift(newQuote);
+            saveAllDataToStorage();
             logSysActivity("Báo giá", "Tạo mới", `Nhân bản báo giá từ ${q.refNo} thành ${newQuote.refNo}`);
             renderQuotesTable();
             updateBadges();
@@ -2811,9 +3227,15 @@
         }
 
         function deleteQuote(quoteId) {
-            const idx = quotesData.findIndex(q => q.id === quoteId);
+            const q = quotesData.find(item => item.id === quoteId);
+            const ref = q ? q.refNo : quoteId;
+            if (!confirm(`Xác nhận xóa: Bạn có chắc chắn muốn chuyển Báo giá "${ref}" vào Thùng rác không?`)) {
+                return;
+            }
+            const idx = quotesData.findIndex(item => item.id === quoteId);
             if (idx >= 0) {
                 const deleted = quotesData.splice(idx, 1)[0];
+                saveAllDataToStorage();
                 trashData.unshift(deleted);
                 logSysActivity("Báo giá", "Xóa", `Chuyển báo giá ${deleted.refNo} vào Trash`);
                 renderQuotesTable();
@@ -3070,8 +3492,8 @@
         // Dark Navy Blue (#003566) + White text for active state
         function updateQuoteConfigTogglesUI() {
             if (!activeQuote) return;
-            const activeClass = "flex-1 py-1 px-2 rounded transition-all text-center bg-[#003566] text-white font-bold shadow";
-            const inactiveClass = "flex-1 py-1 px-2 rounded transition-all text-center text-slate-600 hover:text-slate-900";
+            const activeClass = "flex-1 py-1 px-2 rounded transition-all text-center bg-[#003566] text-white font-bold shadow text-xs";
+            const inactiveClass = "flex-1 py-1 px-2 rounded transition-all text-center text-slate-600 hover:text-slate-900 text-xs";
 
             document.getElementById('btn-brand-cloudpbx').className = activeQuote.brand === 'CLOUDPBX' ? activeClass : inactiveClass;
             document.getElementById('btn-brand-dntg').className = activeQuote.brand === 'DNTG' ? activeClass : inactiveClass;
@@ -3079,13 +3501,56 @@
             document.getElementById('btn-curr-vnd').className = activeQuote.currency === 'VND' ? activeClass : inactiveClass;
             document.getElementById('btn-curr-usd').className = activeQuote.currency === 'USD' ? activeClass : inactiveClass;
 
-            document.getElementById('btn-doclang-vi').className = activeQuote.docLang === 'VI' ? activeClass : inactiveClass;
-            document.getElementById('btn-doclang-en').className = activeQuote.docLang === 'EN' ? activeClass : inactiveClass;
+            const docLang = activeQuote.docLang || 'VI';
+            const btnVi = document.getElementById('btn-doclang-vi');
+            const btnEn = document.getElementById('btn-doclang-en');
+            const btnBi = document.getElementById('btn-doclang-bi');
+            if (btnVi) btnVi.className = docLang === 'VI' ? activeClass : inactiveClass;
+            if (btnEn) btnEn.className = docLang === 'EN' ? activeClass : inactiveClass;
+            if (btnBi) btnBi.className = docLang === 'BI' ? activeClass : inactiveClass;
+
+            const validity = Number(activeQuote.validityDays) || 30;
+            const vActiveClass = "px-2.5 py-1 rounded transition-all text-center bg-[#003566] text-white font-bold shadow text-xs";
+            const vInactiveClass = "px-2.5 py-1 rounded transition-all text-center text-slate-600 hover:text-slate-900 text-xs";
+            [15, 30, 45, 60].forEach(d => {
+                const b = document.getElementById(`btn-valid-${d}`);
+                if (b) b.className = (validity === d) ? vActiveClass : vInactiveClass;
+            });
         }
 
         function setQuoteBrand(brand) { activeQuote.brand = brand; updateQuoteConfigTogglesUI(); updateQuotationPreview(); }
         function setQuoteCurrency(curr) { activeQuote.currency = curr; updateQuoteConfigTogglesUI(); updateQuotationPreview(); renderSeparatedLineItemInputs(); }
-        function setQuoteDocLang(lang) { activeQuote.docLang = lang; updateQuoteConfigTogglesUI(); updateQuotationPreview(); }
+
+        function setQuoteDocLang(lang) {
+            if (!activeQuote) return;
+            activeQuote.docLang = lang;
+            const validityDays = Number(activeQuote.validityDays) || 30;
+            const expiryDate = calculateExpiryDate(activeQuote.date, validityDays);
+            const termsEl = document.getElementById('form-quote-terms');
+            if (termsEl) {
+                termsEl.value = getDefaultQuoteTerms(lang, validityDays, expiryDate);
+                activeQuote.terms = termsEl.value;
+            }
+            updateQuoteConfigTogglesUI();
+            updateQuotationPreview();
+            const langNames = { VI: 'Tiếng Việt', EN: 'English', BI: 'Song ngữ (VI-EN)' };
+            showToast(`Đã chuyển ngôn ngữ báo giá: ${langNames[lang] || lang}`, "info");
+        }
+
+        function setQuoteValidity(days) {
+            if (!activeQuote) return;
+            activeQuote.validityDays = Number(days);
+            const validityDays = Number(activeQuote.validityDays);
+            const expiryDate = calculateExpiryDate(activeQuote.date, validityDays);
+            const termsEl = document.getElementById('form-quote-terms');
+            if (termsEl) {
+                termsEl.value = getDefaultQuoteTerms(activeQuote.docLang || 'VI', validityDays, expiryDate);
+                activeQuote.terms = termsEl.value;
+            }
+            updateQuoteConfigTogglesUI();
+            updateQuotationPreview();
+            showToast(`Đã cập nhật hiệu lực báo giá: ${days} ngày`, "info");
+        }
 
         // Render line items matching Image #1 layout
         function renderSeparatedLineItemInputs() {
@@ -3106,8 +3571,11 @@
                                 <input type="text" value="${item.code || ''}" oninput="activeQuote.lineItems[${idx}].code=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
                             </div>
                             <div class="md:col-span-5">
-                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Mô tả sản phẩm / dịch vụ</label>
-                                <textarea rows="2" oninput="activeQuote.lineItems[${idx}].desc=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange resize-y font-normal leading-relaxed">${item.desc || ''}</textarea>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1 flex items-center justify-between">
+                                    <span>Mô tả sản phẩm / dịch vụ</span>
+                                    <span class="text-[9.5px] text-slate-400 font-normal italic">Dòng 1: Tên SP (In đậm) | Dòng 2+: Mô tả (Chữ thường)</span>
+                                </label>
+                                <textarea rows="2" placeholder="Dòng 1: Tên sản phẩm / dịch vụ (In đậm)&#10;Dòng 2+: Chi tiết mô tả tính năng (Chữ thường)..." oninput="activeQuote.lineItems[${idx}].desc=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange resize-y font-normal leading-relaxed">${item.desc || ''}</textarea>
                             </div>
                             <div class="md:col-span-3">
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Ghi chú phụ / Subtitle</label>
@@ -3162,9 +3630,15 @@
         }
 
         function removeLineItem(idx) {
+            const item = activeQuote && activeQuote.lineItems ? activeQuote.lineItems[idx] : null;
+            const itemName = item && item.desc ? item.desc.split('\n')[0].trim() : `mục số ${idx + 1}`;
+            if (!confirm(`Xác nhận xóa: Bạn có chắc chắn muốn xóa dòng sản phẩm/dịch vụ "${itemName}" khỏi báo giá không?`)) {
+                return;
+            }
             activeQuote.lineItems.splice(idx, 1);
             renderSeparatedLineItemInputs();
             updateQuotationPreview();
+            showToast(`Đã xóa mục "${itemName}"`, "info");
         }
 
         function updateExistingQuote() {
@@ -3241,6 +3715,9 @@
             activeQuote.advancePct = Number(document.getElementById('form-advance-pct')?.value) || 30;
             activeQuote.advanceRem = Number(document.getElementById('form-advance-rem')?.value) || 70;
             activeQuote.advanceDays = Number(document.getElementById('form-advance-days')?.value) || 7;
+            if (!activeQuote.exchangeRate) {
+                activeQuote.exchangeRate = currentSystemExchangeRate;
+            }
 
             // Save edited sales info
             activeQuote.salesName = document.getElementById('form-sales-name')?.value || activeQuote.salesName;
@@ -3274,11 +3751,13 @@
                 }
 
                 quotesData[idx] = { ...activeQuote };
+                saveAllDataToStorage();
                 logSysActivity("Báo giá", "Chỉnh sửa", `Cập nhật báo giá ${activeQuote.refNo} (v${activeQuote.version} - ${status})`);
             } else {
                 activeQuote.version = 1;
                 activeQuote.history = [];
                 quotesData.unshift({ ...activeQuote });
+                saveAllDataToStorage();
                 logSysActivity("Báo giá", "Tạo mới", `Tạo mới báo giá ${activeQuote.refNo} (${status})`);
             }
 
@@ -3344,18 +3823,100 @@
                 if (brandEmail) brandEmail.innerText = 'hello@cloudpbx.vn';
             }
 
+            const docLang = activeQuote.docLang || 'VI';
+            const validityDays = Number(activeQuote.validityDays) || 30;
+            const expiryDate = calculateExpiryDate(activeQuote.date, validityDays);
+
+            // Document Title
+            const docTitleEl = document.getElementById('pv-doc-title');
+            if (docTitleEl) {
+                if (docLang === 'EN') docTitleEl.innerText = 'SERVICE QUOTATION';
+                else if (docLang === 'BI') docTitleEl.innerText = 'BÁO GIÁ DỊCH VỤ / SERVICE QUOTATION';
+                else docTitleEl.innerText = 'BÁO GIÁ DỊCH VỤ';
+            }
+
+            // Header Labels
+            const lblRef = document.getElementById('pv-lbl-ref');
+            if (lblRef) {
+                if (docLang === 'EN') lblRef.innerText = 'Ref:';
+                else if (docLang === 'BI') lblRef.innerText = 'Số / Ref:';
+                else lblRef.innerText = 'Số (Ref):';
+            }
+
+            const lblDate = document.getElementById('pv-lbl-date');
+            if (lblDate) {
+                if (docLang === 'EN') lblDate.innerText = 'Date:';
+                else if (docLang === 'BI') lblDate.innerText = 'Ngày / Date:';
+                else lblDate.innerText = 'Ngày:';
+            }
+
+            // Validity & Expiry display
+            const lblValid = document.getElementById('pv-lbl-validity');
+            const valTxt = document.getElementById('pv-quote-validity');
+            const expTxt = document.getElementById('pv-quote-expiry');
+            if (lblValid) {
+                if (docLang === 'EN') lblValid.innerText = 'Validity:';
+                else if (docLang === 'BI') lblValid.innerText = 'Hiệu lực / Validity:';
+                else lblValid.innerText = 'Hiệu lực:';
+            }
+            if (valTxt) {
+                if (docLang === 'EN') valTxt.innerText = `${validityDays} days`;
+                else if (docLang === 'BI') valTxt.innerText = `${validityDays} ngày / days`;
+                else valTxt.innerText = `${validityDays} ngày`;
+            }
+            if (expTxt) {
+                if (docLang === 'EN') expTxt.innerText = `(Until ${expiryDate})`;
+                else if (docLang === 'BI') expTxt.innerText = `(Đến / Until ${expiryDate})`;
+                else expTxt.innerText = `(Đến ${expiryDate})`;
+            }
+
             document.getElementById('pv-quote-ref').innerText = activeQuote.refNo;
             const rawDate = activeQuote.date || '';
             const dateParts = rawDate.split('-');
             const formattedDate = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : rawDate;
             document.getElementById('pv-quote-date').innerText = formattedDate;
 
+            // Recipient Header & Labels
+            const recHeaderTitle = document.getElementById('pv-recipient-header-title');
+            if (recHeaderTitle) {
+                if (docLang === 'EN') recHeaderTitle.innerText = 'TO:';
+                else if (docLang === 'BI') recHeaderTitle.innerText = 'KÍNH GỬI / TO:';
+                else recHeaderTitle.innerText = 'KÍNH GỬI:';
+            }
+
             document.getElementById('pv-recipient-person').innerText = activeQuote.recipientPerson || '---';
             document.getElementById('pv-recipient-title').innerText = activeQuote.recipientTitle || '---';
             document.getElementById('pv-recipient-company').innerText = activeQuote.companyName || '---';
             document.getElementById('pv-recipient-address').innerText = activeQuote.address || '---';
-            document.getElementById('pv-terms-content-display').innerText = activeQuote.terms || DEFAULT_QUOTE_TERMS;
 
+            // Terms display & Title
+            const termsTitle = document.getElementById('pv-lbl-terms-title');
+            if (termsTitle) {
+                if (docLang === 'EN') termsTitle.innerText = 'Terms & Conditions:';
+                else if (docLang === 'BI') termsTitle.innerText = 'Ghi chú & Điều khoản / Terms & Conditions:';
+                else termsTitle.innerText = 'Ghi chú & Điều khoản dịch vụ:';
+            }
+            document.getElementById('pv-terms-content-display').innerText = activeQuote.terms || getDefaultQuoteTerms(docLang, validityDays, expiryDate);
+
+            // Table Column Headers i18n
+            const thCode = document.getElementById('th-code');
+            const thStt = document.getElementById('th-stt');
+            const thDesc = document.getElementById('th-desc');
+            const thPrice = document.getElementById('th-price');
+            const thQty = document.getElementById('th-qty');
+            const thUnit = document.getElementById('th-unit');
+            const thVat = document.getElementById('th-vat');
+            const thTotal = document.getElementById('th-total');
+
+            if (thCode) thCode.innerText = docLang === 'EN' ? 'Code' : (docLang === 'BI' ? 'Mã / Code' : 'Mã');
+            if (thStt) thStt.innerText = docLang === 'EN' ? 'No.' : (docLang === 'BI' ? 'STT / No.' : 'STT');
+            if (thDesc) thDesc.innerText = docLang === 'EN' ? 'Product / Service Description' : (docLang === 'BI' ? 'Mô tả SP - Dịch vụ / Description' : 'Mô tả Sản phẩm / Dịch vụ');
+            if (thPrice) thPrice.innerText = docLang === 'EN' ? 'Unit Price' : (docLang === 'BI' ? 'Đơn giá / Price' : 'Đơn giá');
+            if (thQty) thQty.innerText = docLang === 'EN' ? 'Qty' : (docLang === 'BI' ? 'SL / Qty' : 'SL');
+            if (thUnit) thUnit.innerText = docLang === 'EN' ? 'Unit' : (docLang === 'BI' ? 'ĐVT / Unit' : 'Đơn vị');
+            if (thTotal) thTotal.innerText = docLang === 'EN' ? 'Amount' : (docLang === 'BI' ? 'Tổng / Amount' : 'Tổng');
+
+            // Payment terms translation
             const setupVal = document.querySelector('input[name="term_setup"]:checked')?.value || activeQuote.termSetup || 'PREPAID';
             const cloudVal = document.querySelector('input[name="term_cloud"]:checked')?.value || activeQuote.termCloud || 'YEARLY';
             const advPct = document.getElementById('form-advance-pct')?.value || activeQuote.advancePct || 30;
@@ -3363,12 +3924,32 @@
             const advDays = document.getElementById('form-advance-days')?.value || activeQuote.advanceDays || 7;
 
             let setupText = 'Trả trước (100%)';
-            if (setupVal === 'POSTPAID') setupText = 'Trả sau khi nghiệm thu';
-            else if (setupVal === 'ADVANCE') setupText = `Tạm ứng ${advPct}%, còn lại ${advRem}% trong vòng ${advDays} ngày`;
+            if (docLang === 'EN') {
+                if (setupVal === 'POSTPAID') setupText = 'Postpaid upon acceptance';
+                else if (setupVal === 'ADVANCE') setupText = `Advance ${advPct}%, balance ${advRem}% within ${advDays} days`;
+                else setupText = 'Prepaid (100%)';
+            } else if (docLang === 'BI') {
+                if (setupVal === 'POSTPAID') setupText = 'Trả sau khi nghiệm thu / Postpaid';
+                else if (setupVal === 'ADVANCE') setupText = `Tạm ứng ${advPct}% / Advance ${advPct}%, còn lại ${advRem}% trong ${advDays} ngày`;
+                else setupText = 'Trả trước / Prepaid (100%)';
+            } else {
+                if (setupVal === 'POSTPAID') setupText = 'Trả sau khi nghiệm thu';
+                else if (setupVal === 'ADVANCE') setupText = `Tạm ứng ${advPct}%, còn lại ${advRem}% trong vòng ${advDays} ngày`;
+            }
 
             let cloudText = 'Mỗi năm';
-            if (cloudVal === 'MONTHLY') cloudText = 'Mỗi tháng';
-            else if (cloudVal === 'QUARTERLY') cloudText = 'Mỗi Quý';
+            if (docLang === 'EN') {
+                if (cloudVal === 'MONTHLY') cloudText = 'Monthly';
+                else if (cloudVal === 'QUARTERLY') cloudText = 'Quarterly';
+                else cloudText = 'Yearly';
+            } else if (docLang === 'BI') {
+                if (cloudVal === 'MONTHLY') cloudText = 'Mỗi tháng / Monthly';
+                else if (cloudVal === 'QUARTERLY') cloudText = 'Mỗi Quý / Quarterly';
+                else cloudText = 'Mỗi năm / Yearly';
+            } else {
+                if (cloudVal === 'MONTHLY') cloudText = 'Mỗi tháng';
+                else if (cloudVal === 'QUARTERLY') cloudText = 'Mỗi Quý';
+            }
 
             const setupDisp = document.getElementById('pv-payment-setup-display');
             const cloudDisp = document.getElementById('pv-payment-cloud-display');
@@ -3399,10 +3980,14 @@
             let html = '';
             let stt = 1;
 
+            const cat1Title = docLang === 'EN' ? 'I. ONE-TIME CHARGES (Setup / Equipment)' : (docLang === 'BI' ? 'I. PHÍ THANH TOÁN 1 LẦN / ONE-TIME CHARGES' : 'I. PHÍ THANH TOÁN 1 LẦN (Khởi tạo / Thiết bị)');
+            const cat2Title = docLang === 'EN' ? 'II. RECURRING CHARGES (CloudPBX Service)' : (docLang === 'BI' ? 'II. PHÍ DUY TRÌ DỊCH VỤ / RECURRING CHARGES' : 'II. PHÍ DUY TRÌ DỊCH VỤ (CloudPBX)');
+            const grandTotalLabel = docLang === 'EN' ? 'TOTAL AMOUNT (INCL. VAT):' : (docLang === 'BI' ? 'TỔNG CỘNG / GRAND TOTAL (INCL. VAT):' : 'TỔNG CỘNG (ĐÃ GỒM VAT):');
+
             if (cat1Items.length > 0) {
                 html += `
                     <tr class="bg-slate-100/90 font-bold text-slate-800 text-[10px]">
-                        <td colspan="8" class="p-1.5 font-bold">I. PHÍ THANH TOÁN 1 LẦN (Khởi tạo / Thiết bị)</td>
+                        <td colspan="8" class="p-1.5 font-bold">${cat1Title}</td>
                     </tr>
                 `;
                 cat1Items.forEach(item => {
@@ -3412,8 +3997,8 @@
                             <td class="p-1 border-r font-mono text-center">${item.code || ''}</td>
                             <td class="p-1 border-r text-center">${stt++}</td>
                             <td class="p-1 border-r">
-                                <div class="font-semibold text-slate-800 whitespace-pre-line">${item.desc || ''}</div>
-                                ${item.subtitle ? `<div class="text-[9px] text-rose-600 italic">${item.subtitle}</div>` : ''}
+                                ${formatProductDescriptionHtml(item.desc)}
+                                ${item.subtitle ? `<div class="text-[9px] text-rose-600 italic mt-0.5">${item.subtitle}</div>` : ''}
                             </td>
                             <td class="p-1 border-r text-right whitespace-nowrap">${formatMoney(item.price, activeQuote.currency, false)}</td>
                             <td class="p-1 border-r text-center font-bold">${item.qty}</td>
@@ -3428,7 +4013,7 @@
             if (cat2Items.length > 0) {
                 html += `
                     <tr class="bg-slate-100/90 font-bold text-slate-800 text-[10px]">
-                        <td colspan="8" class="p-1.5 font-bold">II. PHÍ DUY TRÌ DỊCH VỤ (CloudPBX)</td>
+                        <td colspan="8" class="p-1.5 font-bold">${cat2Title}</td>
                     </tr>
                 `;
                 cat2Items.forEach(item => {
@@ -3438,8 +4023,8 @@
                             <td class="p-1 border-r font-mono text-center">${item.code || ''}</td>
                             <td class="p-1 border-r text-center">${stt++}</td>
                             <td class="p-1 border-r">
-                                <div class="font-semibold text-slate-800 whitespace-pre-line">${item.desc || ''}</div>
-                                ${item.subtitle ? `<div class="text-[9px] text-rose-600 italic">${item.subtitle}</div>` : ''}
+                                ${formatProductDescriptionHtml(item.desc)}
+                                ${item.subtitle ? `<div class="text-[9px] text-rose-600 italic mt-0.5">${item.subtitle}</div>` : ''}
                             </td>
                             <td class="p-1 border-r text-right whitespace-nowrap">${formatMoney(item.price, activeQuote.currency, false)}</td>
                             <td class="p-1 border-r text-center font-bold">${item.qty}</td>
@@ -3454,7 +4039,7 @@
             const grandTotal = calculateQuoteGrandTotal(activeQuote);
             html += `
                 <tr class="bg-slate-50 font-bold border-t border-slate-300 text-[10px]">
-                    <td colspan="7" class="p-1.5 text-right font-extrabold uppercase">TỔNG CỘNG (ĐÃ GỒM VAT):</td>
+                    <td colspan="7" class="p-1.5 text-right font-extrabold uppercase">${grandTotalLabel}</td>
                     <td class="p-1.5 text-right font-black text-brand-orange whitespace-nowrap">${formatMoney(grandTotal, activeQuote.currency)}</td>
                 </tr>
             `;
@@ -3570,17 +4155,30 @@
 
             let totalVnd = 0;
             let totalUsd = 0;
+            let realRevenueVnd = 0;
+
+            // Update exchange rate badge and label on KPI card with latest applied rate
+            const rptRateBadge = document.getElementById('rpt-rate-badge');
+            if (rptRateBadge) {
+                rptRateBadge.innerText = `1 USD = ${currentSystemExchangeRate.toLocaleString('vi-VN')} VNĐ (Hiện hành)`;
+                rptRateBadge.title = "Tỷ giá hiện hành áp dụng cho các báo giá/hợp đồng từ lúc áp dụng. Số liệu quá khứ bảo lưu theo tỷ giá lịch sử tại thời điểm phát sinh.";
+            }
+            const rptSubRateLabel = document.getElementById('rpt-sub-rate-label');
+            if (rptSubRateLabel) {
+                rptSubRateLabel.innerText = `(Quy đổi theo tỷ giá chốt từng thời điểm)`;
+            }
 
             quotesForKpi.forEach(q => {
                 const qTotal = calculateQuoteGrandTotal(q);
+                const qRate = getEffectiveExchangeRate(q);
                 if (q.currency === 'USD') {
                     totalUsd += qTotal;
+                    realRevenueVnd += (qTotal * qRate);
                 } else {
                     totalVnd += qTotal;
+                    realRevenueVnd += qTotal;
                 }
             });
-
-            const realRevenueVnd = totalVnd + (totalUsd * EXCHANGE_RATE_USD_VND);
 
             document.getElementById('rpt-real-revenue-converted').innerText = formatMoney(realRevenueVnd, 'VND', true);
             document.getElementById('rpt-sub-vnd').innerText = formatMoney(totalVnd, 'VND', true);
@@ -3606,11 +4204,18 @@
                 const dept = departmentsData.find(d => d.id === stf.deptId);
 
                 let stfVnd = 0, stfUsd = 0;
+                let stfConverted = 0;
                 stfQuotes.forEach(q => {
                     const t = calculateQuoteGrandTotal(q);
-                    if (q.currency === 'USD') stfUsd += t; else stfVnd += t;
+                    const qRate = getEffectiveExchangeRate(q);
+                    if (q.currency === 'USD') {
+                        stfUsd += t;
+                        stfConverted += (t * qRate);
+                    } else {
+                        stfVnd += t;
+                        stfConverted += t;
+                    }
                 });
-                const stfConverted = stfVnd + (stfUsd * EXCHANGE_RATE_USD_VND);
 
                 return `
                     <tr class="hover:bg-slate-50">
@@ -3624,6 +4229,126 @@
                     </tr>
                 `;
             }).join('');
+        }
+
+        /* --- GENERAL SETTINGS: LOGO & EXCHANGE RATE HANDLERS --- */
+        function toggleSettingsSubmenu() {
+            const submenu = document.getElementById('nav-settings-submenu');
+            const chevron = document.getElementById('settings-menu-chevron');
+            if (!submenu) return;
+            const isHidden = submenu.classList.contains('hidden');
+            submenu.classList.toggle('hidden', !isHidden);
+            if (chevron) {
+                chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+            }
+        }
+
+        function applySystemLogo(logoUrl, filename) {
+            const loginLogo = document.getElementById('login-system-logo');
+            const sidebarLogo = document.getElementById('sidebar-system-logo');
+            const previewLogo = document.getElementById('settings-logo-preview');
+            const filenameLabel = document.getElementById('settings-logo-filename');
+
+            if (loginLogo) loginLogo.src = logoUrl;
+            if (sidebarLogo) sidebarLogo.src = logoUrl;
+            if (previewLogo) previewLogo.src = logoUrl;
+            if (filenameLabel && filename) filenameLabel.innerText = filename;
+        }
+
+        function handleSystemLogoUpload(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showToast("Vui lòng chọn tệp hình ảnh hợp lệ (PNG, JPG, SVG, WebP)!", "error");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64Data = evt.target.result;
+                currentSystemLogo = base64Data;
+                saveAllDataToStorage();
+                applySystemLogo(base64Data, file.name);
+                logSysActivity("Cài đặt", "Chỉnh sửa", `Cập nhật logo hệ thống mới (${file.name})`);
+                showToast("Đã tải lên và áp dụng logo hệ thống mới!", "success");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetSystemLogoToDefault() {
+            if (!confirm("Bạn có chắc chắn muốn khôi phục về logo hệ thống mặc định không?")) return;
+            currentSystemLogo = 'https://www.cloudpbx.vn/wp-content/uploads/2023/08/logo-cloudpbx-web.png';
+            try {
+                localStorage.removeItem(STORAGE_KEY_PREFIX + 'system_logo');
+            } catch(e) {}
+            saveAllDataToStorage();
+            applySystemLogo(currentSystemLogo, 'logo-cloudpbx-web.png');
+            logSysActivity("Cài đặt", "Chỉnh sửa", "Khôi phục logo hệ thống mặc định");
+            showToast("Đã khôi phục logo mặc định!", "success");
+        }
+
+        function renderSettingsGeneralView() {
+            const currentRateBadge = document.getElementById('settings-current-rate-badge');
+            if (currentRateBadge) {
+                currentRateBadge.innerText = `1 USD = ${currentSystemExchangeRate.toLocaleString('vi-VN')} VNĐ`;
+            }
+
+            const tbody = document.getElementById('settings-rate-history-tbody');
+            if (!tbody) return;
+
+            if (!exchangeRateHistory || exchangeRateHistory.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Chưa có lịch sử thay đổi tỷ giá.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = exchangeRateHistory.map(r => `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="py-2.5 px-3 font-mono text-[11px] text-slate-600 whitespace-nowrap">${r.appliedAt}</td>
+                    <td class="py-2.5 px-3 text-right font-black font-mono ${r.status === 'ACTIVE' ? 'text-emerald-700' : 'text-slate-700'} whitespace-nowrap">${Number(r.rate).toLocaleString('vi-VN')} VNĐ</td>
+                    <td class="py-2.5 px-3 font-semibold text-slate-800 whitespace-nowrap">${r.appliedBy}</td>
+                    <td class="py-2.5 px-3 text-slate-600">${r.note || '---'}</td>
+                    <td class="py-2.5 px-3 text-center whitespace-nowrap">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${r.status === 'ACTIVE' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-slate-100 text-slate-500'}">
+                            ${r.status === 'ACTIVE' ? 'ĐANG ÁP DỤNG' : 'LỊCH SỬ'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function handleApplyNewExchangeRate(e) {
+            e.preventDefault();
+            const input = document.getElementById('settings-new-rate-input');
+            const noteInput = document.getElementById('settings-rate-note-input');
+            const newRate = Number(input.value);
+            if (!newRate || newRate <= 0) {
+                showToast("Vui lòng nhập tỷ giá hợp lệ!", "error");
+                return;
+            }
+            const note = noteInput ? noteInput.value.trim() : '';
+
+            // Mark old as PAST
+            exchangeRateHistory.forEach(r => r.status = 'PAST');
+
+            // Create new record
+            const newRecord = {
+                id: 'rate_' + Date.now(),
+                rate: newRate,
+                appliedAt: getFormattedNow(),
+                appliedBy: currentUser ? currentUser.name : 'Admin',
+                note: note || `Cập nhật tỷ giá mới: 1 USD = ${newRate.toLocaleString('vi-VN')} VNĐ (Chỉ hiệu lực cho chứng từ từ thời điểm này trở đi)`,
+                status: 'ACTIVE'
+            };
+
+            exchangeRateHistory.unshift(newRecord);
+            currentSystemExchangeRate = newRate;
+            saveAllDataToStorage();
+
+            logSysActivity("Cài đặt", "Chỉnh sửa", `Áp dụng tỷ giá mới: 1 USD = ${newRate.toLocaleString('vi-VN')} VNĐ`);
+            renderSettingsGeneralView();
+            renderReports();
+            input.value = '';
+            if (noteInput) noteInput.value = '';
+            showToast(`Đã áp dụng tỷ giá mới: 1 USD = ${newRate.toLocaleString('vi-VN')} VNĐ (Chỉ hiệu lực từ thời điểm này, số liệu quá khứ được giữ nguyên)!`, "success");
         }
 
         function openDepartmentModal() {
@@ -3680,6 +4405,7 @@
                     showToast("Đã cập nhật phòng ban thành công!", "success");
                 }
             } else {
+                saveAllDataToStorage();
                 departmentsData.push({ id: 'dept_' + Date.now(), code, name, managerId });
                 logSysActivity("RBAC", "Tạo mới", `Thêm phòng ban mới ${name} (${code})`);
                 showToast("Đã lưu phòng ban mới!", "success");
@@ -3689,9 +4415,15 @@
         }
 
         function deleteDepartment(id) {
+            const d = departmentsData.find(item => item.id === id);
+            const name = d ? d.name : id;
+            if (!confirm(`Xác nhận xóa: Bạn có chắc chắn muốn xóa Phòng ban "${name}" không?`)) {
+                return;
+            }
             const idx = departmentsData.findIndex(d => d.id === id);
             if (idx >= 0) {
                 const deleted = departmentsData.splice(idx, 1)[0];
+                saveAllDataToStorage();
                 logSysActivity("RBAC", "Xóa", `Xóa phòng ban ${deleted.name}`);
                 renderDepartmentsTable();
                 showToast("Đã xóa phòng ban!", "warning");
@@ -3721,6 +4453,11 @@
             }).join('');
         }
 
+        function changeSysLogPage(page) {
+            syslogCurrentPage = page;
+            renderSysLogTable();
+        }
+
         function renderSysLogTable() {
             const tbody = document.getElementById('syslog-table-body');
             if (!tbody) return;
@@ -3744,7 +4481,54 @@
                 );
             }
 
-            if (logs.length === 0) {
+            const totalLogs = logs.length;
+            const totalPages = Math.ceil(totalLogs / syslogPageSize) || 1;
+            if (syslogCurrentPage > totalPages) syslogCurrentPage = totalPages;
+            if (syslogCurrentPage < 1) syslogCurrentPage = 1;
+
+            const startIndex = (syslogCurrentPage - 1) * syslogPageSize;
+            const pagedLogs = logs.slice(startIndex, startIndex + syslogPageSize);
+
+            const paginationInfo = document.getElementById('syslog-pagination-info');
+            const paginationButtons = document.getElementById('syslog-pagination-buttons');
+
+            if (paginationInfo) {
+                if (totalLogs === 0) {
+                    paginationInfo.innerText = 'Không có nhật ký nào';
+                } else {
+                    paginationInfo.innerText = `Hiển thị ${startIndex + 1} - ${Math.min(startIndex + syslogPageSize, totalLogs)} trên tổng số ${totalLogs} nhật ký (Trang ${syslogCurrentPage}/${totalPages})`;
+                }
+            }
+
+            if (paginationButtons) {
+                if (totalPages <= 1) {
+                    paginationButtons.innerHTML = '';
+                } else {
+                    let btnHtml = '';
+                    // First & Prev
+                    btnHtml += `<button type="button" onclick="changeSysLogPage(1)" ${syslogCurrentPage === 1 ? 'disabled' : ''} class="px-2 py-1 rounded bg-white border border-slate-200 text-xs font-bold ${syslogCurrentPage === 1 ? 'opacity-40 cursor-not-allowed text-slate-400' : 'hover:bg-slate-100 text-slate-700'}" title="Trang đầu"><i class="fa-solid fa-angles-left text-[10px]"></i></button>`;
+                    btnHtml += `<button type="button" onclick="changeSysLogPage(${syslogCurrentPage - 1})" ${syslogCurrentPage === 1 ? 'disabled' : ''} class="px-2 py-1 rounded bg-white border border-slate-200 text-xs font-bold ${syslogCurrentPage === 1 ? 'opacity-40 cursor-not-allowed text-slate-400' : 'hover:bg-slate-100 text-slate-700'}" title="Trang trước"><i class="fa-solid fa-angle-left text-[10px]"></i></button>`;
+
+                    // Page numbers (sliding window around current page)
+                    let startPage = Math.max(1, syslogCurrentPage - 2);
+                    let endPage = Math.min(totalPages, startPage + 4);
+                    if (endPage - startPage < 4) {
+                        startPage = Math.max(1, endPage - 4);
+                    }
+
+                    for (let p = startPage; p <= endPage; p++) {
+                        btnHtml += `<button type="button" onclick="changeSysLogPage(${p})" class="px-2.5 py-1 rounded text-xs font-bold transition-all ${p === syslogCurrentPage ? 'bg-amber-600 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'}">${p}</button>`;
+                    }
+
+                    // Next & Last
+                    btnHtml += `<button type="button" onclick="changeSysLogPage(${syslogCurrentPage + 1})" ${syslogCurrentPage === totalPages ? 'disabled' : ''} class="px-2 py-1 rounded bg-white border border-slate-200 text-xs font-bold ${syslogCurrentPage === totalPages ? 'opacity-40 cursor-not-allowed text-slate-400' : 'hover:bg-slate-100 text-slate-700'}" title="Trang kế tiếp"><i class="fa-solid fa-angle-right text-[10px]"></i></button>`;
+                    btnHtml += `<button type="button" onclick="changeSysLogPage(${totalPages})" ${syslogCurrentPage === totalPages ? 'disabled' : ''} class="px-2 py-1 rounded bg-white border border-slate-200 text-xs font-bold ${syslogCurrentPage === totalPages ? 'opacity-40 cursor-not-allowed text-slate-400' : 'hover:bg-slate-100 text-slate-700'}" title="Trang cuối"><i class="fa-solid fa-angles-right text-[10px]"></i></button>`;
+
+                    paginationButtons.innerHTML = btnHtml;
+                }
+            }
+
+            if (pagedLogs.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Không có nhật ký nào phù hợp.</td></tr>';
                 return;
             }
@@ -3758,7 +4542,7 @@
                 'Đăng xuất': 'bg-slate-100 text-slate-800'
             };
 
-            tbody.innerHTML = logs.map(l => `
+            tbody.innerHTML = pagedLogs.map(l => `
                 <tr class="hover:bg-slate-50 border-b">
                     <td class="py-2.5 px-3 font-mono text-[11px] text-slate-600 whitespace-nowrap">${l.timestamp}</td>
                     <td class="py-2.5 px-3 font-bold text-slate-800 whitespace-nowrap">${l.userName}</td>
@@ -3771,7 +4555,15 @@
         }
 
         function clearAllSysLogs() {
+            if (sysLogsData.length === 0) {
+                showToast("Nhật ký hệ thống đã rỗng!", "info");
+                return;
+            }
+            if (!confirm("Cảnh báo: Bạn có chắc chắn muốn xóa sạch toàn bộ Nhật ký Hệ thống (SysLog) không?")) {
+                return;
+            }
             sysLogsData = [];
+            saveAllDataToStorage();
             logSysActivity("SysLog", "Xóa", "Xóa sạch toàn bộ nhật ký hệ thống");
             renderSysLogTable();
             updateBadges();
@@ -3880,6 +4672,7 @@
                     showToast(`Đã cập nhật tài khoản ${email}!`, "success");
                 }
             } else {
+                saveAllDataToStorage();
                 usersData.push({ id: 'usr_' + Date.now(), name, email, username: email, password, deptId, type, title, phone });
                 logSysActivity("RBAC", "Tạo mới", `Tạo tài khoản mới ${email} (${type})`);
                 showToast(`Đã thêm tài khoản ${email}`, "success");
@@ -3891,9 +4684,15 @@
         }
 
         function deleteUserAccount(id) {
+            const u = usersData.find(item => item.id === id);
+            const name = u ? `${u.name} (${u.email})` : id;
+            if (!confirm(`Xác nhận xóa: Bạn có chắc chắn muốn xóa tài khoản "${name}" không?`)) {
+                return;
+            }
             const idx = usersData.findIndex(u => u.id === id);
             if (idx >= 0) {
                 const deleted = usersData.splice(idx, 1)[0];
+                saveAllDataToStorage();
                 logSysActivity("RBAC", "Xóa", `Xóa tài khoản ${deleted.email}`);
                 renderAdminUsersTable();
                 showToast("Đã xóa tài khoản!", "warning");
@@ -3969,7 +4768,28 @@
             if (!tbody) return;
             const search = (document.getElementById('contract-filter-search')?.value || '').toLowerCase().trim();
             const contracts = getAccessibleContracts();
-            const filtered = contracts.filter(c => !search || c.refNo.toLowerCase().includes(search) || (c.companyName || '').toLowerCase().includes(search));
+
+            const filtered = contracts.filter(c => {
+                if (!search) return true;
+                const matchContract =
+                    (c.refNo || '').toLowerCase().includes(search) ||
+                    (c.companyName || '').toLowerCase().includes(search) ||
+                    (c.customerName || '').toLowerCase().includes(search) ||
+                    (c.salesName || '').toLowerCase().includes(search) ||
+                    (c.notes || '').toLowerCase().includes(search);
+
+                const matchAppendix = (c.appendices && Array.isArray(c.appendices)) && c.appendices.some(ap =>
+                    (ap.refNo || '').toLowerCase().includes(search) ||
+                    (ap.notes || '').toLowerCase().includes(search) ||
+                    (ap.salesName || '').toLowerCase().includes(search)
+                );
+
+                if (matchAppendix && !expandedContractIds.has(c.id)) {
+                    expandedContractIds.add(c.id);
+                }
+
+                return matchContract || matchAppendix;
+            });
 
             tbody.innerHTML = filtered.map((c, idx) => {
                 const appendicesCount = (c.appendices && Array.isArray(c.appendices)) ? c.appendices.length : 0;
@@ -3984,7 +4804,10 @@
                                 <span class="font-bold text-emerald-700 font-mono text-xs cursor-pointer hover:underline" onclick="toggleContractAppendices('${c.id}')">${c.refNo}</span>
                             </div>
                         </td>
-                        <td class="py-3 px-4 font-bold text-slate-800 text-xs">${c.companyName || c.customerName}</td>
+                        <td class="py-3 px-4 text-slate-800 text-xs">
+                            <div class="font-bold">${c.companyName || c.customerName}</div>
+                            ${c.notes ? `<div class="text-[10px] text-slate-500 font-normal italic mt-0.5 flex items-center gap-1"><i class="fa-regular fa-note-sticky text-amber-500 text-[10px]"></i><span>${c.notes}</span></div>` : ''}
+                        </td>
                         <td class="py-3 px-4 text-slate-600 font-mono text-xs whitespace-nowrap">${c.date}</td>
                         <td class="py-3 px-4 text-slate-700 text-xs whitespace-nowrap">${c.salesName}</td>
                         <td class="py-3 px-4 text-right font-extrabold text-slate-900 text-xs whitespace-nowrap">${formatMoney(c.totalValue, 'VND')}</td>
@@ -4021,7 +4844,10 @@
                     } else {
                         appendixRows = c.appendices.map(ap => `
                             <tr class="hover:bg-purple-50/40 border-b border-purple-50 transition-all text-xs">
-                                <td class="py-3 px-4 font-mono font-bold text-purple-700 whitespace-nowrap cursor-pointer hover:underline" onclick="viewAppendixDetailsModal('${c.id}', '${ap.id}')" title="Nhấn để xem phụ lục">${ap.refNo}</td>
+                                <td class="py-3 px-4 font-mono font-bold text-purple-700 whitespace-nowrap cursor-pointer hover:underline" onclick="viewAppendixDetailsModal('${c.id}', '${ap.id}')" title="Nhấn để xem phụ lục">
+                                    <div>${ap.refNo}</div>
+                                    ${ap.notes ? `<div class="text-[9.5px] text-purple-700/80 font-normal italic mt-0.5 flex items-center gap-1"><i class="fa-regular fa-note-sticky text-purple-400 text-[9px]"></i><span>${ap.notes}</span></div>` : ''}
+                                </td>
                                 <td class="py-3 px-4 text-slate-600 font-mono whitespace-nowrap">${ap.date}</td>
                                 <td class="py-3 px-4 text-slate-700 whitespace-nowrap">${ap.salesName}</td>
                                 <td class="py-3 px-4 text-right font-bold text-slate-900 whitespace-nowrap">${formatMoney(ap.totalValue, 'VND')}</td>
@@ -4035,6 +4861,9 @@
                                         </button>
                                         <button onclick="editAppendix('${c.id}', '${ap.id}')" data-tooltip="Sửa phụ lục" class="p-1.5 text-slate-500 hover:text-amber-600 rounded-md transition-all">
                                             <i class="fa-regular fa-pen-to-square text-xs"></i>
+                                        </button>
+                                        <button onclick="deleteAppendix('${c.id}', '${ap.id}')" data-tooltip="Xóa phụ lục" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-md transition-all">
+                                            <i class="fa-regular fa-trash-can text-xs"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -4092,14 +4921,55 @@
         }
 
         function deleteContract(contractId) {
-            const idx = contractsData.findIndex(c => c.id === contractId);
+            const c = contractsData.find(item => item.id === contractId);
+            const ref = c ? c.refNo : contractId;
+            if (!confirm(`Xác nhận xóa: Bạn có chắc chắn muốn chuyển Hợp đồng "${ref}" vào Thùng rác không?`)) {
+                return;
+            }
+            const idx = contractsData.findIndex(item => item.id === contractId);
             if (idx >= 0) {
                 const deleted = contractsData.splice(idx, 1)[0];
+                saveAllDataToStorage();
                 trashData.unshift(deleted);
                 logSysActivity("Hợp đồng", "Xóa", `Chuyển hợp đồng ${deleted.refNo} vào Trash`);
                 renderContractsTable();
                 updateBadges();
                 showToast(`Đã chuyển ${deleted.refNo} vào Trash`, "warning");
+            }
+        }
+
+        function deleteAppendix(contractId, appendixId) {
+            const parent = contractsData.find(c => c.id === contractId);
+            if (!parent || !parent.appendices) return;
+            const ap = parent.appendices.find(a => a.id === appendixId);
+            const ref = ap ? ap.refNo : appendixId;
+            if (!confirm(`Xác nhận xóa: Bạn có chắc chắn muốn xóa Phụ lục "${ref}" không?`)) {
+                return;
+            }
+            const idx = parent.appendices.findIndex(a => a.id === appendixId);
+            if (idx >= 0) {
+                parent.appendices.splice(idx, 1);
+                saveAllDataToStorage();
+                logSysActivity("Phụ lục", "Xóa", `Xóa phụ lục ${ref}`);
+                renderContractsTable();
+                showToast(`Đã xóa phụ lục ${ref}!`, "warning");
+            }
+        }
+
+        function deleteCustomer(customerId) {
+            const c = customersData.find(item => item.id === customerId);
+            const name = c ? (c.companyName || c.cid) : customerId;
+            if (!confirm(`Xác nhận xóa: Bạn có chắc chắn muốn xóa Khách hàng "${name}" ([${c ? c.cid : ''}]) không?`)) {
+                return;
+            }
+            const idx = customersData.findIndex(item => item.id === customerId);
+            if (idx >= 0) {
+                customersData.splice(idx, 1);
+                saveAllDataToStorage();
+                logSysActivity("Khách hàng", "Xóa", `Xóa khách hàng ${name}`);
+                renderCustomersTable();
+                updateBadges();
+                showToast(`Đã xóa khách hàng "${name}"!`, "warning");
             }
         }
 
@@ -4178,8 +5048,8 @@
                                         <tr>
                                             <td class="p-2 text-center text-slate-400 font-bold">${idx + 1}</td>
                                             <td class="p-2 font-mono font-bold text-slate-700">${item.code || ''}</td>
-                                            <td class="p-2 font-semibold text-slate-800">
-                                                <div>${(item.desc || '').replace(/\n/g, '<br>')}</div>
+                                            <td class="p-2 text-slate-800">
+                                                ${formatProductDescriptionHtml(item.desc)}
                                                 ${item.subtitle ? `<div class="text-[10px] text-rose-600 italic mt-0.5">${item.subtitle}</div>` : ''}
                                             </td>
                                             <td class="p-2 text-right whitespace-nowrap">${formatMoney(item.price, sourceQuote.currency, false)}</td>
@@ -4374,7 +5244,8 @@
             const totalValInput = document.getElementById('ctr-total-value');
             if (totalValInput) {
                 const total = calculateQuoteGrandTotal(quote);
-                const valVnd = quote.currency === 'USD' ? Math.round(total * EXCHANGE_RATE_USD_VND) : Math.round(total);
+                const qRate = getEffectiveExchangeRate(quote);
+                const valVnd = quote.currency === 'USD' ? Math.round(total * qRate) : Math.round(total);
                 totalValInput.value = valVnd;
             }
         }
@@ -4564,6 +5435,7 @@
                             notes: notes
                         };
                         parent.appendices.unshift(newAp);
+                        saveAllDataToStorage();
                         logSysActivity('Phụ lục', 'Tạo mới', `Tạo mới phụ lục ${newAp.refNo}`);
                         showToast(`Đã lưu phụ lục mới: ${newAp.refNo}`, 'success');
                     }
@@ -4584,6 +5456,7 @@
                         appendices: []
                     };
                     contractsData.unshift(newContract);
+                        saveAllDataToStorage();
                     logSysActivity('Hợp đồng', 'Tạo mới', `Tạo mới hợp đồng ${newContract.refNo}`);
                     showToast(`Đã lưu hợp đồng mới: ${newContract.refNo}`, 'success');
                 }
@@ -4679,6 +5552,9 @@
                                 </button>
                                 <button onclick="createQuoteForCustomer('${c.cid}')" data-tooltip="Tạo báo giá cho khách này" class="p-1 hover:text-brand-orange transition-all">
                                     <i class="fa-solid fa-file-circle-plus text-sm"></i>
+                                </button>
+                                <button onclick="deleteCustomer('${c.id}')" data-tooltip="Xóa khách hàng" class="p-1 hover:text-rose-600 transition-all">
+                                    <i class="fa-regular fa-trash-can text-sm"></i>
                                 </button>
                             </div>
                         </td>
@@ -4879,12 +5755,17 @@
             const editingId = document.getElementById('cust-editing-id')?.value || '';
             const cid = cleanCidString(document.getElementById('cust-cid')?.value || '');
             const taxCode = document.getElementById('cust-tax-code')?.value.trim() || '';
-            const companyName = document.getElementById('cust-company')?.value.trim() || '';
+            const companyName = document.getElementById('cust-company')?.value.trim() || cid; // Tên KH không bắt buộc, fallback về CID
             const contactPerson = document.getElementById('cust-person')?.value.trim() || '';
             const phone = document.getElementById('cust-phone')?.value.trim() || '';
             const email = document.getElementById('cust-email')?.value.trim() || '';
             const address = document.getElementById('cust-address')?.value.trim() || '';
             const status = document.getElementById('cust-status')?.value || 'Mới';
+
+            if (!cid) {
+                showToast("Vui lòng nhập Mã CID khách hàng!", "error");
+                return;
+            }
 
             if (editingId) {
                 const c = customersData.find(item => item.id === editingId);
@@ -4900,6 +5781,7 @@
                     showToast(`Đã cập nhật khách hàng ${cid}`, "success");
                 }
             } else {
+                saveAllDataToStorage();
                 customersData.unshift({ 
                     id: 'c_' + Date.now(), 
                     cid: cid, 
@@ -4953,11 +5835,19 @@
         }
 
         function emptyTrashBin() {
+            if (trashData.length === 0) {
+                showToast("Thùng rác đã rỗng!", "info");
+                return;
+            }
+            if (!confirm("Cảnh báo: Bạn có chắc chắn muốn xóa vĩnh viễn toàn bộ các mục trong Thùng rác không? Thao tác này không thể hoàn tác.")) {
+                return;
+            }
             trashData = [];
-            logSysActivity("Trash", "Xóa", "Xóa sạch thùng rác");
+            saveAllDataToStorage();
+            logSysActivity("Trash", "Xóa", "Xóa sạch toàn bộ mục trong Thùng rác");
             renderTrashTable();
             updateBadges();
-            showToast("Đã xóa rỗng Trash", "info");
+            showToast("Đã xóa rỗng Thùng rác thành công!", "info");
         }
 
         function openPrintPreviewModal() {
@@ -4974,15 +5864,38 @@
         function closePrintPreviewModal() { document.getElementById('print-preview-modal').classList.add('hidden'); }
         
         let previousDocTitle = '';
+
+        function prepareIsolatedPrintContainer() {
+            let container = document.getElementById('print-isolated-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'print-isolated-container';
+                document.body.prepend(container);
+            }
+            const sourcePaper = document.getElementById('printable-quotation-area');
+            if (sourcePaper) {
+                container.innerHTML = sourcePaper.innerHTML;
+                container.className = "text-slate-900 text-[11px] leading-tight space-y-4 bg-white";
+            }
+            return container;
+        }
+
         window.addEventListener('beforeprint', () => {
             previousDocTitle = document.title;
             document.title = ''; // Removes browser default header text and URL printing in header/footer
+            prepareIsolatedPrintContainer();
         });
+
         window.addEventListener('afterprint', () => {
             document.title = previousDocTitle || 'CLOUDPBX eSales System (R1) - Quản lý Báo giá, Hợp đồng & Khách hàng';
+            const container = document.getElementById('print-isolated-container');
+            if (container) {
+                container.innerHTML = '';
+            }
         });
 
         function triggerPrintPDF() { 
+            prepareIsolatedPrintContainer();
             window.print(); 
         }
 
@@ -5001,9 +5914,14 @@
 
         function resetQuoteTermsToDefault() {
             if (!activeQuote) return;
-            activeQuote.terms = DEFAULT_QUOTE_TERMS;
-            document.getElementById('form-quote-terms').value = DEFAULT_QUOTE_TERMS;
+            const validityDays = Number(activeQuote.validityDays) || 30;
+            const expiryDate = calculateExpiryDate(activeQuote.date, validityDays);
+            const newTerms = getDefaultQuoteTerms(activeQuote.docLang || 'VI', validityDays, expiryDate);
+            activeQuote.terms = newTerms;
+            const termsEl = document.getElementById('form-quote-terms');
+            if (termsEl) termsEl.value = newTerms;
             updateQuotationPreview();
+            showToast("Đã khôi phục điều khoản mặc định!", "info");
         }
 
         function resetFilters() {
@@ -5070,7 +5988,19 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            loadAllDataFromStorage();
             renderGreetingAndQuotesBanner();
+
+            // Auto-fill remembered email if saved
+            try {
+                const remembered = localStorage.getItem('cloudpbx_remember_email');
+                if (remembered) {
+                    const emailInp = document.getElementById('login-username');
+                    const remCb = document.getElementById('login-remember-me');
+                    if (emailInp) emailInp.value = remembered;
+                    if (remCb) remCb.checked = true;
+                }
+            } catch(e) {}
         });
     </script>
 </body>
