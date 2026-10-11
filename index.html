@@ -2885,77 +2885,139 @@
                 return;
             }
 
-            const views = ['quotes', 'contracts', 'customers', 'trash', 'reports', 'settings-general', 'departments', 'admin-users', 'syslog'];
-            views.forEach(v => {
-                document.getElementById(`view-${v}`)?.classList.add('hidden');
-                const btn = document.getElementById(`nav-btn-${v}`);
+            // 1. Hide ALL content view sections
+            const allContentViews = [
+                'view-quotes',
+                'view-contracts',
+                'view-customers',
+                'view-trash',
+                'view-reports',
+                'view-settings-general',
+                'view-departments',
+                'view-admin-users',
+                'view-syslog'
+            ];
+            allContentViews.forEach(vId => {
+                const el = document.getElementById(vId);
+                if (el) el.classList.add('hidden');
+            });
+
+            // 2. Reset ALL top-level navigation buttons to unselected styling
+            const allNavButtons = [
+                'nav-btn-quotes',
+                'nav-btn-drafts',
+                'nav-btn-contracts',
+                'nav-btn-customers',
+                'nav-btn-trash',
+                'nav-btn-reports',
+                'nav-btn-settings'
+            ];
+            allNavButtons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
                 if (btn) {
-                    btn.className = `nav-item w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left`;
+                    if (btnId === 'nav-btn-settings') {
+                        btn.className = `nav-item w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left`;
+                    } else {
+                        btn.className = `nav-item w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left`;
+                    }
                 }
             });
 
-            // Reset sub-items styling
-            const subItems = ['general', 'departments', 'admin-users', 'syslog'];
-            subItems.forEach(s => {
-                const subBtn = document.getElementById(`nav-sub-${s}`);
+            // 3. Reset ALL sub-menu buttons to unselected styling
+            const allSubNavButtons = [
+                'nav-sub-general',
+                'nav-sub-departments',
+                'nav-sub-admin-users',
+                'nav-sub-syslog'
+            ];
+            allSubNavButtons.forEach(subId => {
+                const subBtn = document.getElementById(subId);
                 if (subBtn) {
                     subBtn.className = `nav-sub-item w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all text-left`;
                 }
             });
 
-            const targetView = (viewName === 'drafts') ? 'quotes' : viewName;
-            document.getElementById(`view-${targetView}`)?.classList.remove('hidden');
+            // 4. Activate the requested view and button
+            const isSettingsSubView = ['settings-general', 'departments', 'admin-users', 'syslog'].includes(viewName);
 
-            const activeBtn = document.getElementById(`nav-btn-${viewName}`);
-            if (activeBtn) {
-                activeBtn.className = `nav-item w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-white bg-brand-orange shadow text-left`;
-            }
-
-            // If switching to one of the settings sub-views, highlight the sub-menu item and expand settings
-            if (['settings-general', 'departments', 'admin-users', 'syslog'].includes(viewName)) {
+            if (isSettingsSubView) {
+                // Ensure Settings submenu is expanded
                 const settingsSubmenu = document.getElementById('nav-settings-submenu');
                 const chevron = document.getElementById('settings-menu-chevron');
                 if (settingsSubmenu) settingsSubmenu.classList.remove('hidden');
                 if (chevron) chevron.style.transform = 'rotate(180deg)';
 
-                let subId = 'general';
-                if (viewName === 'departments') subId = 'departments';
-                else if (viewName === 'admin-users') subId = 'admin-users';
-                else if (viewName === 'syslog') subId = 'syslog';
+                let activeSubId = 'nav-sub-general';
+                let activeViewId = 'view-settings-general';
 
-                const targetSub = document.getElementById(`nav-sub-${subId}`);
-                if (targetSub) {
-                    targetSub.className = `nav-sub-item w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-slate-800 shadow-sm border border-slate-700/60 transition-all text-left`;
+                if (viewName === 'departments') {
+                    activeSubId = 'nav-sub-departments';
+                    activeViewId = 'view-departments';
+                } else if (viewName === 'admin-users') {
+                    activeSubId = 'nav-sub-admin-users';
+                    activeViewId = 'view-admin-users';
+                } else if (viewName === 'syslog') {
+                    activeSubId = 'nav-sub-syslog';
+                    activeViewId = 'view-syslog';
                 }
-            }
 
-            if (viewName === 'drafts') {
-                const statusSelect = document.getElementById('filter-status');
-                if (statusSelect) statusSelect.value = 'DRAFT';
-                renderQuotesTable();
-            } else if (viewName === 'quotes') {
-                const statusSelect = document.getElementById('filter-status');
-                if (statusSelect && statusSelect.value === 'DRAFT') {
-                    statusSelect.value = 'ALL';
+                // Show target view
+                document.getElementById(activeViewId)?.classList.remove('hidden');
+
+                // Highlight sub-button
+                const subBtn = document.getElementById(activeSubId);
+                if (subBtn) {
+                    subBtn.className = `nav-sub-item w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-slate-800 shadow-sm border border-slate-700/60 transition-all text-left`;
                 }
-                renderQuotesTable();
-            } else if (viewName === 'contracts') {
-                renderContractsTable();
-            } else if (viewName === 'customers') {
-                renderCustomersTable();
-            } else if (viewName === 'trash') {
-                renderTrashTable();
-            } else if (viewName === 'reports') {
-                renderReports();
-            } else if (viewName === 'settings-general') {
-                renderSettingsGeneralView();
-            } else if (viewName === 'departments') {
-                renderDepartmentsTable();
-            } else if (viewName === 'admin-users') {
-                renderAdminUsersTable();
-            } else if (viewName === 'syslog') {
-                syslogCurrentPage = 1;
-                renderSysLogTable();
+
+                if (viewName === 'settings-general') renderSettingsGeneralView();
+                else if (viewName === 'departments') renderDepartmentsTable();
+                else if (viewName === 'admin-users') renderAdminUsersTable();
+                else if (viewName === 'syslog') {
+                    syslogCurrentPage = 1;
+                    renderSysLogTable();
+                }
+            } else {
+                // Main top-level navigation items
+                let activeBtnId = `nav-btn-${viewName}`;
+                let targetViewId = `view-${viewName}`;
+
+                if (viewName === 'drafts') {
+                    activeBtnId = 'nav-btn-drafts';
+                    targetViewId = 'view-quotes';
+                } else if (viewName === 'quotes') {
+                    activeBtnId = 'nav-btn-quotes';
+                    targetViewId = 'view-quotes';
+                }
+
+                // Show target content view
+                document.getElementById(targetViewId)?.classList.remove('hidden');
+
+                // Highlight active button with brand orange
+                const activeBtn = document.getElementById(activeBtnId);
+                if (activeBtn) {
+                    activeBtn.className = `nav-item w-full flex items-center justify-start gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-white bg-brand-orange shadow text-left`;
+                }
+
+                if (viewName === 'drafts') {
+                    const statusSelect = document.getElementById('filter-status');
+                    if (statusSelect) statusSelect.value = 'DRAFT';
+                    renderQuotesTable();
+                } else if (viewName === 'quotes') {
+                    const statusSelect = document.getElementById('filter-status');
+                    if (statusSelect && statusSelect.value === 'DRAFT') {
+                        statusSelect.value = 'ALL';
+                    }
+                    renderQuotesTable();
+                } else if (viewName === 'contracts') {
+                    renderContractsTable();
+                } else if (viewName === 'customers') {
+                    renderCustomersTable();
+                } else if (viewName === 'trash') {
+                    renderTrashTable();
+                } else if (viewName === 'reports') {
+                    renderReports();
+                }
             }
 
             updateRoleBasedMenuVisibility();
@@ -3037,12 +3099,16 @@
             if (txtNavTrash) txtNavTrash.innerText = dict.navTrash;
             const txtNavReports = document.querySelector('#nav-btn-reports span.flex-1');
             if (txtNavReports) txtNavReports.innerText = dict.navReports;
-            const txtNavDepts = document.querySelector('#nav-btn-departments span.flex-1');
+            const txtNavDepts = document.querySelector('#nav-btn-departments span.flex-1') || document.querySelector('#nav-sub-departments span');
             if (txtNavDepts) txtNavDepts.innerText = dict.navDepts;
-            const txtNavUsers = document.querySelector('#nav-btn-admin-users span.flex-1');
+            const txtNavUsers = document.querySelector('#nav-btn-admin-users span.flex-1') || document.querySelector('#nav-sub-admin-users span');
             if (txtNavUsers) txtNavUsers.innerText = dict.navUsers;
-            const txtNavSyslog = document.querySelector('#nav-btn-syslog span.flex-1');
+            const txtNavSyslog = document.querySelector('#nav-btn-syslog span.flex-1') || document.querySelector('#nav-sub-syslog div span');
             if (txtNavSyslog) txtNavSyslog.innerText = dict.navSyslog;
+            const txtNavGeneral = document.querySelector('#nav-sub-general span');
+            if (txtNavGeneral) txtNavGeneral.innerText = isEng ? 'General Settings' : 'Cài đặt chung';
+            const txtNavSettings = document.querySelector('#nav-btn-settings span.flex-1');
+            if (txtNavSettings) txtNavSettings.innerText = isEng ? 'Settings' : 'Cài đặt (Setting)';
 
             // Report Header & Labels
             const rptTitle = document.getElementById('rpt-title-text');
