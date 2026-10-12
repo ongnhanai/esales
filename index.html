@@ -1072,7 +1072,7 @@
                             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tìm khách hàng (CID / Tên) *</label>
                             <div class="relative">
                                 <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
-                                <input type="text" id="quote-cust-search-input" oninput="searchCustomerForQuote(this.value)" placeholder="Gõ tên hoặc CID để tìm..." class="w-full pl-7 pr-3 py-1.5 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-brand-orange font-medium">
+                                <input type="text" id="quote-cust-search-input" oninput="searchCustomerForQuote(this.value)" placeholder="Nhập tên khách hàng" class="w-full pl-7 pr-3 py-1.5 border rounded-lg text-xs outline-none focus:ring-1 focus:ring-brand-orange font-medium">
                             </div>
                             <div id="quote-cust-autocomplete-list" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 shadow-xl rounded-lg max-h-48 overflow-y-auto z-30 hidden divide-y text-xs"></div>
                             <input type="hidden" id="form-customer-select" value="">
@@ -1090,24 +1090,24 @@
                         </div>
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Người Nhận (Ms/Mr)</label>
-                            <input type="text" id="form-recipient-person" oninput="updateQuotationPreview()" class="w-full px-3 py-1.5 border rounded-lg text-xs outline-none">
+                            <input type="text" id="form-recipient-person" oninput="updateQuotationPreview()" class="w-full px-3 py-1.5 border rounded-lg text-xs outline-none" placeholder="Tự động điền sau khi chọn khách hàng">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tên Công Ty</label>
-                            <input type="text" id="form-customer-company" readonly class="w-full px-3 py-1.5 border bg-slate-50 rounded-lg text-xs font-bold text-slate-800">
+                            <input type="text" id="form-customer-company" readonly class="w-full px-3 py-1.5 border bg-slate-50 rounded-lg text-xs font-bold text-slate-800" placeholder="Tự động điền sau khi chọn khách hàng">
                         </div>
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Chức Danh</label>
-                            <input type="text" id="form-recipient-title" oninput="updateQuotationPreview()" class="w-full px-3 py-1.5 border rounded-lg text-xs outline-none">
+                            <input type="text" id="form-recipient-title" oninput="updateQuotationPreview()" class="w-full px-3 py-1.5 border rounded-lg text-xs outline-none" placeholder="Tự động điền sau khi chọn khách hàng">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-600 mb-1">Địa Chỉ</label>
-                        <input type="text" id="form-customer-address" readonly class="w-full px-3 py-1.5 border bg-slate-50 rounded-lg text-xs text-slate-700">
+                        <input type="text" id="form-customer-address" readonly class="w-full px-3 py-1.5 border bg-slate-50 rounded-lg text-xs text-slate-700" placeholder="Tự động điền sau khi chọn khách hàng">
                     </div>
                 </div>
 
@@ -1247,8 +1247,8 @@
                         <div class="space-y-0.5">
                             <div id="pv-brand-typography-container" class="space-y-0.5">
                                 <div id="pv-brand-badge-name" class="text-xl font-extrabold text-brand-orange tracking-tight leading-none mb-1">CLOUDPBX</div>
-                                <div id="pv-brand-header-title" class="font-bold uppercase text-slate-900 text-xs tracking-tight">CÔNG TY TNHH CNTT ĐỒNG NHẤT</div>
-                                <div id="pv-brand-subtitle" class="text-[9px] text-slate-500 uppercase tracking-wider font-semibold">VIETNAM CLOUDCOMMUNICATION SERVICE CENTER</div>
+                                <div id="pv-brand-header-title" class="font-bold uppercase text-slate-900 text-xs tracking-tight">VIETNAM CLOUDCOMMUNICATION SERVICE CENTER</div>
+                                <div id="pv-brand-subtitle" class="text-[10px] text-slate-500 font-semibold tracking-wide">(by DNTG)</div>
                             </div>
                         </div>
                         <div class="text-right space-y-1 shrink-0">
@@ -1266,7 +1266,7 @@
                     </div>
 
                     <div class="text-[9.5px] text-slate-600 flex justify-between border-b border-slate-200 pb-2 flex-wrap gap-1">
-                        <span>22 Đường số 5, Phường Tân Hưng, TP. HCM</span>
+                        <span id="pv-company-address">22 Đường số 5, Phường Tân Hưng, TP. HCM</span>
                         <span>Hotline: 1900 6020 - Email: <span id="pv-brand-email" class="font-semibold text-slate-800">hello@cloudpbx.vn</span></span>
                     </div>
 
@@ -1276,22 +1276,22 @@
                         <table class="w-full border-collapse border border-slate-300 text-[10.5px] quotation-table">
                             <tbody>
                                 <tr class="border-b border-slate-300">
-                                    <td class="bg-slate-50 font-semibold p-1.5 w-24 border-r border-slate-300">Người nhận</td>
-                                    <td id="pv-recipient-person" class="p-1.5 border-r border-slate-300 font-medium">Ms Thủy</td>
-                                    <td class="bg-slate-50 font-semibold p-1.5 w-24 border-r border-slate-300">Chức danh</td>
-                                    <td id="pv-recipient-title" class="p-1.5">Trưởng phòng Mua hàng</td>
+                                    <td class="bg-slate-50 font-semibold p-1.5 w-24 border-r border-slate-300" id="pv-lbl-person">Người nhận</td>
+                                    <td id="pv-recipient-person" class="p-1.5 border-r border-slate-300 font-medium">---</td>
+                                    <td class="bg-slate-50 font-semibold p-1.5 w-24 border-r border-slate-300" id="pv-lbl-title">Chức danh</td>
+                                    <td id="pv-recipient-title" class="p-1.5">---</td>
                                 </tr>
                                 <tr class="border-b border-slate-300">
-                                    <td class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300">Công ty</td>
-                                    <td id="pv-recipient-company" class="p-1.5 border-r border-slate-300 font-bold">MAMA BOX CORP</td>
-                                    <td class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300">Email</td>
-                                    <td id="pv-recipient-email" class="p-1.5">thuy.mama@gmail.com</td>
+                                    <td class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300" id="pv-lbl-company">Công ty</td>
+                                    <td id="pv-recipient-company" class="p-1.5 border-r border-slate-300 font-bold">---</td>
+                                    <td class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300" id="pv-lbl-email">Email</td>
+                                    <td id="pv-recipient-email" class="p-1.5">---</td>
                                 </tr>
                                 <tr>
-                                    <td class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300">Địa chỉ</td>
-                                    <td id="pv-recipient-address" class="p-1.5 border-r border-slate-300">728-730 Võ Văn Kiệt, P.1, Q.5, TP.HCM</td>
-                                    <td class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300">Điện thoại</td>
-                                    <td id="pv-recipient-phone" class="p-1.5">0332877968</td>
+                                    <td class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300" id="pv-lbl-address">Địa chỉ</td>
+                                    <td id="pv-recipient-address" class="p-1.5 border-r border-slate-300">---</td>
+                                    <td class="bg-slate-50 font-semibold p-1.5 border-r border-slate-300" id="pv-lbl-phone">Điện thoại</td>
+                                    <td id="pv-recipient-phone" class="p-1.5">---</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1302,8 +1302,8 @@
                         <table class="w-full border-collapse border border-slate-300 text-[10px] quotation-table">
                             <thead>
                                 <tr class="bg-slate-100 font-bold text-slate-800 border-b border-slate-300 text-center">
-                                    <th class="p-1 border-r border-slate-300 w-16" id="th-code">Mã</th>
                                     <th class="p-1 border-r border-slate-300 w-8" id="th-stt">STT</th>
+                                    <th class="p-1 border-r border-slate-300 w-16" id="th-code">Mã</th>
                                     <th class="p-1 border-r border-slate-300" id="th-desc">Mô tả Sản phẩm / Dịch vụ</th>
                                     <th class="p-1 border-r border-slate-300 w-24 text-right whitespace-nowrap" id="th-price">Đơn giá</th>
                                     <th class="p-1 border-r border-slate-300 w-10" id="th-qty">SL</th>
@@ -1326,17 +1326,17 @@
                     <!-- Payment Terms & Official Bank Account -->
                     <div class="grid grid-cols-2 gap-4 pt-1 text-[10px]">
                         <div class="space-y-1 bg-slate-50 p-2.5 rounded border border-slate-200">
-                            <div class="font-bold text-slate-800 uppercase">ĐIỀU KIỆN THANH TOÁN</div>
-                            <div>• <span class="font-semibold">Thiết bị / Khởi tạo:</span> <span id="pv-payment-setup-display">Trả trước (100%)</span></div>
-                            <div>• <span class="font-semibold">Phí dịch vụ Cloud:</span> <span id="pv-payment-cloud-display">Mỗi năm</span></div>
+                            <div class="font-bold text-slate-800 uppercase" id="pv-lbl-payment-title">ĐIỀU KIỆN THANH TOÁN</div>
+                            <div>• <span class="font-semibold" id="pv-lbl-payment-setup">Thiết bị / Khởi tạo:</span> <span id="pv-payment-setup-display">Trả trước (100%)</span></div>
+                            <div>• <span class="font-semibold" id="pv-lbl-payment-cloud">Phí dịch vụ Cloud:</span> <span id="pv-payment-cloud-display">Mỗi năm</span></div>
                         </div>
                         <div class="space-y-0.5 bg-slate-50 p-2.5 rounded border border-slate-200 text-[9px]">
-                            <div class="font-bold text-slate-800 uppercase mb-0.5 text-[9.5px]">THÔNG TIN TÀI KHOẢN CÔNG TY</div>
-                            <div class="font-bold text-slate-900">CÔNG TY TNHH CNTT ĐỒNG NHẤT</div>
-                            <div class="font-bold text-brand-dntg">601704060180338 (VND)  -  608840060000710 (USD)</div>
-                            <div>Ngân hàng Quốc Tế (VIB) - Chi nhánh HCM</div>
-                            <div class="text-slate-500">54-56 Nam Kỳ Khởi Nghĩa, P. Nguyễn Thái Bình, Q.1, TP.HCM, Việt Nam</div>
-                            <div class="font-bold text-slate-700">Swift code: VNIBVNVX</div>
+                            <div class="font-bold text-slate-800 uppercase mb-0.5 text-[9.5px]" id="pv-lbl-bank-title">THÔNG TIN TÀI KHOẢN CÔNG TY</div>
+                            <div class="font-bold text-slate-900" id="pv-lbl-bank-company">CÔNG TY TNHH CNTT ĐỒNG NHẤT</div>
+                            <div class="font-bold text-brand-dntg" id="pv-lbl-bank-account-num">601704060180338 (VND)  -  608840060000710 (USD)</div>
+                            <div id="pv-lbl-bank-name">Ngân hàng Quốc Tế (VIB) - Chi nhánh HCM</div>
+                            <div class="text-slate-500" id="pv-lbl-bank-address">54-56 Nam Kỳ Khởi Nghĩa, P. Nguyễn Thái Bình, Q.1, TP.HCM, Việt Nam</div>
+                            <div class="font-bold text-slate-700" id="pv-lbl-bank-swift">Swift code: VNIBVNVX</div>
                         </div>
                     </div>
 
@@ -1344,14 +1344,14 @@
                     <div class="grid grid-cols-2 gap-8 pt-4 text-center text-[10.5px]">
                         <div class="space-y-12">
                             <div>
-                                <div class="font-bold uppercase text-slate-800">ĐẠI DIỆN KHÁCH HÀNG</div>
-                                <div class="text-[9.5px] text-slate-400 italic">(Ký, đóng dấu và ghi rõ họ tên)</div>
+                                <div class="font-bold uppercase text-slate-800" id="pv-lbl-sign-cust-title">ĐẠI DIỆN KHÁCH HÀNG</div>
+                                <div class="text-[9.5px] text-slate-400 italic" id="pv-lbl-sign-cust-sub">(Ký, đóng dấu và ghi rõ họ tên)</div>
                             </div>
                         </div>
                         <div class="space-y-1 relative">
                             <div>
-                                <div class="font-bold uppercase text-slate-800">ĐẠI DIỆN NHÀ CUNG CẤP</div>
-                                <div class="text-[9.5px] text-slate-400 italic">(Ký, đóng dấu và ghi rõ họ tên)</div>
+                                <div class="font-bold uppercase text-slate-800" id="pv-lbl-sign-prov-title">ĐẠI DIỆN NHÀ CUNG CẤP</div>
+                                <div class="text-[9.5px] text-slate-400 italic" id="pv-lbl-sign-prov-sub">(Ký, đóng dấu và ghi rõ họ tên)</div>
                             </div>
                             
                             <!-- Red ISSUED Seal Stamp -->
@@ -1412,7 +1412,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div class="relative">
                         <label class="block font-semibold text-slate-600 mb-1">Khách hàng liên kết *</label>
-                        <input type="text" id="ctr-cust-search-input" oninput="searchCustomerForContract(this.value)" placeholder="Tìm khách hàng..." class="w-full px-3 py-2 border rounded-lg font-semibold outline-none">
+                        <input type="text" id="ctr-cust-search-input" oninput="searchCustomerForContract(this.value)" placeholder="Nhập tên khách hàng" class="w-full px-3 py-2 border rounded-lg font-semibold outline-none">
                         <div id="ctr-cust-autocomplete-list" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 shadow-xl rounded-lg max-h-48 overflow-y-auto z-30 hidden divide-y"></div>
                         <input type="hidden" id="ctr-customer-select" value="">
                     </div>
@@ -1596,7 +1596,7 @@
                 <div class="grid grid-cols-3 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Mã CID (Duy nhất) *</label>
-                        <input type="text" id="cust-cid" oninput="validateCidInput(this)" required class="w-full px-3 py-1.5 border rounded-lg font-bold uppercase text-teal-700 outline-none" placeholder="VD: MAMA">
+                        <input type="text" id="cust-cid" oninput="validateCidInput(this)" required class="w-full px-3 py-1.5 border rounded-lg font-bold uppercase text-teal-700 outline-none" placeholder="VD: MAMA, GLOBALTECH, VIETRICE...">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Mã Số Thuế (MST)</label>
@@ -1614,12 +1614,12 @@
                 </div>
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">Tên Công Ty / Khách Hàng (Tùy chọn)</label>
-                    <input type="text" id="cust-company" class="w-full px-3 py-1.5 border rounded-lg outline-none" placeholder="Nhập tên công ty hoặc để trống">
+                    <input type="text" id="cust-company" class="w-full px-3 py-1.5 border rounded-lg outline-none" placeholder="VD: Công ty Cổ phần MAMA BOX">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Người liên hệ</label>
-                        <input type="text" id="cust-person" class="w-full px-3 py-1.5 border rounded-lg outline-none">
+                        <input type="text" id="cust-person" class="w-full px-3 py-1.5 border rounded-lg outline-none" placeholder="VD: Ms Thủy (Trưởng phòng Mua hàng)">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-600 mb-1">Điện thoại (Tùy chọn)</label>
@@ -1632,7 +1632,7 @@
                 </div>
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">Địa chỉ</label>
-                    <input type="text" id="cust-address" class="w-full px-3 py-1.5 border rounded-lg outline-none">
+                    <input type="text" id="cust-address" class="w-full px-3 py-1.5 border rounded-lg outline-none" placeholder="VD: 728-730 Võ Văn Kiệt, P.1, Q.5, TP.HCM">
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-2 border-t">
                     <button type="button" onclick="closeCustomerModal()" class="px-4 py-1.5 bg-slate-200 text-slate-800 font-bold rounded-lg">Hủy</button>
@@ -3180,18 +3180,17 @@
         }
 
         function openNewQuoteModal() {
-            const firstCust = customersData[0] || { cid: "MAMA", companyName: "MAMA BOX CORP" };
             activeQuote = {
                 id: 'q_' + Date.now(),
-                refNo: generateNextQuoteRef(firstCust.cid),
-                customerName: firstCust.cid,
-                companyName: firstCust.companyName,
+                refNo: generateNextQuoteRef(''),
+                customerName: '',
+                companyName: '',
                 date: new Date().toISOString().split('T')[0],
-                recipientPerson: firstCust.contactPerson || "Ms Thủy",
-                recipientTitle: "Trưởng phòng Mua hàng",
-                address: firstCust.address || "",
-                email: firstCust.email || "",
-                mobile: firstCust.phone || "",
+                recipientPerson: '',
+                recipientTitle: '',
+                address: '',
+                email: '',
+                mobile: '',
                 salesName: currentUser ? currentUser.name : "Lê Nguyễn Ngọc Ngân",
                 salesUserId: currentUser ? currentUser.id : "usr_1",
                 salesTitle: currentUser ? currentUser.title : "Account Manager",
@@ -3202,6 +3201,7 @@
                 status: "OFFICIAL",
                 version: 1,
                 terms: DEFAULT_QUOTE_TERMS,
+                validityDays: 30,
                 termSetup: "PREPAID",
                 termCloud: "YEARLY",
                 advancePct: 30,
@@ -3210,20 +3210,27 @@
                 notes: "",
                 brand: "CLOUDPBX",
                 currency: "VND",
-                docLang: "VI", validityDays: 30,
+                docLang: "VI",
                 history: [],
                 lineItems: [
-                    { category: 1, code: "AD0001", desc: "Phí khởi tạo dịch vụ CloudPBX\nHướng dẫn cài đặt, kịch bản, vận hành", subtitle: "Tặng gói hỗ trợ kỹ thuật Onsite", price: 1000000, qty: 1, unit: "Lần", vatPct: 8 },
-                    { category: 2, code: "CPBX-STD-YR", desc: "CloudPBX Standard (20 máy nhánh)\nPhí dịch vụ 12 tháng", subtitle: "Cam kết Uptime 99.9%", price: 535000, qty: 12, unit: "Tháng", vatPct: 8 }
+                    { category: 1, code: "", desc: "", subtitle: "", price: "", qty: "", unit: "Lần", vatPct: 8 },
+                    { category: 2, code: "", desc: "", subtitle: "", price: "", qty: "", unit: "Tháng", vatPct: 8 }
                 ]
             };
 
             document.getElementById('modal-title').innerText = "Soạn thảo Báo Giá";
             document.getElementById('modal-ref-indicator').innerText = "Chế độ tạo mới";
             document.getElementById('modal-btn-to-contract')?.classList.add('hidden');
-            // Hide Update button when creating new quote
             document.getElementById('modal-btn-update')?.classList.add('hidden');
-            
+
+            const custSearchInp = document.getElementById('quote-cust-search-input');
+            if (custSearchInp) {
+                custSearchInp.value = '';
+                custSearchInp.placeholder = 'Nhập tên khách hàng';
+            }
+            const selHidden = document.getElementById('form-customer-select');
+            if (selHidden) selHidden.value = '';
+
             populateModalFormFields();
             updateQuoteConfigTogglesUI();
             renderSeparatedLineItemInputs();
@@ -3496,7 +3503,14 @@
 
         function populateModalFormFields() {
             if (!activeQuote) return;
-            document.getElementById('quote-cust-search-input').value = `[${activeQuote.customerName}] ${activeQuote.companyName || ''}`;
+            const custSearchInp = document.getElementById('quote-cust-search-input');
+            if (custSearchInp) {
+                custSearchInp.value = activeQuote.customerName ? `[${activeQuote.customerName}] ${activeQuote.companyName || ''}` : '';
+                custSearchInp.placeholder = 'Nhập tên khách hàng';
+            }
+            const selHidden = document.getElementById('form-customer-select');
+            if (selHidden) selHidden.value = activeQuote.customerName || '';
+
             document.getElementById('form-quote-ref').value = activeQuote.refNo;
             document.getElementById('form-quote-date').value = activeQuote.date;
             document.getElementById('form-recipient-person').value = activeQuote.recipientPerson || '';
@@ -3505,7 +3519,7 @@
             document.getElementById('form-customer-address').value = activeQuote.address || '';
             document.getElementById('form-quote-terms').value = activeQuote.terms || DEFAULT_QUOTE_TERMS;
 
-            // Sales Info Inputs (Image #2) - Editable
+            // Sales Info Inputs - Editable
             const salesNameInput = document.getElementById('form-sales-name');
             const salesTitleInput = document.getElementById('form-sales-title');
             const salesEmailInput = document.getElementById('form-sales-email');
@@ -3516,7 +3530,7 @@
             if (salesEmailInput) salesEmailInput.value = activeQuote.salesEmail || (currentUser ? currentUser.email : '');
             if (salesPhoneInput) salesPhoneInput.value = activeQuote.salesPhone || (currentUser ? currentUser.phone : '');
 
-            // Populate Payment Terms Radios (Image #1)
+            // Populate Payment Terms Radios
             const termSetup = activeQuote.termSetup || 'PREPAID';
             const termCloud = activeQuote.termCloud || 'YEARLY';
             const setupRadios = document.getElementsByName('term_setup');
@@ -3629,23 +3643,25 @@
 
             let h1 = '', h2 = '';
             activeQuote.lineItems.forEach((item, idx) => {
+                const isCat2 = Number(item.category) === 2;
+                const defaultUnit = isCat2 ? 'Tháng' : 'Lần';
                 const itemHtml = `
                     <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-3 relative text-xs">
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-start">
                             <div class="md:col-span-3">
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Mã SP/DV</label>
-                                <input type="text" value="${item.code || ''}" oninput="activeQuote.lineItems[${idx}].code=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
+                                <input type="text" value="${item.code || ''}" placeholder="Mã SP" oninput="activeQuote.lineItems[${idx}].code=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
                             </div>
                             <div class="md:col-span-5">
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1 flex items-center justify-between">
                                     <span>Mô tả sản phẩm / dịch vụ</span>
                                     <span class="text-[9.5px] text-slate-400 font-normal italic">Dòng 1: Tên SP (In đậm) | Dòng 2+: Mô tả (Chữ thường)</span>
                                 </label>
-                                <textarea rows="2" placeholder="Dòng 1: Tên sản phẩm / dịch vụ (In đậm)&#10;Dòng 2+: Chi tiết mô tả tính năng (Chữ thường)..." oninput="activeQuote.lineItems[${idx}].desc=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange resize-y font-normal leading-relaxed">${item.desc || ''}</textarea>
+                                <textarea rows="2" placeholder="Mô tả sản phẩm" oninput="activeQuote.lineItems[${idx}].desc=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange resize-y font-normal leading-relaxed">${item.desc || ''}</textarea>
                             </div>
                             <div class="md:col-span-3">
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Ghi chú phụ / Subtitle</label>
-                                <input type="text" value="${item.subtitle || ''}" placeholder="Tặng gói hỗ trợ kỹ thuật Onsite" oninput="activeQuote.lineItems[${idx}].subtitle=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange text-rose-600 italic font-medium">
+                                <input type="text" value="${item.subtitle || ''}" placeholder="Ghi chú" oninput="activeQuote.lineItems[${idx}].subtitle=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange text-rose-600 italic font-medium">
                             </div>
                             <div class="md:col-span-1 flex justify-end items-center pt-5">
                                 <button type="button" onclick="removeLineItem(${idx})" title="Xóa dòng" class="text-rose-500 hover:text-rose-700 p-1">
@@ -3656,24 +3672,24 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Đơn giá (${currencyLabel})</label>
-                                <input type="number" value="${item.price || 0}" oninput="activeQuote.lineItems[${idx}].price=Number(this.value);updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
+                                <input type="number" value="${item.price !== undefined && item.price !== null && item.price !== '' ? item.price : ''}" placeholder="0" oninput="activeQuote.lineItems[${idx}].price=Number(this.value);updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Số lượng</label>
-                                <input type="number" value="${item.qty || 1}" oninput="activeQuote.lineItems[${idx}].qty=Number(this.value);updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
+                                <input type="number" value="${item.qty !== undefined && item.qty !== null && item.qty !== '' ? item.qty : ''}" placeholder="0" oninput="activeQuote.lineItems[${idx}].qty=Number(this.value);updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Đơn vị</label>
-                                <input type="text" value="${item.unit || 'Lần'}" oninput="activeQuote.lineItems[${idx}].unit=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
+                                <input type="text" value="${item.unit || defaultUnit}" placeholder="${defaultUnit}" oninput="activeQuote.lineItems[${idx}].unit=this.value;updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">VAT (%)</label>
-                                <input type="number" value="${item.vatPct !== undefined ? item.vatPct : 8}" oninput="activeQuote.lineItems[${idx}].vatPct=Number(this.value);updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
+                                <input type="number" value="${item.vatPct !== undefined && item.vatPct !== null && item.vatPct !== '' ? item.vatPct : 8}" placeholder="8" oninput="activeQuote.lineItems[${idx}].vatPct=Number(this.value);updateQuotationPreview();" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg bg-white outline-none focus:ring-1 focus:ring-brand-orange font-medium">
                             </div>
                         </div>
                     </div>
                 `;
-                if (Number(item.category) === 2) h2 += itemHtml; else h1 += itemHtml;
+                if (isCat2) h2 += itemHtml; else h1 += itemHtml;
             });
 
             c1.innerHTML = h1 || '<div class="text-slate-400 italic text-[11px] text-center p-2">Chưa có mục Phí 1 lần. Bấm nút phía trên để thêm.</div>';
@@ -3683,12 +3699,12 @@
         function addNewLineItem(cat) {
             activeQuote.lineItems.push({
                 category: cat,
-                code: cat === 1 ? "AD0001" : "CPBX-STD-YR",
-                desc: cat === 1 ? "Phí khởi tạo dịch vụ CloudPBX\nHướng dẫn cài đặt, kịch bản, vận hành" : "CloudPBX Standard (20 máy nhánh)\nPhí dịch vụ 12 tháng",
-                subtitle: cat === 1 ? "Tặng gói hỗ trợ kỹ thuật Onsite" : "Cam kết Uptime 99.9%",
-                price: cat === 1 ? 1000000 : 529000,
-                qty: cat === 1 ? 1 : 12,
-                unit: cat === 1 ? "Lần" : "Tháng",
+                code: "",
+                desc: "",
+                subtitle: "",
+                price: "",
+                qty: "",
+                unit: Number(cat) === 2 ? "Tháng" : "Lần",
                 vatPct: 8
             });
             renderSeparatedLineItemInputs();
@@ -3854,10 +3870,15 @@
             activeQuote.salesEmail = document.getElementById('form-sales-email')?.value || activeQuote.salesEmail || '';
             activeQuote.salesPhone = document.getElementById('form-sales-phone')?.value || activeQuote.salesPhone || '';
 
+            const docLang = activeQuote.docLang || 'VI';
+            const validityDays = Number(activeQuote.validityDays) || 30;
+            const expiryDate = calculateExpiryDate(activeQuote.date, validityDays);
+
             const brandBadgeName = document.getElementById('pv-brand-badge-name');
             const brandHeaderTitle = document.getElementById('pv-brand-header-title');
             const brandSubtitle = document.getElementById('pv-brand-subtitle');
             const brandEmail = document.getElementById('pv-brand-email');
+            const companyAddr = document.getElementById('pv-company-address');
 
             if (activeQuote.brand === 'DNTG') {
                 if (brandBadgeName) {
@@ -3869,8 +3890,8 @@
                     brandHeaderTitle.className = 'font-bold uppercase text-slate-900 text-xs tracking-tight';
                 }
                 if (brandSubtitle) {
-                    brandSubtitle.innerText = 'DONG NHAT TECHNOLOGY GROUP';
-                    brandSubtitle.className = 'text-[9px] text-slate-500 uppercase tracking-wider font-semibold';
+                    brandSubtitle.innerText = '(DONG NHAT INFORMATION TECHNOLOGY CO.,LTD)';
+                    brandSubtitle.className = 'text-[10px] text-slate-500 font-semibold tracking-wide uppercase';
                 }
                 if (brandEmail) brandEmail.innerText = 'hello@dntg.com.vn';
             } else {
@@ -3879,19 +3900,21 @@
                     brandBadgeName.className = 'text-xl font-extrabold text-brand-orange tracking-tight leading-none mb-1';
                 }
                 if (brandHeaderTitle) {
-                    brandHeaderTitle.innerText = 'CÔNG TY TNHH CNTT ĐỒNG NHẤT';
+                    brandHeaderTitle.innerText = 'VIETNAM CLOUDCOMMUNICATION SERVICE CENTER';
                     brandHeaderTitle.className = 'font-bold uppercase text-slate-900 text-xs tracking-tight';
                 }
                 if (brandSubtitle) {
-                    brandSubtitle.innerText = 'VIETNAM CLOUDCOMMUNICATION SERVICE CENTER';
-                    brandSubtitle.className = 'text-[9px] text-slate-500 uppercase tracking-wider font-semibold';
+                    brandSubtitle.innerText = '(by DNTG)';
+                    brandSubtitle.className = 'text-[10px] text-slate-500 font-semibold tracking-wide';
                 }
                 if (brandEmail) brandEmail.innerText = 'hello@cloudpbx.vn';
             }
 
-            const docLang = activeQuote.docLang || 'VI';
-            const validityDays = Number(activeQuote.validityDays) || 30;
-            const expiryDate = calculateExpiryDate(activeQuote.date, validityDays);
+            if (companyAddr) {
+                if (docLang === 'EN') companyAddr.innerText = '22 Street 5, Tan Hung Ward, Ho Chi Minh City, Vietnam';
+                else if (docLang === 'BI') companyAddr.innerText = '22 Đường số 5, P. Tân Hưng, TP. HCM / 22 Street 5, Tan Hung Ward, HCMC';
+                else companyAddr.innerText = '22 Đường số 5, Phường Tân Hưng, TP. HCM';
+            }
 
             // Document Title
             const docTitleEl = document.getElementById('pv-doc-title');
@@ -3904,8 +3927,8 @@
             // Header Labels
             const lblRef = document.getElementById('pv-lbl-ref');
             if (lblRef) {
-                if (docLang === 'EN') lblRef.innerText = 'Ref:';
-                else if (docLang === 'BI') lblRef.innerText = 'Số / Ref:';
+                if (docLang === 'EN') lblRef.innerText = 'Ref No.:';
+                else if (docLang === 'BI') lblRef.innerText = 'Số / Ref No.:';
                 else lblRef.innerText = 'Số (Ref):';
             }
 
@@ -3950,10 +3973,25 @@
                 else recHeaderTitle.innerText = 'KÍNH GỬI:';
             }
 
+            const lblPerson = document.getElementById('pv-lbl-person');
+            const lblTitle = document.getElementById('pv-lbl-title');
+            const lblCompany = document.getElementById('pv-lbl-company');
+            const lblEmail = document.getElementById('pv-lbl-email');
+            const lblAddress = document.getElementById('pv-lbl-address');
+            const lblPhone = document.getElementById('pv-lbl-phone');
+
+            if (lblPerson) lblPerson.innerText = docLang === 'EN' ? 'Attn' : (docLang === 'BI' ? 'Người nhận / Attn' : 'Người nhận');
+            if (lblTitle) lblTitle.innerText = docLang === 'EN' ? 'Title' : (docLang === 'BI' ? 'Chức danh / Title' : 'Chức danh');
+            if (lblCompany) lblCompany.innerText = docLang === 'EN' ? 'Company' : (docLang === 'BI' ? 'Công ty / Company' : 'Công ty');
+            if (lblAddress) lblAddress.innerText = docLang === 'EN' ? 'Address' : (docLang === 'BI' ? 'Địa chỉ / Address' : 'Địa chỉ');
+            if (lblPhone) lblPhone.innerText = docLang === 'EN' ? 'Phone' : (docLang === 'BI' ? 'Điện thoại / Phone' : 'Điện thoại');
+
             document.getElementById('pv-recipient-person').innerText = activeQuote.recipientPerson || '---';
             document.getElementById('pv-recipient-title').innerText = activeQuote.recipientTitle || '---';
             document.getElementById('pv-recipient-company').innerText = activeQuote.companyName || '---';
             document.getElementById('pv-recipient-address').innerText = activeQuote.address || '---';
+            document.getElementById('pv-recipient-email').innerText = activeQuote.email || '---';
+            document.getElementById('pv-recipient-phone').innerText = activeQuote.mobile || '---';
 
             // Terms display & Title
             const termsTitle = document.getElementById('pv-lbl-terms-title');
@@ -3964,9 +4002,9 @@
             }
             document.getElementById('pv-terms-content-display').innerText = activeQuote.terms || getDefaultQuoteTerms(docLang, validityDays, expiryDate);
 
-            // Table Column Headers i18n
-            const thCode = document.getElementById('th-code');
+            // Table Column Headers: Col 1 = STT, Col 2 = Mã (Requirement 3)
             const thStt = document.getElementById('th-stt');
+            const thCode = document.getElementById('th-code');
             const thDesc = document.getElementById('th-desc');
             const thPrice = document.getElementById('th-price');
             const thQty = document.getElementById('th-qty');
@@ -3974,13 +4012,14 @@
             const thVat = document.getElementById('th-vat');
             const thTotal = document.getElementById('th-total');
 
-            if (thCode) thCode.innerText = docLang === 'EN' ? 'Code' : (docLang === 'BI' ? 'Mã / Code' : 'Mã');
             if (thStt) thStt.innerText = docLang === 'EN' ? 'No.' : (docLang === 'BI' ? 'STT / No.' : 'STT');
+            if (thCode) thCode.innerText = docLang === 'EN' ? 'Code' : (docLang === 'BI' ? 'Mã / Code' : 'Mã');
             if (thDesc) thDesc.innerText = docLang === 'EN' ? 'Product / Service Description' : (docLang === 'BI' ? 'Mô tả SP - Dịch vụ / Description' : 'Mô tả Sản phẩm / Dịch vụ');
             if (thPrice) thPrice.innerText = docLang === 'EN' ? 'Unit Price' : (docLang === 'BI' ? 'Đơn giá / Price' : 'Đơn giá');
             if (thQty) thQty.innerText = docLang === 'EN' ? 'Qty' : (docLang === 'BI' ? 'SL / Qty' : 'SL');
             if (thUnit) thUnit.innerText = docLang === 'EN' ? 'Unit' : (docLang === 'BI' ? 'ĐVT / Unit' : 'Đơn vị');
-            if (thTotal) thTotal.innerText = docLang === 'EN' ? 'Amount' : (docLang === 'BI' ? 'Tổng / Amount' : 'Tổng');
+            if (thVat) thVat.innerText = 'VAT';
+            if (thTotal) thTotal.innerText = docLang === 'EN' ? 'Amount' : (docLang === 'BI' ? 'Thành tiền / Amount' : 'Tổng');
 
             // Payment terms translation
             const setupVal = document.querySelector('input[name="term_setup"]:checked')?.value || activeQuote.termSetup || 'PREPAID';
@@ -3988,6 +4027,14 @@
             const advPct = document.getElementById('form-advance-pct')?.value || activeQuote.advancePct || 30;
             const advRem = document.getElementById('form-advance-rem')?.value || activeQuote.advanceRem || 70;
             const advDays = document.getElementById('form-advance-days')?.value || activeQuote.advanceDays || 7;
+
+            const lblPayTitle = document.getElementById('pv-lbl-payment-title');
+            const lblPaySetup = document.getElementById('pv-lbl-payment-setup');
+            const lblPayCloud = document.getElementById('pv-lbl-payment-cloud');
+
+            if (lblPayTitle) lblPayTitle.innerText = docLang === 'EN' ? 'PAYMENT TERMS' : (docLang === 'BI' ? 'ĐIỀU KIỆN THANH TOÁN / PAYMENT TERMS' : 'ĐIỀU KIỆN THANH TOÁN');
+            if (lblPaySetup) lblPaySetup.innerText = docLang === 'EN' ? 'Equipment / Setup:' : (docLang === 'BI' ? 'Khởi tạo & Thiết bị / Setup & Equipment:' : 'Thiết bị / Khởi tạo:');
+            if (lblPayCloud) lblPayCloud.innerText = docLang === 'EN' ? 'CloudPBX Service:' : (docLang === 'BI' ? 'Phí dịch vụ Cloud / Cloud Service:' : 'Phí dịch vụ Cloud:');
 
             let setupText = 'Trả trước (100%)';
             if (docLang === 'EN') {
@@ -4022,19 +4069,44 @@
             if (setupDisp) setupDisp.innerText = setupText;
             if (cloudDisp) cloudDisp.innerText = cloudText;
 
+            // Bank Account info translation
+            const lblBankTitle = document.getElementById('pv-lbl-bank-title');
+            const lblBankComp = document.getElementById('pv-lbl-bank-company');
+            const lblBankName = document.getElementById('pv-lbl-bank-name');
+            const lblBankAddr = document.getElementById('pv-lbl-bank-address');
+
+            if (lblBankTitle) lblBankTitle.innerText = docLang === 'EN' ? 'COMPANY BANK ACCOUNT INFORMATION' : (docLang === 'BI' ? 'THÔNG TIN TÀI KHOẢN / BANK ACCOUNT DETAILS' : 'THÔNG TIN TÀI KHOẢN CÔNG TY');
+            if (lblBankComp) lblBankComp.innerText = docLang === 'EN' ? 'DONG NHAT IT CO., LTD' : (docLang === 'BI' ? 'CÔNG TY TNHH CNTT ĐỒNG NHẤT / DONG NHAT IT CO., LTD' : 'CÔNG TY TNHH CNTT ĐỒNG NHẤT');
+            if (lblBankName) lblBankName.innerText = docLang === 'EN' ? 'Vietnam International Bank (VIB) - HCMC Branch' : (docLang === 'BI' ? 'Ngân hàng Quốc Tế (VIB) - CN HCM / Vietnam International Bank (VIB)' : 'Ngân hàng Quốc Tế (VIB) - Chi nhánh HCM');
+            if (lblBankAddr) lblBankAddr.innerText = docLang === 'EN' ? '54-56 Nam Ky Khoi Nghia, Dist. 1, HCMC, Vietnam' : (docLang === 'BI' ? '54-56 Nam Kỳ Khởi Nghĩa, Q.1, TP.HCM / Dist. 1, HCMC' : '54-56 Nam Kỳ Khởi Nghĩa, P. Nguyễn Thái Bình, Q.1, TP.HCM, Việt Nam');
+
+            // Signatures block translation
+            const lblSignCustTitle = document.getElementById('pv-lbl-sign-cust-title');
+            const lblSignCustSub = document.getElementById('pv-lbl-sign-cust-sub');
+            const lblSignProvTitle = document.getElementById('pv-lbl-sign-prov-title');
+            const lblSignProvSub = document.getElementById('pv-lbl-sign-prov-sub');
+
+            if (lblSignCustTitle) lblSignCustTitle.innerText = docLang === 'EN' ? 'CUSTOMER REPRESENTATIVE' : (docLang === 'BI' ? 'ĐẠI DIỆN KHÁCH HÀNG / CUSTOMER REPRESENTATIVE' : 'ĐẠI DIỆN KHÁCH HÀNG');
+            if (lblSignCustSub) lblSignCustSub.innerText = docLang === 'EN' ? '(Sign, stamp and full name)' : (docLang === 'BI' ? '(Ký, đóng dấu / Signature & Seal)' : '(Ký, đóng dấu và ghi rõ họ tên)');
+            if (lblSignProvTitle) lblSignProvTitle.innerText = docLang === 'EN' ? 'PROVIDER REPRESENTATIVE' : (docLang === 'BI' ? 'ĐẠI DIỆN NHÀ CUNG CẤP / PROVIDER REPRESENTATIVE' : 'ĐẠI DIỆN NHÀ CUNG CẤP');
+            if (lblSignProvSub) lblSignProvSub.innerText = docLang === 'EN' ? '(Sign, stamp and full name)' : (docLang === 'BI' ? '(Ký, đóng dấu / Signature & Seal)' : '(Ký, đóng dấu và ghi rõ họ tên)');
+
             const salesSignName = document.getElementById('pv-sales-sign-name');
             const salesSignTitle = document.getElementById('pv-sales-sign-title');
             const salesSignContact = document.getElementById('pv-sales-sign-contact');
 
             if (salesSignName) salesSignName.innerText = activeQuote.salesName || 'Lê Nguyễn Ngọc Ngân';
             if (salesSignTitle) salesSignTitle.innerText = activeQuote.salesTitle || 'Account Manager';
-            if (salesSignContact) salesSignContact.innerText = `Phone: ${activeQuote.salesPhone || '---'} | Email: ${activeQuote.salesEmail || '---'}`;
+            if (salesSignContact) {
+                const phoneLabel = docLang === 'EN' ? 'Phone:' : (docLang === 'BI' ? 'Phone / ĐT:' : 'Điện thoại:');
+                salesSignContact.innerText = `${phoneLabel} ${activeQuote.salesPhone || '---'} | Email: ${activeQuote.salesEmail || '---'}`;
+            }
 
             const stampText = document.getElementById('pv-stamp-text');
             if (stampText) {
                 const parts = (activeQuote.date || '').split('-');
                 const dStr = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : activeQuote.date;
-                stampText.innerText = `ISSUED ${dStr}`;
+                stampText.innerText = docLang === 'BI' ? `ISSUED / BAN HÀNH ${dStr}` : `ISSUED ${dStr}`;
             }
 
             const tbody = document.getElementById('pv-table-body');
@@ -4046,8 +4118,8 @@
             let html = '';
             let stt = 1;
 
-            const cat1Title = docLang === 'EN' ? 'I. ONE-TIME CHARGES (Setup / Equipment)' : (docLang === 'BI' ? 'I. PHÍ THANH TOÁN 1 LẦN / ONE-TIME CHARGES' : 'I. PHÍ THANH TOÁN 1 LẦN (Khởi tạo / Thiết bị)');
-            const cat2Title = docLang === 'EN' ? 'II. RECURRING CHARGES (CloudPBX Service)' : (docLang === 'BI' ? 'II. PHÍ DUY TRÌ DỊCH VỤ / RECURRING CHARGES' : 'II. PHÍ DUY TRÌ DỊCH VỤ (CloudPBX)');
+            const cat1Title = docLang === 'EN' ? 'I. ONE-TIME CHARGES (Setup / Equipment)' : (docLang === 'BI' ? 'I. PHÍ THANH TOÁN 1 LẦN / ONE-TIME CHARGES (Khởi tạo & Thiết bị)' : 'I. PHÍ THANH TOÁN 1 LẦN (Khởi tạo / Thiết bị)');
+            const cat2Title = docLang === 'EN' ? 'II. RECURRING CHARGES (CloudPBX Service)' : (docLang === 'BI' ? 'II. PHÍ DUY TRÌ DỊCH VỤ / RECURRING CHARGES (CloudPBX)' : 'II. PHÍ DUY TRÌ DỊCH VỤ (CloudPBX)');
             const grandTotalLabel = docLang === 'EN' ? 'TOTAL AMOUNT (INCL. VAT):' : (docLang === 'BI' ? 'TỔNG CỘNG / GRAND TOTAL (INCL. VAT):' : 'TỔNG CỘNG (ĐÃ GỒM VAT):');
 
             if (cat1Items.length > 0) {
@@ -4060,8 +4132,8 @@
                     const lineTot = calculateLineItemTotal(item);
                     html += `
                         <tr class="text-[9.5px]">
+                            <td class="p-1 border-r text-center font-bold">${stt++}</td>
                             <td class="p-1 border-r font-mono text-center">${item.code || ''}</td>
-                            <td class="p-1 border-r text-center">${stt++}</td>
                             <td class="p-1 border-r">
                                 ${formatProductDescriptionHtml(item.desc)}
                                 ${item.subtitle ? `<div class="text-[9px] text-rose-600 italic mt-0.5">${item.subtitle}</div>` : ''}
@@ -4086,8 +4158,8 @@
                     const lineTot = calculateLineItemTotal(item);
                     html += `
                         <tr class="text-[9.5px]">
+                            <td class="p-1 border-r text-center font-bold">${stt++}</td>
                             <td class="p-1 border-r font-mono text-center">${item.code || ''}</td>
-                            <td class="p-1 border-r text-center">${stt++}</td>
                             <td class="p-1 border-r">
                                 ${formatProductDescriptionHtml(item.desc)}
                                 ${item.subtitle ? `<div class="text-[9px] text-rose-600 italic mt-0.5">${item.subtitle}</div>` : ''}
@@ -4111,9 +4183,7 @@
             `;
 
             tbody.innerHTML = html;
-        }
-
-        function handleRptPeriodChange() {
+        }function handleRptPeriodChange() {
             const period = document.getElementById('rpt-filter-period')?.value;
             const customWrapper = document.getElementById('rpt-custom-date-wrapper');
             if (customWrapper) {
@@ -5344,15 +5414,17 @@
             if (list) list.classList.add('hidden');
             const c = customersData.find(item => item.cid === cid);
             if (!c) return;
+
             const input = document.getElementById('quote-cust-search-input');
-            if (input) input.value = `[${c.cid}] ${c.companyName}`;
+            if (input) input.value = `[${c.cid}] ${c.companyName || c.cid}`;
             const selHidden = document.getElementById('form-customer-select');
             if (selHidden) selHidden.value = c.cid;
 
             if (activeQuote) {
                 activeQuote.customerName = c.cid;
-                activeQuote.companyName = c.companyName;
-                activeQuote.recipientPerson = c.contactPerson || '';
+                activeQuote.companyName = c.companyName || c.cid;
+                activeQuote.recipientPerson = c.contactPerson || 'Đại diện mua hàng';
+                activeQuote.recipientTitle = c.recipientTitle || c.contactTitle || 'Trưởng phòng Mua hàng';
                 activeQuote.address = c.address || '';
                 activeQuote.email = c.email || '';
                 activeQuote.mobile = c.phone || '';
@@ -5364,8 +5436,21 @@
                     if (refEl) refEl.value = activeQuote.refNo;
                 }
             }
-            populateModalFormFields();
+
+            // Auto-fill all customer form fields in Quote modal
+            const elPerson = document.getElementById('form-recipient-person');
+            if (elPerson) elPerson.value = activeQuote.recipientPerson;
+            const elTitle = document.getElementById('form-recipient-title');
+            if (elTitle) elTitle.value = activeQuote.recipientTitle;
+            const elComp = document.getElementById('form-customer-company');
+            if (elComp) elComp.value = activeQuote.companyName;
+            const elAddr = document.getElementById('form-customer-address');
+            if (elAddr) elAddr.value = activeQuote.address;
+            const elRef = document.getElementById('form-quote-ref');
+            if (elRef) elRef.value = activeQuote.refNo;
+
             updateQuotationPreview();
+            showToast(`Đã tự động điền thông tin khách hàng [${c.cid}] ${c.companyName || ''}`, 'success');
         }
 
         function openNewContractModal() {
@@ -5375,13 +5460,22 @@
             document.getElementById('ctr-type').value = 'CONTRACT';
             document.getElementById('contract-modal-title').innerText = 'Tạo Hợp đồng chính mới';
             document.getElementById('parent-contract-wrapper').classList.add('hidden');
-            
-            const firstCust = customersData[0] || { cid: 'MAMA', companyName: 'MAMA BOX CORP' };
-            selectCustomerForContract(firstCust.cid);
+
+            const custSearchInp = document.getElementById('ctr-cust-search-input');
+            if (custSearchInp) {
+                custSearchInp.value = '';
+                custSearchInp.placeholder = 'Nhập tên khách hàng';
+            }
+            document.getElementById('ctr-customer-select').value = '';
+            document.getElementById('ctr-source-quote-select').innerHTML = '<option value="">-- Chọn báo giá liên kết (sau khi chọn KH) --</option>';
+            document.getElementById('ctr-source-quote-ref').value = '';
+            document.getElementById('ctr-ref').value = generateNextContractRef('');
             document.getElementById('ctr-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('ctr-status').value = 'Đã ký';
-            document.getElementById('ctr-total-value').value = 5000000;
+            document.getElementById('ctr-total-value').value = '';
+            document.getElementById('ctr-total-value').placeholder = 'Tự động điền theo báo giá hoặc nhập tiền';
             document.getElementById('ctr-notes').value = '';
+            document.getElementById('ctr-notes').placeholder = 'Nhập ghi chú hợp đồng (nếu có)...';
             document.getElementById('contract-modal')?.classList.remove('hidden');
         }
 
@@ -5594,7 +5688,7 @@
                 const custContracts = contractsData.filter(ct => ct.customerName === c.cid);
 
                 let rowHtml = `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100 transition-all ${isExpanded ? 'bg-slate-50/60' : 'bg-white'}">
+                    <tr id="customer-row-${c.id}" class="hover:bg-slate-50 border-b border-slate-100 transition-all ${isExpanded ? 'bg-slate-50/60' : 'bg-white'}">
                         <td class="py-3 px-4 cursor-pointer hover:underline" onclick="toggleCustomerDrawer('${c.id}')" title="Nhấn để xem chi tiết">
                             <div class="font-mono font-bold text-teal-700 text-xs">${c.cid}</div>
                             <div class="text-[10px] font-mono text-slate-500">${c.taxCode ? 'MST: ' + c.taxCode : '<span class="text-slate-400 italic">Chưa có MST</span>'}</div>
@@ -5997,6 +6091,23 @@
             renderQuotesTable();
         }
 
+        function viewCustomerFromGlobal(custId) {
+            clearGlobalSearch();
+            switchView('customers');
+            expandedCustomerIds.add(custId);
+            renderCustomersTable();
+            setTimeout(() => {
+                const row = document.getElementById(`customer-row-${custId}`);
+                if (row) {
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    row.classList.add('ring-2', 'ring-teal-500', 'bg-teal-50/70');
+                    setTimeout(() => {
+                        row.classList.remove('ring-2', 'ring-teal-500', 'bg-teal-50/70');
+                    }, 2500);
+                }
+            }, 100);
+        }
+
         function handleGlobalSearch(q) {
             const dropdown = document.getElementById('global-search-dropdown');
             const clearBtn = document.getElementById('global-search-clear-btn');
@@ -6009,40 +6120,130 @@
             }
             clearBtn.classList.remove('hidden');
 
-            const mQuotes = quotesData.filter(item => item.refNo.toLowerCase().includes(query) || item.customerName.toLowerCase().includes(query) || (item.companyName || '').toLowerCase().includes(query));
-            const mContracts = contractsData.filter(item => item.refNo.toLowerCase().includes(query) || item.companyName.toLowerCase().includes(query));
+            const mQuotes = quotesData.filter(item => 
+                item.refNo.toLowerCase().includes(query) || 
+                item.customerName.toLowerCase().includes(query) || 
+                (item.companyName || '').toLowerCase().includes(query) ||
+                (item.recipientPerson || '').toLowerCase().includes(query)
+            );
+
+            const mContracts = contractsData.filter(item => 
+                item.refNo.toLowerCase().includes(query) || 
+                item.customerName.toLowerCase().includes(query) ||
+                (item.companyName || '').toLowerCase().includes(query) ||
+                (item.notes || '').toLowerCase().includes(query)
+            );
+
+            // Search appendices across all contracts
+            const mAppendices = [];
+            contractsData.forEach(ct => {
+                if (ct.appendices && Array.isArray(ct.appendices)) {
+                    ct.appendices.forEach(ap => {
+                        if (
+                            ap.refNo.toLowerCase().includes(query) ||
+                            (ap.companyName || '').toLowerCase().includes(query) ||
+                            (ap.customerName || '').toLowerCase().includes(query) ||
+                            (ap.notes || '').toLowerCase().includes(query)
+                        ) {
+                            mAppendices.push({
+                                ...ap,
+                                parentContractId: ct.id,
+                                parentContractRef: ct.refNo
+                            });
+                        }
+                    });
+                }
+            });
+
             const mCust = customersData.filter(item => 
                 item.cid.toLowerCase().includes(query) || 
                 (item.taxCode || '').toLowerCase().includes(query) || 
                 item.companyName.toLowerCase().includes(query) || 
-                item.phone.includes(query)
+                (item.contactPerson || '').toLowerCase().includes(query) ||
+                (item.phone || '').includes(query) ||
+                (item.email || '').toLowerCase().includes(query)
             );
 
-            if (mQuotes.length === 0 && mContracts.length === 0 && mCust.length === 0) {
+            if (mQuotes.length === 0 && mContracts.length === 0 && mAppendices.length === 0 && mCust.length === 0) {
                 dropdown.innerHTML = '<div class="p-3 text-center text-slate-400 text-xs">Không tìm thấy kết quả phù hợp.</div>';
                 dropdown.classList.remove('hidden');
                 return;
             }
 
             let html = '';
+
+            // 1. Quotations
             if (mQuotes.length > 0) {
-                html += '<div class="bg-slate-50 px-3 py-1 font-bold text-[10px] text-slate-500 uppercase">Báo giá</div>';
+                html += '<div class="bg-slate-50 px-3 py-1 font-bold text-[10px] text-slate-500 uppercase flex items-center gap-1.5"><i class="fa-solid fa-file-invoice text-brand-orange"></i> Báo giá (' + mQuotes.length + ')</div>';
                 mQuotes.forEach(qt => {
-                    html += `<div onclick="viewQuote('${qt.id}'); clearGlobalSearch();" class="p-2.5 hover:bg-slate-100 cursor-pointer text-xs flex justify-between"><div><strong class="text-brand-orange font-mono">${qt.refNo}</strong> - ${qt.companyName}</div><span class="font-bold">${formatMoney(calculateQuoteGrandTotal(qt), qt.currency)}</span></div>`;
+                    html += `
+                        <div onclick="viewQuote('${qt.id}'); clearGlobalSearch();" class="p-2.5 hover:bg-orange-50/60 cursor-pointer text-xs flex justify-between items-center transition-colors">
+                            <div>
+                                <strong class="text-brand-orange font-mono">${qt.refNo}</strong>
+                                <span class="text-slate-700 ml-1.5 font-medium">${qt.companyName || qt.customerName}</span>
+                                ${qt.recipientPerson ? `<span class="text-slate-400 text-[10.5px] ml-1">(${qt.recipientPerson})</span>` : ''}
+                            </div>
+                            <span class="font-bold text-slate-900 whitespace-nowrap ml-2">${formatMoney(calculateQuoteGrandTotal(qt), qt.currency)}</span>
+                        </div>
+                    `;
                 });
             }
+
+            // 2. Contracts
             if (mContracts.length > 0) {
-                html += '<div class="bg-slate-50 px-3 py-1 font-bold text-[10px] text-slate-500 uppercase">Hợp đồng</div>';
+                html += '<div class="bg-slate-50 px-3 py-1 font-bold text-[10px] text-slate-500 uppercase flex items-center gap-1.5"><i class="fa-solid fa-file-contract text-emerald-600"></i> Hợp đồng (' + mContracts.length + ')</div>';
                 mContracts.forEach(ct => {
-                    html += `<div onclick="switchView('contracts'); clearGlobalSearch();" class="p-2.5 hover:bg-slate-100 cursor-pointer text-xs flex justify-between"><div><strong class="text-emerald-700 font-mono">${ct.refNo}</strong> - ${ct.companyName}</div><span class="font-bold">${formatMoney(ct.totalValue, 'VND')}</span></div>`;
+                    html += `
+                        <div onclick="viewContractDetailsModal('${ct.id}'); clearGlobalSearch();" class="p-2.5 hover:bg-emerald-50/60 cursor-pointer text-xs flex justify-between items-center transition-colors">
+                            <div>
+                                <strong class="text-emerald-700 font-mono">${ct.refNo}</strong>
+                                <span class="text-slate-700 ml-1.5 font-medium">${ct.companyName || ct.customerName}</span>
+                                ${ct.notes ? `<div class="text-[10px] text-slate-400 italic">${ct.notes}</div>` : ''}
+                            </div>
+                            <span class="font-bold text-emerald-800 whitespace-nowrap ml-2">${formatMoney(ct.totalValue, 'VND')}</span>
+                        </div>
+                    `;
                 });
             }
+
+            // 3. Appendices
+            if (mAppendices.length > 0) {
+                html += '<div class="bg-slate-50 px-3 py-1 font-bold text-[10px] text-slate-500 uppercase flex items-center gap-1.5"><i class="fa-solid fa-folder-tree text-purple-600"></i> Phụ lục Hợp đồng (' + mAppendices.length + ')</div>';
+                mAppendices.forEach(ap => {
+                    html += `
+                        <div onclick="viewAppendixDetailsModal('${ap.parentContractId}', '${ap.id}'); clearGlobalSearch();" class="p-2.5 hover:bg-purple-50/60 cursor-pointer text-xs flex justify-between items-center transition-colors">
+                            <div>
+                                <strong class="text-purple-700 font-mono">${ap.refNo}</strong>
+                                <span class="text-slate-700 ml-1.5 font-medium">${ap.companyName || ap.customerName}</span>
+                                <div class="text-[10px] text-purple-600/80">Thuộc HĐ: ${ap.parentContractRef} ${ap.notes ? `• <em>${ap.notes}</em>` : ''}</div>
+                            </div>
+                            <span class="font-bold text-purple-900 whitespace-nowrap ml-2">${formatMoney(ap.totalValue, 'VND')}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // 4. Customers
             if (mCust.length > 0) {
-                html += '<div class="bg-slate-50 px-3 py-1 font-bold text-[10px] text-slate-500 uppercase">Khách hàng</div>';
+                html += '<div class="bg-slate-50 px-3 py-1 font-bold text-[10px] text-slate-500 uppercase flex items-center gap-1.5"><i class="fa-solid fa-address-book text-teal-600"></i> Khách hàng (' + mCust.length + ')</div>';
                 mCust.forEach(c => {
-                    html += `<div onclick="switchView('customers'); clearGlobalSearch();" class="p-2.5 hover:bg-slate-100 cursor-pointer text-xs flex justify-between"><div><strong class="text-teal-700 font-mono">[${c.cid}]</strong> ${c.companyName} ${c.taxCode ? `<span class="text-[10px] text-slate-500 font-mono">(MST: ${c.taxCode})</span>` : ''}</div><span class="text-slate-400">${c.phone}</span></div>`;
+                    html += `
+                        <div onclick="viewCustomerFromGlobal('${c.id}');" class="p-2.5 hover:bg-teal-50/60 cursor-pointer text-xs flex justify-between items-center transition-colors">
+                            <div>
+                                <strong class="text-teal-700 font-mono">[${c.cid}]</strong>
+                                <span class="text-slate-800 ml-1.5 font-bold">${c.companyName}</span>
+                                ${c.contactPerson ? `<span class="text-slate-500 text-[10.5px] ml-1">(${c.contactPerson})</span>` : ''}
+                                ${c.taxCode ? `<div class="text-[10px] text-slate-400 font-mono">MST: ${c.taxCode}</div>` : ''}
+                            </div>
+                            <div class="text-right ml-2 shrink-0">
+                                <span class="text-slate-600 text-xs">${c.phone || ''}</span>
+                                <div class="text-[9.5px] text-teal-700 font-bold">Xem hồ sơ &rarr;</div>
+                            </div>
+                        </div>
+                    `;
                 });
             }
+
             dropdown.innerHTML = html;
             dropdown.classList.remove('hidden');
         }
